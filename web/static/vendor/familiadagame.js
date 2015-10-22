@@ -1818,11 +1818,29 @@ Elm.FamiliadaGame.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
+   var answersList = function (answers) {
+      return function () {
+         var answerHTML = function (a) {
+            return A2($Html.li,
+            _L.fromArray([]),
+            _L.fromArray([$Html.text(a.answer)]));
+         };
+         return A2($List.map,
+         answerHTML,
+         answers);
+      }();
+   };
    var view = F2(function (address,
    model) {
       return A2($Html.div,
       _L.fromArray([$Html$Attributes.$class("jumbotron")]),
-      _L.fromArray([$Html.text("elo elo 3 5 0")]));
+      _L.fromArray([$Html.text("elo elo 3 5 0")
+                   ,A2($Html.div,
+                   _L.fromArray([]),
+                   _L.fromArray([$Html.text("lista odpowiedzi")]))
+                   ,A2($Html.ul,
+                   _L.fromArray([]),
+                   answersList(model.currentQuestion.answers))]));
    });
    var update = F2(function (action,
    model) {
@@ -1892,6 +1910,7 @@ Elm.FamiliadaGame.make = function (_elm) {
                                ,ChangeVisibility: ChangeVisibility
                                ,update: update
                                ,view: view
+                               ,answersList: answersList
                                ,main: main
                                ,model: model
                                ,actions: actions};

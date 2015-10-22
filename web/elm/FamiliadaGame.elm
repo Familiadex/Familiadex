@@ -83,8 +83,16 @@ view : Address Action -> Model -> Html
 view address model =
     div
       [ class "jumbotron" ]
-      [ text "elo elo 3 5 0" ]
+      [ text "elo elo 3 5 0",
+        div [] [text "lista odpowiedzi" ],
+        ul [] (answersList model.currentQuestion.answers)
+      ]
 
+answersList : List Answer -> List Html
+answersList answers =
+  let answerHTML a = li [] [text a.answer]
+  in
+    List.map answerHTML answers
 
 ---- INPUTS ----
 
