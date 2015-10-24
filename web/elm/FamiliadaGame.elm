@@ -30,13 +30,13 @@ type alias Question =
     , answers : List Answer
     }
 
-sampleAnswer : Answer
-sampleAnswer =
+createSampleAnswer : Bool -> Answer
+createSampleAnswer shown =
   {
     id = 1,
     answer = "Odpowiedz1",
     points = 12,
-    visible = True
+    visible = shown
   }
 
 sampleQuestion : Question
@@ -44,7 +44,7 @@ sampleQuestion =
   {
     id = 1,
     question = "pytanie 1",
-    answers = [sampleAnswer]
+    answers = [(createSampleAnswer True), (createSampleAnswer False)]
   }
 
 
@@ -85,14 +85,19 @@ view address model =
       [ class "jumbotron" ]
       [ text "elo elo 3 5 0",
         div [] [text "lista odpowiedzi" ],
-        ul [] (answersList model.currentQuestion.answers)
+        ul [] (viewAnswersList model.currentQuestion.answers)
       ]
 
-answersList : List Answer -> List Html
-answersList answers =
-  let answerHTML a = li [] [text a.answer]
-  in
-    List.map answerHTML answers
+viewAnswer : Answer -> Html
+viewAnswer answer =
+  if answer.visible then
+    li [] [text answer.answer]
+  else
+    li [] [text "..........."]
+
+viewAnswersList : List Answer -> List Html
+viewAnswersList answers =
+    List.map viewAnswer answers
 
 ---- INPUTS ----
 
