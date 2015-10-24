@@ -1,5 +1,7 @@
 # Familiada
 
+[![Join the chat at https://gitter.im/Familiadex/Familiadex](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Familiadex/Familiadex?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 To start your Phoenix app:
 
   1. Install dependencies with `mix deps.get`
