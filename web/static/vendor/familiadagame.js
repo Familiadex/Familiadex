@@ -1898,6 +1898,27 @@ Elm.FamiliadaGame.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
+   var viewTeamPlayers = function (team) {
+      return function () {
+         var viewPlayer = function (p) {
+            return A2($Html.li,
+            _L.fromArray([]),
+            _L.fromArray([$Html.text(p.name)]));
+         };
+         return A2($Html.div,
+         _L.fromArray([]),
+         _L.fromArray([$Html.text(A2($Basics._op["++"],
+                      team.name,
+                      A2($Basics._op["++"],
+                      " ",
+                      "players")))
+                      ,A2($Html.ul,
+                      _L.fromArray([]),
+                      A2($List.map,
+                      viewPlayer,
+                      team.players))]));
+      }();
+   };
    var update = F2(function (action,
    model) {
       return function () {
@@ -1916,26 +1937,40 @@ Elm.FamiliadaGame.make = function (_elm) {
               }();
             case "NoOp": return model;}
          _U.badCase($moduleName,
-         "between lines 64 and 70");
+         "between lines 85 and 91");
       }();
    });
    var AnswersListAction = function (a) {
       return {ctor: "AnswersListAction"
              ,_0: a};
    };
+   var boardView = F2(function (address,
+   model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("row row-list")]),
+      _L.fromArray([A2($Html.div,
+                   _L.fromArray([$Html$Attributes.$class("col-xs-3")]),
+                   _L.fromArray([viewTeamPlayers(model.teamA)]))
+                   ,A2($Html.div,
+                   _L.fromArray([$Html$Attributes.$class("col-xs-6")]),
+                   _L.fromArray([$Html.text("Odpowiedzi")
+                                ,A2($AnswersList.view,
+                                A2($Signal.forwardTo,
+                                address,
+                                AnswersListAction),
+                                model.currentQuestion.answers)]))
+                   ,A2($Html.div,
+                   _L.fromArray([$Html$Attributes.$class("col-xs-3")]),
+                   _L.fromArray([viewTeamPlayers(model.teamB)]))]));
+   });
    var view = F2(function (address,
    model) {
       return A2($Html.div,
-      _L.fromArray([$Html$Attributes.$class("jumbotron")]),
-      _L.fromArray([$Html.text("Familiadex")
-                   ,A2($Html.div,
-                   _L.fromArray([]),
-                   _L.fromArray([$Html.text("Odpowiedzi")]))
-                   ,A2($AnswersList.view,
-                   A2($Signal.forwardTo,
-                   address,
-                   AnswersListAction),
-                   model.currentQuestion.answers)]));
+      _L.fromArray([]),
+      _L.fromArray([A2($Html.div,
+                   _L.fromArray([$Html$Attributes.$class("jumbotron")]),
+                   _L.fromArray([$Html.text("Familiadex")]))
+                   ,A2(boardView,address,model)]));
    });
    var NoOp = {ctor: "NoOp"};
    var actions = $Signal.mailbox(NoOp);
@@ -1954,15 +1989,6 @@ Elm.FamiliadaGame.make = function (_elm) {
                                                ,A2(createAnswer,2,false)])
                         ,id: 1
                         ,question: "pytanie 1"};
-   var initialModel = {_: {}
-                      ,currentQuestion: sampleQuestion};
-   var model = A3($Signal.foldp,
-   update,
-   initialModel,
-   actions.signal);
-   var main = A2($Signal.map,
-   view(actions.address),
-   model);
    var Question = F3(function (a,
    b,
    c) {
@@ -1971,12 +1997,61 @@ Elm.FamiliadaGame.make = function (_elm) {
              ,id: a
              ,question: b};
    });
-   var Model = function (a) {
+   var createPlayer = F2(function (id,
+   name) {
       return {_: {}
-             ,currentQuestion: a};
-   };
+             ,id: id
+             ,name: name};
+   });
+   var initialModel = {_: {}
+                      ,currentQuestion: sampleQuestion
+                      ,teamA: {_: {}
+                              ,id: 1
+                              ,name: "TeamA"
+                              ,players: _L.fromArray([A2(createPlayer,
+                                                     1,
+                                                     "TeamA player1")
+                                                     ,A2(createPlayer,
+                                                     2,
+                                                     "TeamA player2")])}
+                      ,teamB: {_: {}
+                              ,id: 2
+                              ,name: "TeamB"
+                              ,players: _L.fromArray([A2(createPlayer,
+                                                     3,
+                                                     "TeamB player1")
+                                                     ,A2(createPlayer,
+                                                     4,
+                                                     "TeamB player2")])}};
+   var model = A3($Signal.foldp,
+   update,
+   initialModel,
+   actions.signal);
+   var main = A2($Signal.map,
+   view(actions.address),
+   model);
+   var Team = F3(function (a,b,c) {
+      return {_: {}
+             ,id: a
+             ,name: b
+             ,players: c};
+   });
+   var Player = F2(function (a,b) {
+      return {_: {},id: a,name: b};
+   });
+   var Model = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,currentQuestion: a
+             ,teamA: b
+             ,teamB: c};
+   });
    _elm.FamiliadaGame.values = {_op: _op
                                ,Model: Model
+                               ,Player: Player
+                               ,Team: Team
+                               ,createPlayer: createPlayer
                                ,Question: Question
                                ,createAnswer: createAnswer
                                ,sampleQuestion: sampleQuestion
@@ -1985,6 +2060,8 @@ Elm.FamiliadaGame.make = function (_elm) {
                                ,AnswersListAction: AnswersListAction
                                ,update: update
                                ,view: view
+                               ,boardView: boardView
+                               ,viewTeamPlayers: viewTeamPlayers
                                ,main: main
                                ,model: model
                                ,actions: actions};

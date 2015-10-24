@@ -14,9 +14,23 @@ import Window
 
 -- The full application state of our todo app.
 type alias Model =
-    {
-      currentQuestion: Question
+    { currentQuestion: Question
+    , teamA: Team
+    , teamB: Team
     }
+
+type alias Player =
+    { id : Int
+    , name : String
+    }
+
+type alias Team =
+    { id: Int
+    , name: String
+    , players: List Player
+    }
+
+createPlayer id name = { id = id, name = name}
 
 type alias Question =
     { id : Int
@@ -44,8 +58,15 @@ sampleQuestion =
 
 initialModel : Model
 initialModel =
-    {
-      currentQuestion = sampleQuestion
+    { currentQuestion = sampleQuestion
+    , teamA = { id = 1
+              , name = "TeamA"
+              , players = [(createPlayer 1 "TeamA player1"), (createPlayer 2 "TeamA player2")]
+              }
+    , teamB = { id = 2
+              , name = "TeamB"
+              , players = [(createPlayer 3 "TeamB player1"), (createPlayer 4 "TeamB player2")]
+              }
     }
 
 
@@ -73,12 +94,32 @@ update action model =
 
 view : Address Action -> Model -> Html
 view address model =
-    div
-      [ class "jumbotron" ]
-      [ text "Familiadex"
-      , div [] [text "Odpowiedzi" ]
-      , (AnswersList.view (Signal.forwardTo address AnswersListAction) model.currentQuestion.answers)
+    div []
+      [ div [class "jumbotron"] [text "Familiadex"]
+      , (boardView address model)
       ]
+
+boardView: Address Action -> Model -> Html
+boardView address model =
+    div [ class "row row-list" ]
+      [ div [class "col-xs-3"] [(viewTeamPlayers model.teamA)]
+      , div [class "col-xs-6"]
+          [ text "Odpowiedzi"
+          , (AnswersList.view (Signal.forwardTo address AnswersListAction) model.currentQuestion.answers)
+          ]
+      , div [class "col-xs-3"] [(viewTeamPlayers model.teamB)]
+      ]
+
+viewTeamPlayers : Team -> Html
+viewTeamPlayers team =
+  let viewPlayer p = li [] [text p.name]
+  in
+    div []
+    [
+      text (team.name ++ " " ++ "players"),
+      ul [] (List.map viewPlayer team.players)
+    ]
+
 
 ---- INPUTS ----
 
