@@ -1,5 +1,6 @@
 module FamiliadaGame where
 
+import AnswersList exposing (Answer)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -17,23 +18,16 @@ type alias Model =
       currentQuestion: Question
     }
 
-type alias Answer =
-    { id : Int
-    , answer : String
-    , points : Int
-    , visible : Bool
-    }
-
 type alias Question =
     { id : Int
     , question : String
-    , answers : List Answer
+    , answers : AnswersList.Model
     }
 
-createSampleAnswer : Bool -> Answer
-createSampleAnswer shown =
+createAnswer : Int -> Bool -> Answer
+createAnswer id shown =
   {
-    id = 1,
+    id = id,
     answer = "Odpowiedz1",
     points = 12,
     visible = shown
@@ -44,7 +38,7 @@ sampleQuestion =
   {
     id = 1,
     question = "pytanie 1",
-    answers = [(createSampleAnswer True), (createSampleAnswer False)]
+    answers = [(createAnswer 1 True), (createAnswer 2 False)]
   }
 
 
@@ -62,42 +56,29 @@ initialModel =
 -- some alternatives: http://elm-lang.org/learn/Architecture.elm
 type Action
     = NoOp
-    | ChangeVisibility Answer Bool
-
+    | AnswersListAction AnswersList.Action
 
 -- How we update our Model on a given Action?
 update : Action -> Model -> Model
 update action model =
     case action of
       NoOp -> model
-
-      -- ShowAnswer aid ->
-      --   let showAnswer a = if a.id == aid then { a | visible <- True } else a
-      --   in
-      --     { model | currentQuestion.answers <- List.map showAnswer currentQuestion.answers }
-
-
+      AnswersListAction act ->
+        let currentQuestion = model.currentQuestion
+            updatedCurrentQuestions = { currentQuestion | answers <- (AnswersList.update act currentQuestion.answers) }
+        in
+         { model | currentQuestion <- updatedCurrentQuestions }
 ---- VIEW ----
+
 
 view : Address Action -> Model -> Html
 view address model =
     div
       [ class "jumbotron" ]
-      [ text "elo elo 3 5 0",
-        div [] [text "lista odpowiedzi" ],
-        ul [] (viewAnswersList model.currentQuestion.answers)
+      [ text "Familiadex"
+      , div [] [text "Odpowiedzi" ]
+      , (AnswersList.view (Signal.forwardTo address AnswersListAction) model.currentQuestion.answers)
       ]
-
-viewAnswer : Answer -> Html
-viewAnswer answer =
-  if answer.visible then
-    li [] [text answer.answer]
-  else
-    li [] [text "..........."]
-
-viewAnswersList : List Answer -> List Html
-viewAnswersList answers =
-    List.map viewAnswer answers
 
 ---- INPUTS ----
 

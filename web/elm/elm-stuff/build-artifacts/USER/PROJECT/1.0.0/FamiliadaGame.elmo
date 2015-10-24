@@ -9,6 +9,7 @@ Elm.FamiliadaGame.make = function (_elm) {
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
    $moduleName = "FamiliadaGame",
+   $AnswersList = Elm.AnswersList.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
@@ -16,57 +17,60 @@ Elm.FamiliadaGame.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var viewAnswer = function (answer) {
-      return answer.visible ? A2($Html.li,
-      _L.fromArray([]),
-      _L.fromArray([$Html.text(answer.answer)])) : A2($Html.li,
-      _L.fromArray([]),
-      _L.fromArray([$Html.text("...........")]));
-   };
-   var viewAnswersList = function (answers) {
-      return A2($List.map,
-      viewAnswer,
-      answers);
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "AnswersListAction":
+            return function () {
+                 var currentQuestion = model.currentQuestion;
+                 var updatedCurrentQuestions = _U.replace([["answers"
+                                                           ,A2($AnswersList.update,
+                                                           action._0,
+                                                           currentQuestion.answers)]],
+                 currentQuestion);
+                 return _U.replace([["currentQuestion"
+                                    ,updatedCurrentQuestions]],
+                 model);
+              }();
+            case "NoOp": return model;}
+         _U.badCase($moduleName,
+         "between lines 64 and 70");
+      }();
+   });
+   var AnswersListAction = function (a) {
+      return {ctor: "AnswersListAction"
+             ,_0: a};
    };
    var view = F2(function (address,
    model) {
       return A2($Html.div,
       _L.fromArray([$Html$Attributes.$class("jumbotron")]),
-      _L.fromArray([$Html.text("elo elo 3 5 0")
+      _L.fromArray([$Html.text("Familiadex")
                    ,A2($Html.div,
                    _L.fromArray([]),
-                   _L.fromArray([$Html.text("lista odpowiedzi")]))
-                   ,A2($Html.ul,
-                   _L.fromArray([]),
-                   viewAnswersList(model.currentQuestion.answers))]));
-   });
-   var update = F2(function (action,
-   model) {
-      return function () {
-         switch (action.ctor)
-         {case "NoOp": return model;}
-         _U.badCase($moduleName,
-         "between lines 71 and 77");
-      }();
-   });
-   var ChangeVisibility = F2(function (a,
-   b) {
-      return {ctor: "ChangeVisibility"
-             ,_0: a
-             ,_1: b};
+                   _L.fromArray([$Html.text("Odpowiedzi")]))
+                   ,A2($AnswersList.view,
+                   A2($Signal.forwardTo,
+                   address,
+                   AnswersListAction),
+                   model.currentQuestion.answers)]));
    });
    var NoOp = {ctor: "NoOp"};
    var actions = $Signal.mailbox(NoOp);
-   var createSampleAnswer = function (shown) {
+   var createAnswer = F2(function (id,
+   shown) {
       return {_: {}
              ,answer: "Odpowiedz1"
-             ,id: 1
+             ,id: id
              ,points: 12
              ,visible: shown};
-   };
+   });
    var sampleQuestion = {_: {}
-                        ,answers: _L.fromArray([createSampleAnswer(true)
-                                               ,createSampleAnswer(false)])
+                        ,answers: _L.fromArray([A2(createAnswer,
+                                               1,
+                                               true)
+                                               ,A2(createAnswer,2,false)])
                         ,id: 1
                         ,question: "pytanie 1"};
    var initialModel = {_: {}
@@ -86,33 +90,20 @@ Elm.FamiliadaGame.make = function (_elm) {
              ,id: a
              ,question: b};
    });
-   var Answer = F4(function (a,
-   b,
-   c,
-   d) {
-      return {_: {}
-             ,answer: b
-             ,id: a
-             ,points: c
-             ,visible: d};
-   });
    var Model = function (a) {
       return {_: {}
              ,currentQuestion: a};
    };
    _elm.FamiliadaGame.values = {_op: _op
                                ,Model: Model
-                               ,Answer: Answer
                                ,Question: Question
-                               ,createSampleAnswer: createSampleAnswer
+                               ,createAnswer: createAnswer
                                ,sampleQuestion: sampleQuestion
                                ,initialModel: initialModel
                                ,NoOp: NoOp
-                               ,ChangeVisibility: ChangeVisibility
+                               ,AnswersListAction: AnswersListAction
                                ,update: update
                                ,view: view
-                               ,viewAnswer: viewAnswer
-                               ,viewAnswersList: viewAnswersList
                                ,main: main
                                ,model: model
                                ,actions: actions};
