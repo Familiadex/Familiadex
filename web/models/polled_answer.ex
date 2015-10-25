@@ -1,14 +1,15 @@
-defmodule Familiada.Question do
+defmodule Familiada.PolledAnswer do
   use Familiada.Web, :model
 
-  schema "questions" do
-    field :question, :string
+  schema "polled_answers" do
+    field :answer, :string
+    field :points, :integer
+    belongs_to :question, Familiada.Question
 
-    has_many :polled_answers, Familiada.PolledAnswer
     timestamps
   end
 
-  @required_fields ~w(question)
+  @required_fields ~w(answer points)
   @optional_fields ~w()
 
   @doc """

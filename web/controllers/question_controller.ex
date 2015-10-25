@@ -6,7 +6,7 @@ defmodule Familiada.QuestionController do
   plug :scrub_params, "question" when action in [:create, :update]
 
   def index(conn, _params) do
-    questions = Repo.all(Question)
+    questions = Question |> Repo.all |> Repo.preload [:polled_answers]
     render(conn, "index.json", questions: questions)
   end
 

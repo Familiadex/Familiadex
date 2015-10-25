@@ -11,6 +11,7 @@ defmodule Familiada.QuestionView do
 
   def render("question.json", %{question: question}) do
     %{id: question.id,
-      question: question.question}
+      question: question.question,
+      answers: render_many(question.polled_answers, Familiada.PolledAnswerView, "polled_answer.json")}
   end
 end
