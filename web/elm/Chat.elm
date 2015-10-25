@@ -21,7 +21,7 @@ type Action = NoOp
             | NewMsg Msg
 
 model : Model
-model = { msgList = [{username: "Chat", content: "Welcome!"}]
+model = { msgList = [{username = "Chat", content = "Welcome!"}]
         , users = ["Chat"]
         }
 
