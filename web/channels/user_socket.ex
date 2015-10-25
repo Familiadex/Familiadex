@@ -3,6 +3,7 @@ defmodule Familiada.UserSocket do
 
   ## Channels
   # channel "rooms:*", Familiada.RoomChannel
+  channel "questions:*", Familiada.QuestionChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
