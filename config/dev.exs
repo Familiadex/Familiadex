@@ -36,6 +36,7 @@ config :phoenix, :stacktrace_depth, 20
 config :familiada, Familiada.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "space",
+  password: "",
   database: "familiada_dev",
   hostname: "localhost",
   pool_size: 10
