@@ -22,3 +22,10 @@ defmodule Familiada.Question do
     |> cast(params, @required_fields, @optional_fields)
   end
 end
+
+defimpl Poison.Encoder, for: Familiada.Question do
+  def encode(model, opts) do
+    %{id: model.id,
+      question: model.question} |> Poison.Encoder.encode(opts)
+  end
+end

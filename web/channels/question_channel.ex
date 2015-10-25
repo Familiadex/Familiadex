@@ -1,8 +1,13 @@
 defmodule Familiada.QuestionChannel do
   use Familiada.Web, :channel
 
+  import Ecto.Query
+
+  alias Familiada.Question
+
   def join("questions:index", payload, socket) do
-    {:ok, socket}
+    questions = Question |> Repo.all
+    {:ok, questions, socket}
   end
 
   # Channels can be used in a request/response fashion
