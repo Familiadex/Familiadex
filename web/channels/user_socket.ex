@@ -2,7 +2,7 @@ defmodule Familiada.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "rooms:*", Familiada.RoomChannel
+  channel "rooms:*", Familiada.RoomChannel
   channel "questions:*", Familiada.QuestionChannel
 
   ## Transports

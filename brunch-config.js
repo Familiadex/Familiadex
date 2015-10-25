@@ -43,7 +43,8 @@ exports.config = {
       "deps/phoenix_html/web/static",
       "web/static",
       "test/static",
-      "web/elm/FamiliadaGame.elm"
+      "web/elm/FamiliadaGame.elm",
+      "web/elm/Chat.elm"
     ],
 
     // Where to compile files to
@@ -54,7 +55,7 @@ exports.config = {
   plugins: {
     elmBrunch: {
       elmFolder: 'web/elm',
-      mainModules: ['FamiliadaGame.elm'],
+      mainModules: ['FamiliadaGame.elm', "Chat.elm"],
       outputFolder: '../static/vendor'
     },
     babel: {
