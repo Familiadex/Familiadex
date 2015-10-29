@@ -5,8 +5,16 @@
 To start your Phoenix app:
 
   1. Install dependencies with `mix deps.get`
+  2. `mix ecto.create` seems to be broken, run `psql` & `create database familiada_dev owner <your_username>;"
+  3. edit `config/dev.exs` and set proper database user as <your_username>;"
+  4. If it complains about password please run `psql` & `alter user your_username with password '';`
   2. Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  3. Start Phoenix endpoint with `mix phoenix.server`
+  3. Run `npm install`
+  4. Run `npm install -g elm`
+  5. Run `rm -rf web/elm/elm-stuff` - wywalic to z gita
+  6. Run `cd web/elm` & `elm-package install`
+  7. Start Phoenix endpoint with `mix phoenix.server`
+  8. Install inotify(only linux) for automatic hot reload - http://www.phoenixframework.org/docs/installation
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
