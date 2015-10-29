@@ -5,7 +5,7 @@
 To start your Phoenix app:
 
   1. Install dependencies with `mix deps.get`
-  2. `mix ecto.create` seems to be broken, run `psql` & `create database familiada_dev owner <your_username>;"
+  2. `mix ecto.create` seems to be broken, run `psql` & `create database familiada_dev owner <your_username>;`
   3. edit `config/dev.exs` and set proper database user as <your_username>;"
   4. If it complains about password please run `psql` & `alter user your_username with password '';`
   2. Create and migrate your database with `mix ecto.create && mix ecto.migrate`
