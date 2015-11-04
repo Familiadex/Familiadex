@@ -23,13 +23,15 @@ import socket from "./socket"
 var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmApp = Elm.embed(Elm.FamiliadaGame, elmDiv),
-    elmChat = Elm.embed(Elm.Chat, elmChatDiv);
+    elmChat = Elm.embed(Elm.Chat, elmChatDiv, {
+      incMsg: {username: "Chat", content: "Welcome!"}
+    });
 
 // Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("questions:index", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined questions successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join questions", resp) })
+// let channel = socket.channel("questions:index", {})
+// channel.join()
+//   .receive("ok", resp => { console.log("Joined questions successfully", resp) })
+//   .receive("error", resp => { console.log("Unable to join questions", resp) })
 //
 // let chats = socket.channel("rooms:lobby", {})
 // chats.join()
