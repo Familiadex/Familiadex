@@ -33,25 +33,25 @@ var elmDiv = document.getElementById('elm-main'),
 //   .receive("ok", resp => { console.log("Joined questions successfully", resp) })
 //   .receive("error", resp => { console.log("Unable to join questions", resp) })
 //
-// let chats = socket.channel("rooms:lobby", {})
-// chats.join()
-//   .receive("ok", resp => { console.log("Joined chats successfully", resp) })
-//   .receive("error", resp => { console.log("Unable to join chats", resp) })
+let chats = socket.channel("rooms:lobby", {})
+chats.join()
+  .receive("ok", resp => { console.log("Joined chats successfully", resp) })
+  .receive("error", resp => { console.log("Unable to join chats", resp) })
 
-// Port on chan.push("new:msg", {user: $username.val(), body: $input.val()})
-// chats.on("new:msg", msg => {
-//   elmChat.ports.newMsg.send(msg)
-//   console.log("Nowa wiadomosc", msg);
-// })
+chats.on("new:msg", msg => {
+  console.log("backend:new:msg", msg);
+  elmChat.ports.incMsg.send(msg)
+})
 //
 // chats.on("user:entered", msg => {
 //   elmChat.ports.userEntered.send(msg)
 // })
 //
-// elmChat.ports.outMsg.subscribe(sendMsg);
-//
-// function sendMsg(username, msg){
-//   chats.push("new:msg", {username: username, content: msg})
-// }
+elmChat.ports.outMsg.subscribe(sendMsg);
+
+function sendMsg(msg){
+  console.log("new:msg", msg)
+  chats.push("new:msg", msg)
+}
 //
 // sendMsg("dev", "wiadomosc powitalna");

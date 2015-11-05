@@ -1,15 +1,14 @@
-defmodule Familiada.Channels.Rooms do
-  use Phoenix.Channel
+defmodule Familiada.RoomChannel do
+  use Familiada.Web, :channel
 
   def join("rooms:lobby", message, socket) do
     IO.puts "JOIN #{socket.channel}:#{socket.topic}"
-    broadcast socket, "user:entered", username: message["username"]
-    {:ok, socket}
+    {:ok, %{username: message["username"], content: "Hello I've just joinded this chat!"}, socket}
   end
 
-  def event("new:message", message, socket) do
-    broadcast socket, "new:message", content: message["content"],
-                                     username: message["username"]
+  def handle_in("new:msg", message, socket) do
+    broadcast socket, "new:msg", %{content: message["content"],
+                                     username: message["username"] }
 
     socket
   end
