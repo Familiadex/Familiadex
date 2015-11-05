@@ -19,13 +19,12 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
+import initElmChat from "./elm_chat"
 
 var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmApp = Elm.embed(Elm.FamiliadaGame, elmDiv),
-    elmChat = Elm.embed(Elm.Chat, elmChatDiv, {
-      incMsg: {username: "Chat", content: "Welcome!"}
-    });
+    elmChat = initElmChat(elmChatDiv);
 
 // Now that you are connected, you can join channels with a topic:
 // let channel = socket.channel("questions:index", {})
@@ -33,25 +32,6 @@ var elmDiv = document.getElementById('elm-main'),
 //   .receive("ok", resp => { console.log("Joined questions successfully", resp) })
 //   .receive("error", resp => { console.log("Unable to join questions", resp) })
 //
-let chats = socket.channel("rooms:lobby", {})
-chats.join()
-  .receive("ok", resp => { console.log("Joined chats successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join chats", resp) })
 
-chats.on("new:msg", msg => {
-  console.log("backend:new:msg", msg);
-  elmChat.ports.incMsg.send(msg)
-})
-//
-// chats.on("user:entered", msg => {
-//   elmChat.ports.userEntered.send(msg)
-// })
-//
-elmChat.ports.outMsg.subscribe(sendMsg);
-
-function sendMsg(msg){
-  console.log("new:msg", msg)
-  chats.push("new:msg", msg)
-}
 //
 // sendMsg("dev", "wiadomosc powitalna");

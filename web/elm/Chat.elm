@@ -64,9 +64,7 @@ update action model =
     case action of
       NoOp -> model
       InputMsg s -> { model | inputMsg <- s }
-      SendMsg msg -> { model |
-        msgList <- (model.msgList ++ [msg]),
-        inputMsg <- "" }
+      SendMsg msg -> { model | inputMsg <- "" }
       NewMsg msg -> { model | msgList <- (model.msgList ++ [msg]) }
 
 
