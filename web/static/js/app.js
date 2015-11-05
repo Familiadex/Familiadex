@@ -25,8 +25,8 @@ var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmGlobalChatDiv = document.getElementById('elm-chat-global'),
     elmApp = Elm.embed(Elm.FamiliadaGame, elmDiv),
-    elmGlobalChat = initElmChat(elmGlobalChatDiv, "global"),
-    elmChat = initElmChat(elmChatDiv, "game");
+    elmGlobalChat = initElmChat(elmGlobalChatDiv, "global");
+    // elmChat = initElmChat(elmChatDiv, "game");
 
 // Now that you are connected, you can join channels with a topic:
 // let channel = socket.channel("questions:index", {})

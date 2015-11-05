@@ -1937,7 +1937,7 @@ Elm.FamiliadaGame.make = function (_elm) {
               }();
             case "NoOp": return model;}
          _U.badCase($moduleName,
-         "between lines 85 and 91");
+         "between lines 90 and 96");
       }();
    });
    var AnswersListAction = function (a) {
@@ -1967,10 +1967,9 @@ Elm.FamiliadaGame.make = function (_elm) {
    model) {
       return A2($Html.div,
       _L.fromArray([]),
-      _L.fromArray([A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("jumbotron")]),
-                   _L.fromArray([$Html.text("Familiadex")]))
-                   ,A2(boardView,address,model)]));
+      _L.fromArray([A2(boardView,
+      address,
+      model)]));
    });
    var NoOp = {ctor: "NoOp"};
    var actions = $Signal.mailbox(NoOp);
@@ -1997,30 +1996,32 @@ Elm.FamiliadaGame.make = function (_elm) {
              ,id: a
              ,question: b};
    });
-   var createPlayer = F2(function (id,
+   var mkPlayer = F2(function (id,
    name) {
       return {_: {}
              ,id: id
-             ,name: name};
+             ,name: name
+             ,ready: false};
    });
    var initialModel = {_: {}
                       ,currentQuestion: sampleQuestion
+                      ,playersReady: 0
                       ,teamA: {_: {}
                               ,id: 1
                               ,name: "TeamA"
-                              ,players: _L.fromArray([A2(createPlayer,
+                              ,players: _L.fromArray([A2(mkPlayer,
                                                      1,
                                                      "TeamA player1")
-                                                     ,A2(createPlayer,
+                                                     ,A2(mkPlayer,
                                                      2,
                                                      "TeamA player2")])}
                       ,teamB: {_: {}
                               ,id: 2
                               ,name: "TeamB"
-                              ,players: _L.fromArray([A2(createPlayer,
+                              ,players: _L.fromArray([A2(mkPlayer,
                                                      3,
                                                      "TeamB player1")
-                                                     ,A2(createPlayer,
+                                                     ,A2(mkPlayer,
                                                      4,
                                                      "TeamB player2")])}};
    var model = A3($Signal.foldp,
@@ -2036,22 +2037,29 @@ Elm.FamiliadaGame.make = function (_elm) {
              ,name: b
              ,players: c};
    });
-   var Player = F2(function (a,b) {
-      return {_: {},id: a,name: b};
-   });
-   var Model = F3(function (a,
+   var Player = F3(function (a,
    b,
    c) {
       return {_: {}
+             ,id: a
+             ,name: b
+             ,ready: c};
+   });
+   var Model = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
              ,currentQuestion: a
-             ,teamA: b
-             ,teamB: c};
+             ,playersReady: b
+             ,teamA: c
+             ,teamB: d};
    });
    _elm.FamiliadaGame.values = {_op: _op
                                ,Model: Model
                                ,Player: Player
                                ,Team: Team
-                               ,createPlayer: createPlayer
+                               ,mkPlayer: mkPlayer
                                ,Question: Question
                                ,createAnswer: createAnswer
                                ,sampleQuestion: sampleQuestion
