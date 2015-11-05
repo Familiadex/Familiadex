@@ -1,6 +1,5 @@
 defmodule Familiada.Router do
   use Familiada.Web, :router
-  use Addict.RoutesHelper
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -16,12 +15,11 @@ defmodule Familiada.Router do
 
   scope "/", Familiada do
     pipe_through :browser # Use the default browser stack
-    addict :routes
 
     get "/", PageController, :index
     resources "/questions", QuestionController
     resources "/users", UserController
-  end
+    end
 
   # Other scopes may use custom stacks.
   # scope "/api", Familiada do
