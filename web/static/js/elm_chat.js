@@ -5,7 +5,7 @@ function initElmChat (domElement){
     incMsg: {username: "Chat", content: "Welcome!"}
   });
 
-  let chats = socket.channel("rooms:lobby", {})
+  let chats = socket.channel("chats:lobby", {})
   chats.join()
     .receive("ok", resp => { console.log("Joined chats successfully", resp) })
     .receive("error", resp => { console.log("Unable to join chats", resp) })

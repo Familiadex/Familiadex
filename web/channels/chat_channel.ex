@@ -1,11 +1,11 @@
-defmodule Familiada.RoomChannel do
+defmodule Familiada.ChatChannel do
   use Familiada.Web, :channel
 
   # To sie powinno nazywac czat
   # kazdy chat bedzie mial swoje UUID przekazywane z frontu
   # na tej podstawie bedzie odsylal odpowiedzi
 
-  def join("rooms:lobby", message, socket) do
+  def join("chats:lobby", message, socket) do
     IO.puts "JOIN #{socket.channel}:#{socket.topic}"
     {:ok, %{username: message["username"], content: "Hello I've just joinded this chat!"}, socket}
   end
