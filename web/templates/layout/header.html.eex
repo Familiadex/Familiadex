@@ -1,0 +1,20 @@
+<div class="header">
+  <ul class="nav nav-pills pull-right">
+    <li>
+      <%= link "Home", to: page_path(@conn, :index) %>
+    </li>
+    <%= if logged_in?(@conn) do %>
+      <li>
+        <%= link "Logout", to: session_path(@conn, :delete), method: :delete %>
+      </li>
+    <% else %>
+      <li>
+        <%= link "Login", to: session_path(@conn, :new) %>
+      </li>
+      <li>
+        <%= link "Register", to: registration_path(@conn, :new) %>
+      </li>
+    <% end %>
+  </ul>
+<span class="logo"></span>
+</div>
