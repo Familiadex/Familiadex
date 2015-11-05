@@ -1,25 +1,35 @@
 import socket from "./socket"
 
-function initElmChat (domElement){
+function initElmChat (domElement, chatUUID){
+  let channelName = "chats:" + chatUUID;
   let elmChat = Elm.embed(Elm.Chat, domElement,  {
     incMsg: {username: "Chat", content: "Welcome!"}
   });
 
-  let chats = socket.channel("chats:lobby", {})
+  let chats = socket.channel(channelName, {})
   chats.join()
-    .receive("ok", resp => { console.log("Joined chats successfully", resp) })
-    .receive("error", resp => { console.log("Unable to join chats", resp) })
+    .receive("ok", resp => { console.log(`Joined ${channelName} successfully`, resp) })
+    .receive("error", resp => { console.log(`Unable to join ${channelName}`, resp) })
 
-  chats.on("new:msg", msg => {
-    console.log("backend:new:msg", msg);
+  // Push into elm ports
+  chats.on("back:msg", msg => {
+    console.log("back:msg", msg);
     elmChat.ports.incMsg.send(msg)
   })
 
-  elmChat.ports.outMsg.subscribe(sendMsg);
-  function sendMsg(msg){
-    console.log("new:msg", msg)
-    chats.push("new:msg", msg)
-  }
+  chats.on("back:userlist", ul => {
+    elmChat.ports.incMsg.send(msg)
+  })
+
+  // Subsribe to elm ports
+  elmChat.ports.outMsg.subscribe(function(msg){
+    console.log("front:msg", msg)
+    chats.push("front:msg", msg)
+  })
+
+  // elmChat.ports.joinChat.subscribe(function(username){
+  //   chats.push("front:joined", username);
+  // })
 
   return elmChat;
 }

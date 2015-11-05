@@ -21,6 +21,7 @@ type Action = NoOp
             | NewMsg Msg
             | InputMsg String
             | SendMsg Msg
+            | InputUsername String
 
 -- ports
 port incMsg : Signal Msg
@@ -43,9 +44,9 @@ incMsgActions =
 
 model : Model
 model = { msgList = [{username = "Chat", content = "Welcome!"}]
-        , users = ["Chat", "Player1", "Player2"]
+        , users = ["Anonymous"]
         , inputMsg = ""
-        , currentUser = "Me"
+        , currentUser = "Anonymous"
         }
 
 mainSignal : Signal Action
@@ -66,6 +67,7 @@ update action model =
       InputMsg s -> { model | inputMsg <- s }
       SendMsg msg -> { model | inputMsg <- "" }
       NewMsg msg -> { model | msgList <- (model.msgList ++ [msg]) }
+      InputUsername u -> { model | currentUser <- u }
 
 
 mkMessage : Model -> Msg
@@ -83,15 +85,16 @@ view address model =
       ]
     , div [class "row row-list"]
       [ input
+        [ class "col-xs-3"
+        , value model.currentUser
+        , on "input" targetValue (Signal.message address << InputUsername)
+        ] [text "Send"]
+      , input
         [ class "col-xs-9"
         , value model.inputMsg
         , on "input" targetValue (Signal.message address << InputMsg)
         , onKeyUp address (mkMessage model |> sendMessage)
         ] []
-      , button
-        [ class "col-xs-3"
-        , onClick address ((mkMessage model |> sendMessage) 13)
-          ] [text "Send"]
       ]
     ]
 
