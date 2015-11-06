@@ -9,7 +9,7 @@
         <%= link current_user(@conn).email, to: "http://google.com" %>
       </li>
       <li>
-        <%= link "Logout", to: session_path(@conn, :delete), method: :delete %>
+        <%= link "Logout", to: session_path(@conn, :delete)%>
       </li>
     <% else %>
       <li>
