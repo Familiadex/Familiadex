@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?><php><datatypes db="php">
+	<group color="rgb(238,238,170)">
+		<type label="Public" sql="public"/>
+	</group>
+
+	<group color="rgb(255,200,200)">
+		<type label="Private" sql="private"/>
+	</group>
+
+	<group color="rgb(200,255,200)">
+		<type label="Protected" sql="protected"/>
+	</group>
+
+</datatypes><table x="354" y="331" name="gracz" interface="true"><association clasa="wychodzi_z_gry"></association></table><table x="47" y="463" name="za³o¿yciel_pokoju" interface="true"><extend clasa="gracz"></extend></table><table x="1282" y="217" name="system" interface="true"><association clasa="dodaje_punkty"></association></table><table x="817" y="156" name="losuje_pytania" interface="false"><association clasa="system"></association></table><table x="819" y="352" name="zadaje_pytanie" interface="false"><association clasa="system"></association></table><table x="824" y="491" name="punktuje_odpowiedŸ" interface="false"><association clasa="system"></association></table><table x="805" y="630" name="wyœwietla_odpowiedŸ" interface="false"><dependency clasa="punktuje_odpowiedŸ"></dependency></table><table x="1463" y="85" name="rozpoczyna_runde" interface="false"><association clasa="system"></association></table><table x="1515" y="219" name="koñczy_runde" interface="false"><association clasa="system"></association></table><table x="1248" y="65" name="dodaje_punkty" interface="false"></table><table x="578" y="202" name="zajmuje_miejsce" interface="false"><association clasa="gracz"></association></table><table x="581" y="46" name="oznajmia_gotowoœ" interface="false"><realization clasa="zajmuje_miejsce"></realization></table><table x="383" y="594" name="rozpoczyna_gre" interface="false"><association clasa="za³o¿yciel_pokoju"></association></table><table x="161" y="256" name="wychodzi_z_gry" interface="false"><dependency clasa="koñczy_gre"></dependency></table><table x="97" y="150" name="koñczy_gre" interface="false"></table><table x="573" y="421" name="odpowiada_na_pytanie" interface="false"><association clasa="gracz"></association></table><table x="780" y="259" name="ustala_kolejnoœ_odpowiedzi" interface="false"><association clasa="system"></association></table><table x="1245" y="479" name="odmierza_czas" interface="false"><association clasa="system"></association></table></php>
