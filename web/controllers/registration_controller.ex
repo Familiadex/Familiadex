@@ -16,17 +16,14 @@ defmodule Familiada.RegistrationController do
         {:ok, user} ->
           conn
           |> put_session(:current_user, user.id)
-          |> put_flash(:info, "Your account was created")
+          |> put_flash(:success, "Your account was created")
           |> redirect(to: "/")
-        {:error, _changeset} ->
+        {:error, changeset} ->
           conn
-          # FIXME: display error message
-          |> put_flash(:error, "FIXME: Wiadomosc do wyswietlenia, email zajety itp")
           |> render("new.html", changeset: changeset)
       end
     else
       conn
-      |> put_flash(:info, "Unable to create account")
       |> render("new.html", changeset: changeset)
     end
   end

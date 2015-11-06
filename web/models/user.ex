@@ -5,11 +5,12 @@ defmodule Familiada.User do
     field :email, :string, unique: true
     field :crypted_password, :string
     field :password, :string, virtual: true
+    field :password_confirmation, :string, virtual: true
 
     timestamps
   end
 
-  @required_fields ~w(email password)
+  @required_fields ~w(email password password_confirmation)
   @optional_fields ~w()
 
   @doc """
@@ -24,5 +25,7 @@ defmodule Familiada.User do
     |> unique_constraint(:email)
     |> validate_format(:email, ~r/@/)
     |> validate_length(:password, min: 3)
+    |> validate_confirmation(:password, message: "does not match")
   end
+
 end
