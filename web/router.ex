@@ -16,7 +16,8 @@ defmodule Familiada.Router do
   scope "/", Familiada do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    get "/", PageController, :public
+    get "/game", PageController, :game
     resources "/questions", QuestionController
 
     get "/register", RegistrationController, :new

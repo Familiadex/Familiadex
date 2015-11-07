@@ -17,7 +17,7 @@ defmodule Familiada.RegistrationController do
           conn
           |> put_session(:current_user, user.id)
           |> put_flash(:success, "Your account was created")
-          |> redirect(to: "/")
+          |> redirect(to: "/game")
         {:error, changeset} ->
           conn
           |> render("new.html", changeset: changeset)
