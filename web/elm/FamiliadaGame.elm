@@ -13,8 +13,11 @@ import Window
 ---- MODEL ----
 
 -- The full application state of our todo app.
+-- maximum 4 players per room
+-- in queue can be arbitrary number
 type alias Model =
     { currentQuestion: Question
+    , playersReady : Int
     , teamA: Team
     , teamB: Team
     }
@@ -22,6 +25,7 @@ type alias Model =
 type alias Player =
     { id : Int
     , name : String
+    , ready : Bool
     }
 
 type alias Team =
@@ -30,7 +34,7 @@ type alias Team =
     , players: List Player
     }
 
-createPlayer id name = { id = id, name = name}
+mkPlayer id name = { id = id, name = name, ready = False}
 
 type alias Question =
     { id : Int
@@ -59,13 +63,14 @@ sampleQuestion =
 initialModel : Model
 initialModel =
     { currentQuestion = sampleQuestion
+    , playersReady = 0
     , teamA = { id = 1
               , name = "TeamA"
-              , players = [(createPlayer 1 "TeamA player1"), (createPlayer 2 "TeamA player2")]
+              , players = [(mkPlayer 1 "TeamA player1"), (mkPlayer 2 "TeamA player2")]
               }
     , teamB = { id = 2
               , name = "TeamB"
-              , players = [(createPlayer 3 "TeamB player1"), (createPlayer 4 "TeamB player2")]
+              , players = [(mkPlayer 3 "TeamB player1"), (mkPlayer 4 "TeamB player2")]
               }
     }
 
@@ -95,8 +100,7 @@ update action model =
 view : Address Action -> Model -> Html
 view address model =
     div []
-      [ div [class "jumbotron"] [text "Familiadex"]
-      , (boardView address model)
+      [ (boardView address model)
       ]
 
 boardView: Address Action -> Model -> Html
