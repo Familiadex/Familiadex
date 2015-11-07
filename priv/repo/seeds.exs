@@ -10,6 +10,9 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
+user = %Familiada.User{email: "test@user.com", crypted_password: Comeonin.Bcrypt.hashpwsalt("test")}
+Familiada.Repo.insert!(user)
+
 q1 = Familiada.Repo.insert!(%Familiada.Question{question: "Popularny owoc"})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q1.id, answer: "Jabłko", points: 60})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q1.id, answer: "Gruszka", points: 40})

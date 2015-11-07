@@ -2,7 +2,10 @@
   <div class="jumbotron logo"> Familiadex </div>
   <ul class="nav nav-pills pull-right">
     <li>
-      <%= link "Home", to: page_path(@conn, :index) %>
+      <%= link "Home", to: page_path(@conn, :public) %>
+    </li>
+    <li>
+      <%= link "Game", to: page_path(@conn, :game) %>
     </li>
     <%= if logged_in?(@conn) do %>
       <li>
