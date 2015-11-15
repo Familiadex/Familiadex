@@ -20,6 +20,11 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ## Test user
   * email: test@user.com
   * password: test
+  
+## Heroku buildpacks required
+=== familiadex Buildpack URLs
+1. https://github.com/HashNuke/heroku-buildpack-elixir
+2. https://github.com/Machiaweliczny/heroku-buildpack-elm
 
 ## Learn more
 
