@@ -28,12 +28,11 @@ var elmDiv = document.getElementById('elm-main'),
     elmGlobalChat = initElmChat(elmGlobalChatDiv, "global");
     // elmChat = initElmChat(elmChatDiv, "game");
 
-// Now that you are connected, you can join channels with a topic:
-// let channel = socket.channel("questions:index", {})
-// channel.join()
-//   .receive("ok", resp => { console.log("Joined questions successfully", resp) })
-//   .receive("error", resp => { console.log("Unable to join questions", resp) })
-//
+let games = socket.channel("games:someGame11", {player_id: 111})
+games.join()
+  .receive("ok", resp => { console.log("Joined games successfully", resp) })
+  .receive("error", resp => { console.log("Unable to join games", resp) })
 
-//
-// sendMsg("dev", "wiadomosc powitalna");
+games.push("set_player_ready", {room_id: "someGame11", player_id: 1})
+
+games.on("back:readyQueue", readyQueue => { console.log("readyQueue", readyQueue)})
