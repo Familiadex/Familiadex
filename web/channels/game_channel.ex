@@ -3,9 +3,9 @@ defmodule Familiada.GameChannel do
   alias Familiada.GameState
 
   def join(room_id, p, socket) do
-    GameState.player_joined(room_id, p["player_id"])
+    playersList = GameState.player_joined(room_id, p["player_id"])
     socket = assign(socket, :player_id, p["player_id"])
-    {:ok, GameState.get_players_list(room_id), socket}
+    {:ok, playersList, socket}
   end
 
   def leave(_reason, socket) do
@@ -48,9 +48,10 @@ defmodule Familiada.GameState do
 
   # I can probably macro all this shit :)
   def player_joined(room_id, player_id) do
-    get_room(room_id)
-    |> (RoomState.player_joined player_id)
-    |> (set_room room_id)
+    room = get_room(room_id)
+    new_room = RoomState.player_joined room, player_id
+    set_room new_room, room_id
+    new_room["playersList"]
   end
 
   def player_left(room_id, player_id) do
