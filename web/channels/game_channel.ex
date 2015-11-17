@@ -3,15 +3,30 @@ defmodule Familiada.GameChannel do
   alias Familiada.GameState
 
   def join(room_id, p, socket) do
-    IO.puts "****** join(#{room_id}, #{p["player_id"]}, socket)"
     GameState.player_joined(room_id, p["player_id"])
-    {:ok, %{}, socket}
+    socket = assign(socket, :player_id, p["player_id"])
+    {:ok, GameState.get_players_list(room_id), socket}
   end
 
-  def handle_in("set_player_ready", p, socket) do
-    GameState.set_player_ready(p.room_id, p.player_id)
-    broadcast socket, "back:readyQueue", GameState.get_players_list(p.room_id)
+  def leave(_reason, socket) do
+    GameState.player_left(socket.topic, player_id(socket))
+    {:ok, socket}
+  end
+
+  def handle_in("set_player_ready", _, socket) do
+    readyQueue = GameState.set_player_ready(socket.topic, player_id(socket))
+    broadcast socket, "back:readyQueue", %{ readyQueue: readyQueue }
     {:noreply, socket}
+  end
+
+  def handle_in("set_player_not_ready", _, socket) do
+    readyQueue = GameState.set_player_not_ready(socket.topic, player_id(socket))
+    broadcast socket, "back:readyQueue", %{ readyQueue: readyQueue }
+    {:noreply, socket}
+  end
+
+  defp player_id(socket) do
+    socket.assigns.player_id
   end
 
   defp authorized?(_payload) do
@@ -33,29 +48,29 @@ defmodule Familiada.GameState do
 
   # I can probably macro all this shit :)
   def player_joined(room_id, player_id) do
-    IO.puts "&&&& player_joined(#{room_id}, #{player_id})"
-    room = get_room(room_id)
-    IO.puts "&&&&& room = #{Poison.encode!(room)}"
-    new_room = RoomState.player_joined room, player_id
-    set_room new_room, room_id
+    get_room(room_id)
+    |> (RoomState.player_joined player_id)
+    |> (set_room room_id)
   end
 
   def player_left(room_id, player_id) do
     get_room(room_id)
-    |> RoomState.player_left player_id
-    |> set_room room_id
+    |> (RoomState.player_left player_id)
+    |> (set_room room_id)
   end
 
   def set_player_ready(room_id, player_id) do
-    get_room(room_id)
-    |> RoomState.set_player_ready player_id
-    |> set_room room_id
+    room = get_room(room_id)
+    new_room = RoomState.set_player_ready room, player_id
+    set_room new_room, room_id
+    new_room["readyQueue"]
   end
 
   def set_player_not_ready(room_id, player_id) do
-    get_room(room_id)
-    |> RoomState.set_player_not_ready player_id
-    |> set_room room_id
+    room = get_room(room_id)
+    new_room = RoomState.set_player_not_ready room, player_id
+    set_room new_room, room_id
+    new_room["readyQueue"]
   end
 
   defp get_room(room_id) do
@@ -72,28 +87,35 @@ defmodule Familiada.RoomState do
   alias Familiada.Utils
 
   def player_joined(room, player_id) do
-    IO.puts "**** player_joined(#{Poison.encode!(room)}, #{player_id})"
     playersList = Dict.get(room, "playersList", [])
-    Dict.put(room, "playersList", [player_id | playersList])
+    Dict.put(room, "playersList", Utils.uniq_add(playersList, player_id))
   end
 
-  def player_left(player_id, room) do
+  def player_left(room, player_id) do
     playersList = Dict.get(room, "playersList", [])
     Dict.put(room, "playersList",  Utils.without_id(playersList, player_id))
   end
 
-  def set_player_ready(player_id, room) do
+  def set_player_ready(room, player_id) do
     readyQueue = Dict.get(room, "readyQueue", [])
-    Dict.put(room, "readyQueue", [player_id | readyQueue])
+    Dict.put(room, "readyQueue", Utils.uniq_add(readyQueue, player_id))
   end
 
-  def set_player_not_ready(player_id, room) do
+  def set_player_not_ready(room, player_id) do
     readyQueue = Dict.get(room, "readyQueue", [])
     Dict.put(room, "readyQueue", Utils.without_id(readyQueue, player_id))
   end
 end
 
 defmodule Familiada.Utils do
+  def uniq_add(list, id) do
+    if Enum.member?(list, id) do
+      list
+    else
+      [id | list]
+    end
+  end
+
   def without_id(enumerable, id_to_remove) do
     Enum.filter(enumerable, fn(id) -> id != id_to_remove end)
   end
