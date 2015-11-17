@@ -2,28 +2,35 @@ defmodule Familiada.GameChannel do
   use Familiada.Web, :channel
   alias Familiada.GameState
 
+  # This room_id is available under socket.topic
   def join(room_id, p, socket) do
-    playersList = GameState.player_joined(room_id, p["player_id"])
+    # TODO: authentication
+    # Assigns user to socket - It will be recognized by this
     socket = assign(socket, :player_id, p["player_id"])
-    {:ok, playersList, socket}
-  end
-
-  def leave(_reason, socket) do
-    GameState.player_left(socket.topic, player_id(socket))
+    send(self, :after_join)
     {:ok, socket}
   end
 
-  def handle_in("set_player_ready", _, socket) do
-    readyQueue = GameState.set_player_ready(socket.topic, player_id(socket))
-    broadcast socket, "back:readyQueue", %{ readyQueue: readyQueue }
+  def handle_info(:after_join, socket) do
+   game_state = GameState.update(socket.topic, "player_joined", [player_id(socket)])
+   broadcast socket, "back:modelUpdate", %{ model: game_state }
+   {:noreply, socket}
+ end
+
+  def leave(_reason, socket) do
+    game_state = GameState.update(socket.topic, "player_left", [player_id(socket)])
+    broadcast socket, "back:modelUpdate", %{ model: game_state }
+    {:ok, socket}
+  end
+
+  def handle_in("modelUpdateCmd", cmd, socket) do
+    # TODO: Check if action authorized given user and state - which layer?
+    game_state = GameState.update(socket.topic, cmd["cmd"], cmd["params"])
+    broadcast socket, "back:modelUpdate", %{ model: game_state }
     {:noreply, socket}
   end
 
-  def handle_in("set_player_not_ready", _, socket) do
-    readyQueue = GameState.set_player_not_ready(socket.topic, player_id(socket))
-    broadcast socket, "back:readyQueue", %{ readyQueue: readyQueue }
-    {:noreply, socket}
-  end
+  #### #### #### #### ####
 
   defp player_id(socket) do
     socket.assigns.player_id
@@ -36,75 +43,78 @@ end
 
 defmodule Familiada.GameState do
   import Exredis
-  alias Familiada.RoomState
+  alias Familiada.GameActions
 
-  def get_players_list(room_id) do
-    get_room(room_id) |> Dict.get "playersList", []
-  end
-
-  def get_ready_queue(room_id) do
-    get_room(room_id) |> Dict.get "readyQueue", []
-  end
-
-  # I can probably macro all this shit :)
-  def player_joined(room_id, player_id) do
+  def update(room_id, action_name, action_params) do
+    # NOTO: You should never symbolize user provided strings
     room = get_room(room_id)
-    new_room = RoomState.player_joined room, player_id
-    set_room new_room, room_id
-    new_room["playersList"]
+    if Enum.member?(allowed_actions, action_name) do
+      new_room = apply(GameActions, String.to_atom(action_name), [room | action_params])
+      set_room(new_room, room_id)
+      new_room
+    else
+      room
+    end
   end
 
-  def player_left(room_id, player_id) do
-    get_room(room_id)
-    |> (RoomState.player_left player_id)
-    |> (set_room room_id)
-  end
-
-  def set_player_ready(room_id, player_id) do
-    room = get_room(room_id)
-    new_room = RoomState.set_player_ready room, player_id
-    set_room new_room, room_id
-    new_room["readyQueue"]
-  end
-
-  def set_player_not_ready(room_id, player_id) do
-    room = get_room(room_id)
-    new_room = RoomState.set_player_not_ready room, player_id
-    set_room new_room, room_id
-    new_room["readyQueue"]
-  end
-
-  defp get_room(room_id) do
+  # This uses redis as depencency so I would need to change it probably
+  def get_room(room_id) do
      room = start_link |> elem(1) |> query ["GET", room_id]
      room != :undefined && Poison.decode!(room) || %{}
   end
-
+  # TODO: me
+  defp allowed_actions do
+    [ "player_joined",
+      "player_left",
+      "set_player_ready",
+      "set_player_not_ready",
+      "start_game"
+    ]
+  end
+  #### #### #### #### ####
   defp set_room(room, room_id) do
     start_link |> elem(1) |> query ["SET", room_id, Poison.encode!(room)]
   end
 end
 
-defmodule Familiada.RoomState do
+defmodule Familiada.GameActions do
+  # Here we should have GameActions which should be similar to game actions on Frontend
+  # Although here we are concerned about authorization and changing game model only
+  # On frontend we are concerned about displaying this model and dispatching actions as update_cmd
   alias Familiada.Utils
 
-  def player_joined(room, player_id) do
-    playersList = Dict.get(room, "playersList", [])
-    Dict.put(room, "playersList", Utils.uniq_add(playersList, player_id))
+  def player_joined(model, player_id) do
+    playersList = Dict.get(model, "playersList", [])
+    Dict.put(model, "playersList", Utils.uniq_add(playersList, player_id))
   end
 
-  def player_left(room, player_id) do
-    playersList = Dict.get(room, "playersList", [])
-    Dict.put(room, "playersList",  Utils.without_id(playersList, player_id))
+  def player_left(model, player_id) do
+    playersList = Dict.get(model, "playersList", [])
+    Dict.put(model, "playersList",  Utils.without_id(playersList, player_id))
   end
 
-  def set_player_ready(room, player_id) do
-    readyQueue = Dict.get(room, "readyQueue", [])
-    Dict.put(room, "readyQueue", Utils.uniq_add(readyQueue, player_id))
+  def set_player_ready(model, player_id) do
+    readyQueue = Dict.get(model, "readyQueue", [])
+    Dict.put(model, "readyQueue", Utils.uniq_add(readyQueue, player_id))
   end
 
-  def set_player_not_ready(room, player_id) do
-    readyQueue = Dict.get(room, "readyQueue", [])
-    Dict.put(room, "readyQueue", Utils.without_id(readyQueue, player_id))
+  def set_player_not_ready(model, player_id) do
+    readyQueue = Dict.get(model, "readyQueue", [])
+    Dict.put(model, "readyQueue", Utils.without_id(readyQueue, player_id))
+  end
+
+  defp get_game_id(model) do
+    next_game_id = Dict.get(model, "nextGameId", 0)
+    Dict.put(model, "nextGameId", next_game_id + 1)
+  end
+
+  def start_game(model) do
+    readyQueue = Dict.get(model, "readyQueue", []) # rigid 2 players
+    if [red_team_player, blue_team_player] = readyQueue do
+      Dict.put(model, "redTeam", [red_team_player]) |> Dict.put("blueTeam", [blue_team_player])
+    else
+      model
+    end
   end
 end
 

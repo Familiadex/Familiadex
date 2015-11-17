@@ -28,13 +28,13 @@ var elmDiv = document.getElementById('elm-main'),
     elmGlobalChat = initElmChat(elmGlobalChatDiv, "global");
     // elmChat = initElmChat(elmChatDiv, "game");
 
-let games = socket.channel("games:someGame123", {player_id: 22})
+let games = socket.channel("games:ID_GRY", {player_id: 123})
 games.join()
   .receive("ok", resp => {
     console.log("Joined games successfully", resp)
-    games.push("set_player_ready")
+    games.push("modelUpdateCmd", {cmd: "set_player_ready", params: [321]})
   })
   .receive("error", resp => { console.log("Unable to join games", resp) })
 
 
-games.on("back:readyQueue", readyQueue => { console.log("readyQueue", readyQueue)})
+games.on("back:modelUpdate", model => { console.log("back:modelUpdate", model)})
