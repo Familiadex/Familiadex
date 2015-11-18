@@ -29,7 +29,7 @@ var elmDiv = document.getElementById('elm-main'),
     // elmChat = initElmChat(elmChatDiv, "game");
 
 // TODO: we have to init elm game & channel with proper auth token (encoded player_id)
-let game = socket.channel("games:ID_GRY3", {player: {id: 1, name: "User1", ready: false}})
+let game = socket.channel("games:ID_GRY5", {player: {id: 1, name: "User1", ready: false}})
 game.join()
   .receive("ok", initialModel => {
     console.log("Joined game channel successfully", initialModel)

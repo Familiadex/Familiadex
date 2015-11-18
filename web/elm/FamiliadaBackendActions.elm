@@ -2,8 +2,7 @@ module FamiliadaBackendActions where
 
 type BackendAction = PlayerJoined
                    | PlayerLeft
-                   | SetPlayerReady
-                   | SetPlayerNotReady
+                   | TooglePlayerReady
                    | StartGame
                    | NoAction
 

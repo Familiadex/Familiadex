@@ -1909,15 +1909,13 @@ Elm.FamiliadaBackendActions.make = function (_elm) {
    });
    var NoAction = {ctor: "NoAction"};
    var StartGame = {ctor: "StartGame"};
-   var SetPlayerNotReady = {ctor: "SetPlayerNotReady"};
-   var SetPlayerReady = {ctor: "SetPlayerReady"};
+   var TooglePlayerReady = {ctor: "TooglePlayerReady"};
    var PlayerLeft = {ctor: "PlayerLeft"};
    var PlayerJoined = {ctor: "PlayerJoined"};
    _elm.FamiliadaBackendActions.values = {_op: _op
                                          ,PlayerJoined: PlayerJoined
                                          ,PlayerLeft: PlayerLeft
-                                         ,SetPlayerReady: SetPlayerReady
-                                         ,SetPlayerNotReady: SetPlayerNotReady
+                                         ,TooglePlayerReady: TooglePlayerReady
                                          ,StartGame: StartGame
                                          ,NoAction: NoAction
                                          ,BackendCmd: BackendCmd
@@ -2038,7 +2036,7 @@ Elm.FamiliadaGame.make = function (_elm) {
          var startButton = allPlayersReady(model) ? A2($Html.div,
          _L.fromArray([A2($Html$Events.onClick,
                       ba,
-                      $FamiliadaBackendActions.SetPlayerReady)
+                      $FamiliadaBackendActions.TooglePlayerReady)
                       ,$Html$Attributes.$class("btn btn-success")]),
          _L.fromArray([$Html.text("Start Game")])) : A2($Html.div,
          _L.fromArray([]),
@@ -2055,7 +2053,7 @@ Elm.FamiliadaGame.make = function (_elm) {
             _L.fromArray([A2($Html.div,
             _L.fromArray([A2($Html$Events.onClick,
                          ba,
-                         $FamiliadaBackendActions.SetPlayerReady)
+                         $FamiliadaBackendActions.TooglePlayerReady)
                          ,readyClass(p.ready)]),
             _L.fromArray([$Html.text(A2($Basics._op["++"],
             p.name,

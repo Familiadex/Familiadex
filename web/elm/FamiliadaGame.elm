@@ -58,13 +58,13 @@ viewPlayersList address ba model =
   let readyClass p = if p then class "alert alert-success pointer" else class "alert alert-danger pointer"
       readyText p = if p then " READY" else " NOT READY"
       viewPlayer p = li [] [ div
-                             [ onClick ba FBA.SetPlayerReady
+                             [ onClick ba FBA.TooglePlayerReady
                              , readyClass p.ready
                              ] [text (p.name ++ " - "++ (readyText p.ready))]
                            ]
       startButton = if allPlayersReady model
         then
-          div [onClick ba FBA.SetPlayerReady, class "btn btn-success"] [text "Start Game"]
+          div [onClick ba FBA.TooglePlayerReady, class "btn btn-success"] [text "Start Game"]
         else
           div [] [text "Waiting for all players ready..."]
   in
