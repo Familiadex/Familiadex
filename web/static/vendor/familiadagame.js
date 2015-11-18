@@ -2013,6 +2013,14 @@ Elm.FamiliadaGame.make = function (_elm) {
                       team.players))]));
       }();
    };
+   var currentPlayer = function (model) {
+      return $List.head(A2($List.filter,
+      function (x) {
+         return _U.eq(x.id,
+         model.user.id);
+      },
+      model.playersList));
+   };
    var update = F2(function (action,
    model) {
       return function () {
@@ -2033,6 +2041,22 @@ Elm.FamiliadaGame.make = function (_elm) {
    ba,
    model) {
       return function () {
+         var toogleButton = function () {
+            var _v1 = currentPlayer(model);
+            switch (_v1.ctor)
+            {case "Just":
+               return function () {
+                    var toogleText = _v1._0.ready ? "I\'m not ready" : "I\'m ready";
+                    return A2($Html.div,
+                    _L.fromArray([A2($Html$Events.onClick,
+                                 ba,
+                                 $FamiliadaBackendActions.TooglePlayerReady)
+                                 ,$Html$Attributes.$class("btn btn-info")]),
+                    _L.fromArray([$Html.text(toogleText)]));
+                 }();}
+            _U.badCase($moduleName,
+            "between lines 73 and 78");
+         }();
          var startButton = allPlayersReady(model) ? A2($Html.div,
          _L.fromArray([A2($Html$Events.onClick,
                       ba,
@@ -2051,10 +2075,7 @@ Elm.FamiliadaGame.make = function (_elm) {
             return A2($Html.li,
             _L.fromArray([]),
             _L.fromArray([A2($Html.div,
-            _L.fromArray([A2($Html$Events.onClick,
-                         ba,
-                         $FamiliadaBackendActions.TooglePlayerReady)
-                         ,readyClass(p.ready)]),
+            _L.fromArray([readyClass(p.ready)]),
             _L.fromArray([$Html.text(A2($Basics._op["++"],
             p.name,
             A2($Basics._op["++"],
@@ -2069,6 +2090,7 @@ Elm.FamiliadaGame.make = function (_elm) {
                       A2($List.map,
                       viewPlayer,
                       model.playersList))
+                      ,toogleButton
                       ,startButton]));
       }();
    });
@@ -2084,8 +2106,8 @@ Elm.FamiliadaGame.make = function (_elm) {
    ba,
    model) {
       return function () {
-         var _v1 = model.mode;
-         switch (_v1)
+         var _v3 = model.mode;
+         switch (_v3)
          {case "WaitingForPlayers":
             return A3(queueView,
               address,
@@ -2115,6 +2137,7 @@ Elm.FamiliadaGame.make = function (_elm) {
                                ,update: update
                                ,view: view
                                ,queueView: queueView
+                               ,currentPlayer: currentPlayer
                                ,viewPlayersList: viewPlayersList
                                ,viewTeamPlayers: viewTeamPlayers
                                ,main: main

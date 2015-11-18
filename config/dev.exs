@@ -40,3 +40,6 @@ config :familiada, Familiada.Repo,
   database: "familiada_dev",
   hostname: "localhost",
   pool_size: 10
+
+# Fake redistogo
+System.put_env("REDISTOGO_URL", "redis://127.0.0.1:6379")

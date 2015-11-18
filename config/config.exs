@@ -29,10 +29,11 @@ config :phoenix, :generators,
   migration: true,
   binary_id: false
 
+redis_info = URI.parse(System.get_env("REDISTOGO_URL"))
 # Configure redis
 config :exredis,
-  host: "127.0.0.1",
-  port: 6379,
+  host: redis_info.host,
+  port: redis_info.port,
   password: "",
   db: 0,
   reconnect: :no_reconnect,

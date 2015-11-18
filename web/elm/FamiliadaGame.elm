@@ -53,24 +53,33 @@ queueView address ba model =
 --       , div [class "col-xs-3"] [(viewTeamPlayers model.teamB)]
 --       ]
 
+currentPlayer : Model -> Maybe Player
+currentPlayer model =
+  List.filter (\x -> x.id == model.user.id) model.playersList |> List.head
+
+
 viewPlayersList : Address Action -> Address BackendAction -> Model -> Html
 viewPlayersList address ba model =
   let readyClass p = if p then class "alert alert-success pointer" else class "alert alert-danger pointer"
       readyText p = if p then " READY" else " NOT READY"
       viewPlayer p = li [] [ div
-                             [ onClick ba FBA.TooglePlayerReady
-                             , readyClass p.ready
-                             ] [text (p.name ++ " - "++ (readyText p.ready))]
+                             [readyClass p.ready] [text (p.name ++ " - "++ (readyText p.ready))]
                            ]
       startButton = if allPlayersReady model
         then
           div [onClick ba FBA.TooglePlayerReady, class "btn btn-success"] [text "Start Game"]
         else
           div [] [text "Waiting for all players ready..."]
+      toogleButton = case (currentPlayer model) of
+        Just p ->
+          let toogleText = if p.ready then "I'm not ready" else "I'm ready"
+          in
+            div [onClick ba FBA.TooglePlayerReady, class "btn btn-info"] [text toogleText]
   in
     div []
     [ text "Players in Que"
     , ul [] (List.map viewPlayer model.playersList)
+    , toogleButton
     , startButton
     ]
 
