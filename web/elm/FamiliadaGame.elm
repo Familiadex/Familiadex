@@ -1,79 +1,13 @@
 module FamiliadaGame where
+import FamiliadaTypes exposing(Model, Player, Team, Question)
+import FamiliadaBackendActions as FBA exposing(BackendAction, BackendCmd, mkBackendCmd)
 
 import AnswersList exposing (Answer)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Html.Lazy exposing (lazy, lazy2, lazy3)
-import Json.Decode as Json
 import Signal exposing (Signal, Address)
-import String
-import Window
-
----- MODEL ----
-
--- The full application state of our todo app.
--- maximum 4 players per room
--- in queue can be arbitrary number
-type alias Model =
-    { currentQuestion: Question
-    , playersReady : Int
-    , teamA: Team
-    , teamB: Team
-    }
-
-type alias Player =
-    { id : Int
-    , name : String
-    , ready : Bool
-    }
-
-type alias Team =
-    { id: Int
-    , name: String
-    , players: List Player
-    }
-
-mkPlayer id name = { id = id, name = name, ready = False}
-
-type alias Question =
-    { id : Int
-    , question : String
-    , answers : AnswersList.Model
-    }
-
-createAnswer : Int -> Bool -> Answer
-createAnswer id shown =
-  {
-    id = id,
-    answer = "Odpowiedz1",
-    points = 12,
-    visible = shown
-  }
-
-sampleQuestion : Question
-sampleQuestion =
-  {
-    id = 1,
-    question = "pytanie 1",
-    answers = [(createAnswer 1 True), (createAnswer 2 False)]
-  }
-
-
-initialModel : Model
-initialModel =
-    { currentQuestion = sampleQuestion
-    , playersReady = 0
-    , teamA = { id = 1
-              , name = "TeamA"
-              , players = [(mkPlayer 1 "TeamA player1"), (mkPlayer 2 "TeamA player2")]
-              }
-    , teamB = { id = 2
-              , name = "TeamB"
-              , players = [(mkPlayer 3 "TeamB player1"), (mkPlayer 4 "TeamB player2")]
-              }
-    }
-
+import Maybe
 
 ---- UPDATE ----
 
@@ -83,36 +17,62 @@ initialModel =
 type Action
     = NoOp
     | AnswersListAction AnswersList.Action
+    | BackendAction
+
+allPlayersReady model = List.all (\x -> x.ready == True) model.playersQueue
 
 -- How we update our Model on a given Action?
 update : Action -> Model -> Model
 update action model =
     case action of
       NoOp -> model
-      AnswersListAction act ->
-        let currentQuestion = model.currentQuestion
-            updatedCurrentQuestions = { currentQuestion | answers <- (AnswersList.update act currentQuestion.answers) }
-        in
-         { model | currentQuestion <- updatedCurrentQuestions }
+      -- AnswersListAction act ->
+      --   let currentQuestion = model.currentQuestion
+      --       updatedCurrentQuestions = { currentQuestion | answers <- (AnswersList.update act currentQuestion.answers) }
+      --   in
+      --    { model | currentQuestion <- updatedCurrentQuestions }
 ---- VIEW ----
 
-
 view : Address Action -> Model -> Html
-view address model =
-    div []
-      [ (boardView address model)
-      ]
+view address model = case model.mode of
+    "WaitingForPlayers" -> queueView address model
+    -- "Started" -> boardView address model
 
-boardView: Address Action -> Model -> Html
-boardView address model =
-    div [ class "row row-list" ]
-      [ div [class "col-xs-3"] [(viewTeamPlayers model.teamA)]
-      , div [class "col-xs-6"]
-          [ text "Odpowiedzi"
-          , (AnswersList.view (Signal.forwardTo address AnswersListAction) model.currentQuestion.answers)
-          ]
-      , div [class "col-xs-3"] [(viewTeamPlayers model.teamB)]
-      ]
+queueView: Address Action -> Model -> Html
+queueView address model =
+  viewPlayerQueue address model
+
+-- boardView: Address Action -> Model -> Html
+-- boardView address model =
+--     div [ class "row row-list" ]
+--       [ div [class "col-xs-3"] [(viewTeamPlayers model.teamA)]
+--       , div [class "col-xs-6"]
+--           [ text "Odpowiedzi"
+--           , (AnswersList.view (Signal.forwardTo address AnswersListAction) model.currentQuestion.answers)
+--           ]
+--       , div [class "col-xs-3"] [(viewTeamPlayers model.teamB)]
+--       ]
+
+viewPlayerQueue : Address Action -> Model -> Html
+viewPlayerQueue address model =
+  let readyClass p = if p then class "alert alert-success pointer" else class "alert alert-danger pointer"
+      readyText p = if p then " READY" else " NOT READY"
+      viewPlayer p = li [] [ div
+                             [onClick address (FBA.SetPlayerReady)
+                             , readyClass p.ready
+                             ] [text (p.name ++ " - "++ (readyText p.ready))]
+                           ]
+      startButton = if allPlayersReady model
+        then
+          div [onClick address (FBA.StartGame), class "btn btn-success"] [text "Start Game"]
+        else
+          div [] [text "Waiting for all players ready..."]
+  in
+    div []
+    [ text "Players in Que"
+    , ul [] (List.map viewPlayer model.playersQueue)
+    , startButton
+    ]
 
 viewTeamPlayers : Team -> Html
 viewTeamPlayers team =
@@ -126,18 +86,25 @@ viewTeamPlayers team =
 
 
 ---- INPUTS ----
+port backendModel : Signal Model
+port modelUpdateCmd : Signal BackendCmd
+port modelUpdateCmd =
+  let cmdOnly a =
+      case a of
+        BackendAction -> Just (mkBackendCmd a [])
+        _ -> Nothing
+  in
+    Signal.filterMap cmdOnly {msg = "x", params = [1]} actions.signal
 
 -- wire the entire application together
 main : Signal Html
 main =
   Signal.map (view actions.address) model
 
-
 -- manage the model of our application over time
 model : Signal Model
-model =
-  Signal.foldp update initialModel actions.signal
-
+model = backendModel
+--  Signal.foldp update initialModel actions.signal
 
 -- actions from user input
 actions : Signal.Mailbox Action
