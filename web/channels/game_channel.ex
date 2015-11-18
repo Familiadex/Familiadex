@@ -7,19 +7,19 @@ defmodule Familiada.GameChannel do
     # TODO: authentication
     # Assigns user to socket - It will be recognized by this
     game_state = GameState.get_room(room_id)
-    socket = assign(socket, :player_id, p["player_id"])
+    socket = assign(socket, :player, p["player"])
     send(self, :after_join)
     {:ok, game_state, socket}
   end
 
   def handle_info(:after_join, socket) do
-   game_state = GameState.update(socket.topic, "player_joined", [player_id(socket)])
+   game_state = GameState.update(socket.topic, "player_joined", [player(socket)])
    broadcast socket, "back:modelUpdate", %{ model: game_state }
    {:noreply, socket}
  end
 
   def leave(_reason, socket) do
-    game_state = GameState.update(socket.topic, "player_left", [player_id(socket)])
+    game_state = GameState.update(socket.topic, "player_left", [player(socket)])
     broadcast socket, "back:modelUpdate", %{ model: game_state }
     {:ok, socket}
   end
@@ -33,8 +33,8 @@ defmodule Familiada.GameChannel do
 
   #### #### #### #### ####
 
-  defp player_id(socket) do
-    socket.assigns.player_id
+  defp player(socket) do
+    socket.assigns.player
   end
 
   defp authorized?(_payload) do
@@ -84,7 +84,7 @@ defmodule Familiada.GameState do
     %{
       mode: "WaitingForPlayers",
       user: %{id: 1, name: "User1", ready: false},
-      playersList: [1],
+      playersList: [%{id: 1, name: "User1", ready: false}],
       readyQueue: []
     }
   end
@@ -132,15 +132,15 @@ defmodule Familiada.GameActions do
 end
 
 defmodule Familiada.Utils do
-  def uniq_add(list, id) do
-    if Enum.member?(list, id) do
+  def uniq_add(list, x) do
+    if Enum.member?(list, x) do
       list
     else
-      [id | list]
+      [x | list]
     end
   end
 
-  def without_id(enumerable, id_to_remove) do
-    Enum.filter(enumerable, fn(id) -> id != id_to_remove end)
+  def without(enumerable, to_remove) do
+    Enum.filter(enumerable, fn(x) -> x != to_remove end)
   end
 end

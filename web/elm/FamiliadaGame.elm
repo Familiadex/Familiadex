@@ -7,7 +7,6 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Signal exposing (Signal, Address)
-import Maybe
 
 ---- UPDATE ----
 
@@ -19,7 +18,8 @@ type Action
     | AnswersListAction AnswersList.Action
     | BackendAction
 
-allPlayersReady model = List.all (\x -> x.ready == True) model.playersQueue
+allPlayersReady : Model -> Bool
+allPlayersReady model = List.all (\x -> x.ready == True) model.playersList
 
 -- How we update our Model on a given Action?
 update : Action -> Model -> Model
@@ -33,14 +33,14 @@ update action model =
       --    { model | currentQuestion <- updatedCurrentQuestions }
 ---- VIEW ----
 
-view : Address Action -> Model -> Html
-view address model = case model.mode of
-    "WaitingForPlayers" -> queueView address model
+view : Address Action -> Address BackendAction -> Model -> Html
+view address ba model = case model.mode of
+    "WaitingForPlayers" -> queueView address ba model
     -- "Started" -> boardView address model
 
-queueView: Address Action -> Model -> Html
-queueView address model =
-  viewPlayerQueue address model
+queueView: Address Action -> Address BackendAction -> Model -> Html
+queueView address ba model =
+  viewPlayersList address ba model
 
 -- boardView: Address Action -> Model -> Html
 -- boardView address model =
@@ -53,24 +53,24 @@ queueView address model =
 --       , div [class "col-xs-3"] [(viewTeamPlayers model.teamB)]
 --       ]
 
-viewPlayerQueue : Address Action -> Model -> Html
-viewPlayerQueue address model =
+viewPlayersList : Address Action -> Address BackendAction -> Model -> Html
+viewPlayersList address ba model =
   let readyClass p = if p then class "alert alert-success pointer" else class "alert alert-danger pointer"
       readyText p = if p then " READY" else " NOT READY"
       viewPlayer p = li [] [ div
-                             [onClick address (FBA.SetPlayerReady)
+                             [ onClick ba FBA.SetPlayerReady
                              , readyClass p.ready
                              ] [text (p.name ++ " - "++ (readyText p.ready))]
                            ]
       startButton = if allPlayersReady model
         then
-          div [onClick address (FBA.StartGame), class "btn btn-success"] [text "Start Game"]
+          div [onClick ba FBA.SetPlayerReady, class "btn btn-success"] [text "Start Game"]
         else
           div [] [text "Waiting for all players ready..."]
   in
     div []
     [ text "Players in Que"
-    , ul [] (List.map viewPlayer model.playersQueue)
+    , ul [] (List.map viewPlayer model.playersList)
     , startButton
     ]
 
@@ -88,18 +88,12 @@ viewTeamPlayers team =
 ---- INPUTS ----
 port backendModel : Signal Model
 port modelUpdateCmd : Signal BackendCmd
-port modelUpdateCmd =
-  let cmdOnly a =
-    case a of
-      BackendAction -> Just (mkBackendCmd a [])
-      _ -> Nothing
-  in
-    Signal.filterMap cmdOnly {msg = "x", params = [1]} actions.signal
+port modelUpdateCmd = Signal.map (\a -> mkBackendCmd a []) baBox.signal
 
 -- wire the entire application together
 main : Signal Html
 main =
-  Signal.map (view actions.address) model
+  Signal.map (view actions.address baBox.address) model
 
 -- manage the model of our application over time
 model : Signal Model
@@ -110,3 +104,6 @@ model = backendModel
 actions : Signal.Mailbox Action
 actions =
   Signal.mailbox NoOp
+
+baBox : Signal.Mailbox BackendAction
+baBox = Signal.mailbox FBA.NoAction

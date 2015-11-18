@@ -1879,6 +1879,51 @@ Elm.Dict.make = function (_elm) {
                       ,fromList: fromList};
    return _elm.Dict.values;
 };
+Elm.FamiliadaBackendActions = Elm.FamiliadaBackendActions || {};
+Elm.FamiliadaBackendActions.make = function (_elm) {
+   "use strict";
+   _elm.FamiliadaBackendActions = _elm.FamiliadaBackendActions || {};
+   if (_elm.FamiliadaBackendActions.values)
+   return _elm.FamiliadaBackendActions.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "FamiliadaBackendActions",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var mkBackendCmd = F2(function (action,
+   params) {
+      return {_: {}
+             ,cmd: $Basics.toString(action)
+             ,params: params};
+   });
+   var BackendCmd = F2(function (a,
+   b) {
+      return {_: {}
+             ,cmd: a
+             ,params: b};
+   });
+   var NoAction = {ctor: "NoAction"};
+   var StartGame = {ctor: "StartGame"};
+   var SetPlayerNotReady = {ctor: "SetPlayerNotReady"};
+   var SetPlayerReady = {ctor: "SetPlayerReady"};
+   var PlayerLeft = {ctor: "PlayerLeft"};
+   var PlayerJoined = {ctor: "PlayerJoined"};
+   _elm.FamiliadaBackendActions.values = {_op: _op
+                                         ,PlayerJoined: PlayerJoined
+                                         ,PlayerLeft: PlayerLeft
+                                         ,SetPlayerReady: SetPlayerReady
+                                         ,SetPlayerNotReady: SetPlayerNotReady
+                                         ,StartGame: StartGame
+                                         ,NoAction: NoAction
+                                         ,BackendCmd: BackendCmd
+                                         ,mkBackendCmd: mkBackendCmd};
+   return _elm.FamiliadaBackendActions.values;
+};
 Elm.FamiliadaGame = Elm.FamiliadaGame || {};
 Elm.FamiliadaGame.make = function (_elm) {
    "use strict";
@@ -1892,12 +1937,63 @@ Elm.FamiliadaGame.make = function (_elm) {
    $moduleName = "FamiliadaGame",
    $AnswersList = Elm.AnswersList.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $FamiliadaBackendActions = Elm.FamiliadaBackendActions.make(_elm),
+   $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
+   var baBox = $Signal.mailbox($FamiliadaBackendActions.NoAction);
+   var modelUpdateCmd = Elm.Native.Port.make(_elm).outboundSignal("modelUpdateCmd",
+   function (v) {
+      return {cmd: v.cmd
+             ,params: Elm.Native.List.make(_elm).toArray(v.params).map(function (v) {
+                return v;
+             })};
+   },
+   A2($Signal.map,
+   function (a) {
+      return A2($FamiliadaBackendActions.mkBackendCmd,
+      a,
+      _L.fromArray([]));
+   },
+   baBox.signal));
+   var backendModel = Elm.Native.Port.make(_elm).inboundSignal("backendModel",
+   "FamiliadaTypes.Model",
+   function (v) {
+      return typeof v === "object" && "mode" in v && "user" in v && "playersList" in v && "readyQueue" in v ? {_: {}
+                                                                                                              ,mode: typeof v.mode === "string" || typeof v.mode === "object" && v.mode instanceof String ? v.mode : _U.badPort("a string",
+                                                                                                              v.mode)
+                                                                                                              ,user: typeof v.user === "object" && "id" in v.user && "name" in v.user && "ready" in v.user ? {_: {}
+                                                                                                                                                                                                             ,id: typeof v.user.id === "number" ? v.user.id : _U.badPort("a number",
+                                                                                                                                                                                                             v.user.id)
+                                                                                                                                                                                                             ,name: typeof v.user.name === "string" || typeof v.user.name === "object" && v.user.name instanceof String ? v.user.name : _U.badPort("a string",
+                                                                                                                                                                                                             v.user.name)
+                                                                                                                                                                                                             ,ready: typeof v.user.ready === "boolean" ? v.user.ready : _U.badPort("a boolean (true or false)",
+                                                                                                                                                                                                             v.user.ready)} : _U.badPort("an object with fields `id`, `name`, `ready`",
+                                                                                                              v.user)
+                                                                                                              ,playersList: typeof v.playersList === "object" && v.playersList instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.playersList.map(function (v) {
+                                                                                                                 return typeof v === "object" && "id" in v && "name" in v && "ready" in v ? {_: {}
+                                                                                                                                                                                            ,id: typeof v.id === "number" ? v.id : _U.badPort("a number",
+                                                                                                                                                                                            v.id)
+                                                                                                                                                                                            ,name: typeof v.name === "string" || typeof v.name === "object" && v.name instanceof String ? v.name : _U.badPort("a string",
+                                                                                                                                                                                            v.name)
+                                                                                                                                                                                            ,ready: typeof v.ready === "boolean" ? v.ready : _U.badPort("a boolean (true or false)",
+                                                                                                                                                                                            v.ready)} : _U.badPort("an object with fields `id`, `name`, `ready`",
+                                                                                                                 v);
+                                                                                                              })) : _U.badPort("an array",
+                                                                                                              v.playersList)
+                                                                                                              ,readyQueue: typeof v.readyQueue === "object" && v.readyQueue instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.readyQueue.map(function (v) {
+                                                                                                                 return typeof v === "number" ? v : _U.badPort("a number",
+                                                                                                                 v);
+                                                                                                              })) : _U.badPort("an array",
+                                                                                                              v.readyQueue)} : _U.badPort("an object with fields `mode`, `user`, `playersList`, `readyQueue`",
+      v);
+   });
+   var model = backendModel;
    var viewTeamPlayers = function (team) {
       return function () {
          var viewPlayer = function (p) {
@@ -1923,114 +2019,134 @@ Elm.FamiliadaGame.make = function (_elm) {
    model) {
       return function () {
          switch (action.ctor)
-         {case "AnswersListAction":
-            return function () {
-                 var currentQuestion = model.currentQuestion;
-                 var updatedCurrentQuestions = _U.replace([["answers"
-                                                           ,A2($AnswersList.update,
-                                                           action._0,
-                                                           currentQuestion.answers)]],
-                 currentQuestion);
-                 return _U.replace([["currentQuestion"
-                                    ,updatedCurrentQuestions]],
-                 model);
-              }();
-            case "NoOp": return model;}
+         {case "NoOp": return model;}
          _U.badCase($moduleName,
-         "between lines 90 and 96");
+         "between lines 27 and 33");
       }();
    });
+   var allPlayersReady = function (model) {
+      return A2($List.all,
+      function (x) {
+         return _U.eq(x.ready,true);
+      },
+      model.playersList);
+   };
+   var viewPlayersList = F3(function (address,
+   ba,
+   model) {
+      return function () {
+         var startButton = allPlayersReady(model) ? A2($Html.div,
+         _L.fromArray([A2($Html$Events.onClick,
+                      ba,
+                      $FamiliadaBackendActions.SetPlayerReady)
+                      ,$Html$Attributes.$class("btn btn-success")]),
+         _L.fromArray([$Html.text("Start Game")])) : A2($Html.div,
+         _L.fromArray([]),
+         _L.fromArray([$Html.text("Waiting for all players ready...")]));
+         var readyText = function (p) {
+            return p ? " READY" : " NOT READY";
+         };
+         var readyClass = function (p) {
+            return p ? $Html$Attributes.$class("alert alert-success pointer") : $Html$Attributes.$class("alert alert-danger pointer");
+         };
+         var viewPlayer = function (p) {
+            return A2($Html.li,
+            _L.fromArray([]),
+            _L.fromArray([A2($Html.div,
+            _L.fromArray([A2($Html$Events.onClick,
+                         ba,
+                         $FamiliadaBackendActions.SetPlayerReady)
+                         ,readyClass(p.ready)]),
+            _L.fromArray([$Html.text(A2($Basics._op["++"],
+            p.name,
+            A2($Basics._op["++"],
+            " - ",
+            readyText(p.ready))))]))]));
+         };
+         return A2($Html.div,
+         _L.fromArray([]),
+         _L.fromArray([$Html.text("Players in Que")
+                      ,A2($Html.ul,
+                      _L.fromArray([]),
+                      A2($List.map,
+                      viewPlayer,
+                      model.playersList))
+                      ,startButton]));
+      }();
+   });
+   var queueView = F3(function (address,
+   ba,
+   model) {
+      return A3(viewPlayersList,
+      address,
+      ba,
+      model);
+   });
+   var view = F3(function (address,
+   ba,
+   model) {
+      return function () {
+         var _v1 = model.mode;
+         switch (_v1)
+         {case "WaitingForPlayers":
+            return A3(queueView,
+              address,
+              ba,
+              model);}
+         _U.badCase($moduleName,
+         "between lines 37 and 39");
+      }();
+   });
+   var BackendAction = {ctor: "BackendAction"};
    var AnswersListAction = function (a) {
       return {ctor: "AnswersListAction"
              ,_0: a};
    };
-   var boardView = F2(function (address,
-   model) {
-      return A2($Html.div,
-      _L.fromArray([$Html$Attributes.$class("row row-list")]),
-      _L.fromArray([A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("col-xs-3")]),
-                   _L.fromArray([viewTeamPlayers(model.teamA)]))
-                   ,A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("col-xs-6")]),
-                   _L.fromArray([$Html.text("Odpowiedzi")
-                                ,A2($AnswersList.view,
-                                A2($Signal.forwardTo,
-                                address,
-                                AnswersListAction),
-                                model.currentQuestion.answers)]))
-                   ,A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("col-xs-3")]),
-                   _L.fromArray([viewTeamPlayers(model.teamB)]))]));
-   });
-   var view = F2(function (address,
-   model) {
-      return A2($Html.div,
-      _L.fromArray([]),
-      _L.fromArray([A2(boardView,
-      address,
-      model)]));
-   });
    var NoOp = {ctor: "NoOp"};
    var actions = $Signal.mailbox(NoOp);
-   var createAnswer = F2(function (id,
-   shown) {
+   var main = A2($Signal.map,
+   A2(view,
+   actions.address,
+   baBox.address),
+   model);
+   _elm.FamiliadaGame.values = {_op: _op
+                               ,NoOp: NoOp
+                               ,AnswersListAction: AnswersListAction
+                               ,BackendAction: BackendAction
+                               ,allPlayersReady: allPlayersReady
+                               ,update: update
+                               ,view: view
+                               ,queueView: queueView
+                               ,viewPlayersList: viewPlayersList
+                               ,viewTeamPlayers: viewTeamPlayers
+                               ,main: main
+                               ,model: model
+                               ,actions: actions
+                               ,baBox: baBox};
+   return _elm.FamiliadaGame.values;
+};
+Elm.FamiliadaTypes = Elm.FamiliadaTypes || {};
+Elm.FamiliadaTypes.make = function (_elm) {
+   "use strict";
+   _elm.FamiliadaTypes = _elm.FamiliadaTypes || {};
+   if (_elm.FamiliadaTypes.values)
+   return _elm.FamiliadaTypes.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "FamiliadaTypes",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var Question = F2(function (a,
+   b) {
       return {_: {}
-             ,answer: "Odpowiedz1"
-             ,id: id
-             ,points: 12
-             ,visible: shown};
-   });
-   var sampleQuestion = {_: {}
-                        ,answers: _L.fromArray([A2(createAnswer,
-                                               1,
-                                               true)
-                                               ,A2(createAnswer,2,false)])
-                        ,id: 1
-                        ,question: "pytanie 1"};
-   var Question = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,answers: c
              ,id: a
              ,question: b};
    });
-   var mkPlayer = F2(function (id,
-   name) {
-      return {_: {}
-             ,id: id
-             ,name: name
-             ,ready: false};
-   });
-   var initialModel = {_: {}
-                      ,currentQuestion: sampleQuestion
-                      ,playersReady: 0
-                      ,teamA: {_: {}
-                              ,id: 1
-                              ,name: "TeamA"
-                              ,players: _L.fromArray([A2(mkPlayer,
-                                                     1,
-                                                     "TeamA player1")
-                                                     ,A2(mkPlayer,
-                                                     2,
-                                                     "TeamA player2")])}
-                      ,teamB: {_: {}
-                              ,id: 2
-                              ,name: "TeamB"
-                              ,players: _L.fromArray([A2(mkPlayer,
-                                                     3,
-                                                     "TeamB player1")
-                                                     ,A2(mkPlayer,
-                                                     4,
-                                                     "TeamB player2")])}};
-   var model = A3($Signal.foldp,
-   update,
-   initialModel,
-   actions.signal);
-   var main = A2($Signal.map,
-   view(actions.address),
-   model);
    var Team = F3(function (a,b,c) {
       return {_: {}
              ,id: a
@@ -2050,30 +2166,17 @@ Elm.FamiliadaGame.make = function (_elm) {
    c,
    d) {
       return {_: {}
-             ,currentQuestion: a
-             ,playersReady: b
-             ,teamA: c
-             ,teamB: d};
+             ,mode: a
+             ,playersList: c
+             ,readyQueue: d
+             ,user: b};
    });
-   _elm.FamiliadaGame.values = {_op: _op
-                               ,Model: Model
-                               ,Player: Player
-                               ,Team: Team
-                               ,mkPlayer: mkPlayer
-                               ,Question: Question
-                               ,createAnswer: createAnswer
-                               ,sampleQuestion: sampleQuestion
-                               ,initialModel: initialModel
-                               ,NoOp: NoOp
-                               ,AnswersListAction: AnswersListAction
-                               ,update: update
-                               ,view: view
-                               ,boardView: boardView
-                               ,viewTeamPlayers: viewTeamPlayers
-                               ,main: main
-                               ,model: model
-                               ,actions: actions};
-   return _elm.FamiliadaGame.values;
+   _elm.FamiliadaTypes.values = {_op: _op
+                                ,Model: Model
+                                ,Player: Player
+                                ,Team: Team
+                                ,Question: Question};
+   return _elm.FamiliadaTypes.values;
 };
 Elm.Graphics = Elm.Graphics || {};
 Elm.Graphics.Collage = Elm.Graphics.Collage || {};
@@ -3925,35 +4028,6 @@ Elm.Html.Events.make = function (_elm) {
                              ,keyCode: keyCode
                              ,Options: Options};
    return _elm.Html.Events.values;
-};
-Elm.Html = Elm.Html || {};
-Elm.Html.Lazy = Elm.Html.Lazy || {};
-Elm.Html.Lazy.make = function (_elm) {
-   "use strict";
-   _elm.Html = _elm.Html || {};
-   _elm.Html.Lazy = _elm.Html.Lazy || {};
-   if (_elm.Html.Lazy.values)
-   return _elm.Html.Lazy.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Html.Lazy",
-   $Basics = Elm.Basics.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $VirtualDom = Elm.VirtualDom.make(_elm);
-   var lazy3 = $VirtualDom.lazy3;
-   var lazy2 = $VirtualDom.lazy2;
-   var lazy = $VirtualDom.lazy;
-   _elm.Html.Lazy.values = {_op: _op
-                           ,lazy: lazy
-                           ,lazy2: lazy2
-                           ,lazy3: lazy3};
-   return _elm.Html.Lazy.values;
 };
 Elm.Json = Elm.Json || {};
 Elm.Json.Decode = Elm.Json.Decode || {};
@@ -12234,75 +12308,6 @@ Elm.Native.VirtualDom.make = function(elm)
 
 },{"virtual-dom/vdom/create-element":6,"virtual-dom/vdom/patch":9,"virtual-dom/vnode/is-vhook":13,"virtual-dom/vnode/vnode":18,"virtual-dom/vnode/vtext":20,"virtual-dom/vtree/diff":22}]},{},[23]);
 
-Elm.Native = Elm.Native || {};
-Elm.Native.Window = {};
-Elm.Native.Window.make = function(localRuntime) {
-
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Window = localRuntime.Native.Window || {};
-	if (localRuntime.Native.Window.values)
-	{
-		return localRuntime.Native.Window.values;
-	}
-
-	var NS = Elm.Native.Signal.make(localRuntime);
-	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
-
-
-	function getWidth()
-	{
-		return localRuntime.node.clientWidth;
-	}
-
-
-	function getHeight()
-	{
-		if (localRuntime.isFullscreen())
-		{
-			return window.innerHeight;
-		}
-		return localRuntime.node.clientHeight;
-	}
-
-
-	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
-
-
-	function resizeIfNeeded()
-	{
-		// Do not trigger event if the dimensions have not changed.
-		// This should be most of the time.
-		var w = getWidth();
-		var h = getHeight();
-		if (dimensions.value._0 === w && dimensions.value._1 === h)
-		{
-			return;
-		}
-
-		setTimeout(function () {
-			// Check again to see if the dimensions have changed.
-			// It is conceivable that the dimensions have changed
-			// again while some other event was being processed.
-			var w = getWidth();
-			var h = getHeight();
-			if (dimensions.value._0 === w && dimensions.value._1 === h)
-			{
-				return;
-			}
-			localRuntime.notify(dimensions.id, Tuple2(w,h));
-		}, 0);
-	}
-
-
-	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
-
-
-	return localRuntime.Native.Window.values = {
-		dimensions: dimensions,
-		resizeIfNeeded: resizeIfNeeded
-	};
-};
-
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";
@@ -13234,31 +13239,4 @@ Elm.VirtualDom.make = function (_elm) {
                             ,lazy3: lazy3
                             ,Options: Options};
    return _elm.VirtualDom.values;
-};
-Elm.Window = Elm.Window || {};
-Elm.Window.make = function (_elm) {
-   "use strict";
-   _elm.Window = _elm.Window || {};
-   if (_elm.Window.values)
-   return _elm.Window.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Window",
-   $Basics = Elm.Basics.make(_elm),
-   $Native$Window = Elm.Native.Window.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var dimensions = $Native$Window.dimensions;
-   var width = A2($Signal.map,
-   $Basics.fst,
-   dimensions);
-   var height = A2($Signal.map,
-   $Basics.snd,
-   dimensions);
-   _elm.Window.values = {_op: _op
-                        ,dimensions: dimensions
-                        ,width: width
-                        ,height: height};
-   return _elm.Window.values;
 };
