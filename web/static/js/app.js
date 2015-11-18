@@ -24,17 +24,26 @@ import initElmChat from "./elm_chat"
 var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmGlobalChatDiv = document.getElementById('elm-chat-global'),
-    elmApp = Elm.embed(Elm.FamiliadaGame, elmDiv),
+    elmFamiliadaGame,
     elmGlobalChat = initElmChat(elmGlobalChatDiv, "global");
     // elmChat = initElmChat(elmChatDiv, "game");
 
-let games = socket.channel("games:ID_GRY", {player_id: 123})
-games.join()
-  .receive("ok", resp => {
-    console.log("Joined games successfully", resp)
-    games.push("modelUpdateCmd", {cmd: "set_player_ready", params: [321]})
+// TODO: we have to init elm game & channel with proper auth token (encoded player_id)
+let game = socket.channel("games:ID_GRY", {player_id: 123})
+game.join()
+  .receive("ok", initialModel => {
+    console.log("Joined game channel successfully", initialModel)
+    elmFamiliadaGame = Elm.embed(Elm.FamiliadaGame, elmDiv, {backendModel: initialModel})
+    game.push("modelUpdateCmd", {cmd: "SetPlayerReady", params: [123]})
   })
-  .receive("error", resp => { console.log("Unable to join games", resp) })
-
-
-games.on("back:modelUpdate", model => { console.log("back:modelUpdate", model)})
+  .receive("error", resp => { console.log("Joined game channel successfully", resp)})
+// Push model updates into Elm Game
+game.on("back:modelUpdate", model => {
+  console.log("back:modelUpdate", model)
+  elmFamiliadaGame.ports.backendModel.send(model)
+})
+// Send actions to backend
+elmFamiliadaGame.ports.modelUpdateCmd.subscribe((cmd) => {
+  console.log("modelUpdateCmd", cmd)
+  game.push("modelUpdateCmd", cmd)
+})

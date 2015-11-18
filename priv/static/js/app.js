@@ -27530,20 +27530,41 @@ var _elm_chat2 = _interopRequireDefault(_elm_chat);
 var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmGlobalChatDiv = document.getElementById('elm-chat-global'),
-    elmApp = Elm.embed(Elm.FamiliadaGame, elmDiv),
+    elmFamiliadaGame,
     elmGlobalChat = (0, _elm_chat2["default"])(elmGlobalChatDiv, "global");
 // elmChat = initElmChat(elmChatDiv, "game");
 
+<<<<<<< HEAD
 var games = _socket2["default"].channel("games:someGame123", { player_id: 22 });
 games.join().receive("ok", function (resp) {
   console.log("Joined games successfully", resp);
   games.push("set_player_ready");
+=======
+// TODO: we have to init elm game & channel with proper auth token (encoded player_id)
+var game = _socket2["default"].channel("games:ID_GRY", { player_id: 123 });
+game.join().receive("ok", function (initialModel) {
+  console.log("Joined game channel successfully", initialModel);
+  elmFamiliadaGame = Elm.embed(Elm.FamiliadaGame, elmDiv, { backendModel: initialModel });
+  game.push("modelUpdateCmd", { cmd: "SetPlayerReady", params: [123] });
+>>>>>>> Elm wont cut it
 }).receive("error", function (resp) {
-  console.log("Unable to join games", resp);
+  console.log("Joined game channel successfully", resp);
 });
+<<<<<<< HEAD
 
 games.on("back:readyQueue", function (readyQueue) {
   console.log("readyQueue", readyQueue);
+=======
+// Push model updates into Elm Game
+game.on("back:modelUpdate", function (model) {
+  console.log("back:modelUpdate", model);
+  elmFamiliadaGame.ports.backendModel.send(model);
+});
+// Send actions to backend
+elmFamiliadaGame.ports.modelUpdateCmd.subscribe(function (cmd) {
+  console.log("modelUpdateCmd", cmd);
+  game.push("modelUpdateCmd", cmd);
+>>>>>>> Elm wont cut it
 });
 });
 

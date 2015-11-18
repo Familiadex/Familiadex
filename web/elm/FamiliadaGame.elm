@@ -90,9 +90,9 @@ port backendModel : Signal Model
 port modelUpdateCmd : Signal BackendCmd
 port modelUpdateCmd =
   let cmdOnly a =
-      case a of
-        BackendAction -> Just (mkBackendCmd a [])
-        _ -> Nothing
+    case a of
+      BackendAction -> Just (mkBackendCmd a [])
+      _ -> Nothing
   in
     Signal.filterMap cmdOnly {msg = "x", params = [1]} actions.signal
 

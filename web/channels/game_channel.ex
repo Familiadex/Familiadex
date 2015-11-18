@@ -6,9 +6,10 @@ defmodule Familiada.GameChannel do
   def join(room_id, p, socket) do
     # TODO: authentication
     # Assigns user to socket - It will be recognized by this
+    game_state = GameState.get_room(room_id)
     socket = assign(socket, :player_id, p["player_id"])
     send(self, :after_join)
-    {:ok, socket}
+    {:ok, game_state, socket}
   end
 
   def handle_info(:after_join, socket) do
@@ -46,10 +47,13 @@ defmodule Familiada.GameState do
   alias Familiada.GameActions
 
   def update(room_id, action_name, action_params) do
-    # NOTO: You should never symbolize user provided strings
+    # NOTE: You should never symbolize user provided strings
     room = get_room(room_id)
-    if Enum.member?(allowed_actions, action_name) do
-      new_room = apply(GameActions, String.to_atom(action_name), [room | action_params])
+    # This is required because from Elm we get actions in CamelizedFormat
+    underscored_action = Mix.Utils.underscore(action_name)
+    if Enum.member?(allowed_actions, underscored_action) do
+      action = String.to_atom(underscored_action) # change to symbol so can be dynamically called
+      new_room = apply(GameActions, action, [room | action_params]) # dynamic action call
       set_room(new_room, room_id)
       new_room
     else
@@ -57,12 +61,12 @@ defmodule Familiada.GameState do
     end
   end
 
-  # This uses redis as depencency so I would need to change it probably
+  # This uses Redis as depencency so I would need to change it probably
   def get_room(room_id) do
      room = start_link |> elem(1) |> query ["GET", room_id]
-     room != :undefined && Poison.decode!(room) || %{}
+     room != :undefined && Poison.decode!(room) || initial_model
   end
-  # TODO: me
+  # NOTE: This should be in sync with BackendActions in Elm
   defp allowed_actions do
     [ "player_joined",
       "player_left",
@@ -74,6 +78,15 @@ defmodule Familiada.GameState do
   #### #### #### #### ####
   defp set_room(room, room_id) do
     start_link |> elem(1) |> query ["SET", room_id, Poison.encode!(room)]
+  end
+
+  defp initial_model do
+    %{
+      mode: "WaitingForPlayers",
+      user: %{id: 1, name: "User1", ready: false},
+      playersList: [1],
+      readyQueue: []
+    }
   end
 end
 
