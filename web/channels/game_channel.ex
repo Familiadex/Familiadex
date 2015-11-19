@@ -7,9 +7,22 @@ defmodule Familiada.GameChannel do
     # TODO: authentication
     # Assigns user to socket - It will be recognized by this
     socket = assign(socket, :player, p["player"])
-    game_state = GameState.update(socket.topic, player(socket)["id"], "player_joined", [player(socket)])
+    proper_player = Dict.put(player(socket), "ready", :false)
+    game_state = GameState.update(socket.topic, player(socket)["id"], "player_joined", [proper_player])
+    game_state = Dict.put(game_state, "user_id", player(socket)["id"])
     send(self, :after_join)
     {:ok, game_state, socket}
+  end
+
+  intercept ["back:modelUpdate"]
+
+  def handle_out("back:modelUpdate", msg, socket) do
+    model = Dict.get(msg, :model)
+    IO.puts "HANDLE_OUT ***** #{Poison.encode! model}"
+    user_model = Dict.put(model, "user_id", player(socket)["id"])
+    customized_msg = Dict.put(msg, :model, user_model)
+    push socket, "back:modelUpdate", customized_msg
+    {:noreply, socket}
   end
 
   def handle_info(:after_join, socket) do
@@ -83,7 +96,7 @@ defmodule Familiada.GameState do
   defp initial_model do
     %{
       mode: "WaitingForPlayers",
-      user: %{id: 1, name: "Anonymouse", ready: false},
+      user_id: 0,
       playersList: [],
       readyQueue: []
     }

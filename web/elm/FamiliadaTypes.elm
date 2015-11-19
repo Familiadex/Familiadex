@@ -2,7 +2,7 @@ module FamiliadaTypes where
 
 type alias Model =
     { mode: String
-    , user : Player
+    , user_id : Int
     , playersList : List Player
     , readyQueue : List Int
     }

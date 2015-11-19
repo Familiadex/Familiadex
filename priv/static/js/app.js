@@ -15250,33 +15250,27 @@ Elm.FamiliadaGame.make = function (_elm) {
    var backendModel = Elm.Native.Port.make(_elm).inboundSignal("backendModel",
    "FamiliadaTypes.Model",
    function (v) {
-      return typeof v === "object" && "mode" in v && "user" in v && "playersList" in v && "readyQueue" in v ? {_: {}
-                                                                                                              ,mode: typeof v.mode === "string" || typeof v.mode === "object" && v.mode instanceof String ? v.mode : _U.badPort("a string",
-                                                                                                              v.mode)
-                                                                                                              ,user: typeof v.user === "object" && "id" in v.user && "name" in v.user && "ready" in v.user ? {_: {}
-                                                                                                                                                                                                             ,id: typeof v.user.id === "number" ? v.user.id : _U.badPort("a number",
-                                                                                                                                                                                                             v.user.id)
-                                                                                                                                                                                                             ,name: typeof v.user.name === "string" || typeof v.user.name === "object" && v.user.name instanceof String ? v.user.name : _U.badPort("a string",
-                                                                                                                                                                                                             v.user.name)
-                                                                                                                                                                                                             ,ready: typeof v.user.ready === "boolean" ? v.user.ready : _U.badPort("a boolean (true or false)",
-                                                                                                                                                                                                             v.user.ready)} : _U.badPort("an object with fields `id`, `name`, `ready`",
-                                                                                                              v.user)
-                                                                                                              ,playersList: typeof v.playersList === "object" && v.playersList instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.playersList.map(function (v) {
-                                                                                                                 return typeof v === "object" && "id" in v && "name" in v && "ready" in v ? {_: {}
-                                                                                                                                                                                            ,id: typeof v.id === "number" ? v.id : _U.badPort("a number",
-                                                                                                                                                                                            v.id)
-                                                                                                                                                                                            ,name: typeof v.name === "string" || typeof v.name === "object" && v.name instanceof String ? v.name : _U.badPort("a string",
-                                                                                                                                                                                            v.name)
-                                                                                                                                                                                            ,ready: typeof v.ready === "boolean" ? v.ready : _U.badPort("a boolean (true or false)",
-                                                                                                                                                                                            v.ready)} : _U.badPort("an object with fields `id`, `name`, `ready`",
-                                                                                                                 v);
-                                                                                                              })) : _U.badPort("an array",
-                                                                                                              v.playersList)
-                                                                                                              ,readyQueue: typeof v.readyQueue === "object" && v.readyQueue instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.readyQueue.map(function (v) {
-                                                                                                                 return typeof v === "number" ? v : _U.badPort("a number",
-                                                                                                                 v);
-                                                                                                              })) : _U.badPort("an array",
-                                                                                                              v.readyQueue)} : _U.badPort("an object with fields `mode`, `user`, `playersList`, `readyQueue`",
+      return typeof v === "object" && "mode" in v && "user_id" in v && "playersList" in v && "readyQueue" in v ? {_: {}
+                                                                                                                 ,mode: typeof v.mode === "string" || typeof v.mode === "object" && v.mode instanceof String ? v.mode : _U.badPort("a string",
+                                                                                                                 v.mode)
+                                                                                                                 ,user_id: typeof v.user_id === "number" ? v.user_id : _U.badPort("a number",
+                                                                                                                 v.user_id)
+                                                                                                                 ,playersList: typeof v.playersList === "object" && v.playersList instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.playersList.map(function (v) {
+                                                                                                                    return typeof v === "object" && "id" in v && "name" in v && "ready" in v ? {_: {}
+                                                                                                                                                                                               ,id: typeof v.id === "number" ? v.id : _U.badPort("a number",
+                                                                                                                                                                                               v.id)
+                                                                                                                                                                                               ,name: typeof v.name === "string" || typeof v.name === "object" && v.name instanceof String ? v.name : _U.badPort("a string",
+                                                                                                                                                                                               v.name)
+                                                                                                                                                                                               ,ready: typeof v.ready === "boolean" ? v.ready : _U.badPort("a boolean (true or false)",
+                                                                                                                                                                                               v.ready)} : _U.badPort("an object with fields `id`, `name`, `ready`",
+                                                                                                                    v);
+                                                                                                                 })) : _U.badPort("an array",
+                                                                                                                 v.playersList)
+                                                                                                                 ,readyQueue: typeof v.readyQueue === "object" && v.readyQueue instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.readyQueue.map(function (v) {
+                                                                                                                    return typeof v === "number" ? v : _U.badPort("a number",
+                                                                                                                    v);
+                                                                                                                 })) : _U.badPort("an array",
+                                                                                                                 v.readyQueue)} : _U.badPort("an object with fields `mode`, `user_id`, `playersList`, `readyQueue`",
       v);
    });
    var model = backendModel;
@@ -15305,7 +15299,7 @@ Elm.FamiliadaGame.make = function (_elm) {
       return $List.head(A2($List.filter,
       function (x) {
          return _U.eq(x.id,
-         model.user.id);
+         model.user_id);
       },
       model.playersList));
    };
@@ -15478,7 +15472,7 @@ Elm.FamiliadaTypes.make = function (_elm) {
              ,mode: a
              ,playersList: c
              ,readyQueue: d
-             ,user: b};
+             ,user_id: b};
    });
    _elm.FamiliadaTypes.values = {_op: _op
                                 ,Model: Model
@@ -27601,7 +27595,7 @@ var elmDiv = document.getElementById('elm-main'),
 // elmChat = initElmChat(elmChatDiv, "game");
 
 // TODO: we have to init elm game & channel with proper auth token (encoded player_id)
-var game = _socket2["default"].channel("games:ID_GRY6", { player: currentUser });
+var game = _socket2["default"].channel("games:ID_GRY21", { player: currentUser });
 
 game.join().receive("ok", function (initialModel) {
   console.log("Joined game channel successfully", initialModel);

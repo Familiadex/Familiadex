@@ -55,7 +55,7 @@ queueView address ba model =
 
 currentPlayer : Model -> Maybe Player
 currentPlayer model =
-  List.filter (\x -> x.id == model.user.id) model.playersList |> List.head
+  List.filter (\x -> x.id == model.user_id) model.playersList |> List.head
 
 
 viewPlayersList : Address Action -> Address BackendAction -> Model -> Html
