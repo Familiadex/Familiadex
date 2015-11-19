@@ -6,14 +6,14 @@ defmodule Familiada.GameChannel do
   def join(room_id, p, socket) do
     # TODO: authentication
     # Assigns user to socket - It will be recognized by this
-    game_state = GameState.get_room(room_id)
     socket = assign(socket, :player, p["player"])
+    game_state = GameState.update(socket.topic, player(socket)["id"], "player_joined", [player(socket)])
     send(self, :after_join)
     {:ok, game_state, socket}
   end
 
   def handle_info(:after_join, socket) do
-   game_state = GameState.update(socket.topic, player(socket)["id"], "player_joined", [player(socket)])
+   game_state = GameState.get_room(socket.topic)
    broadcast socket, "back:modelUpdate", %{ model: game_state }
    {:noreply, socket}
  end
@@ -83,8 +83,8 @@ defmodule Familiada.GameState do
   defp initial_model do
     %{
       mode: "WaitingForPlayers",
-      user: %{id: 1, name: "User1", ready: false},
-      playersList: [%{id: 1, name: "User1", ready: false}],
+      user: %{id: 1, name: "Anonymouse", ready: false},
+      playersList: [],
       readyQueue: []
     }
   end

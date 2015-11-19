@@ -27600,7 +27600,14 @@ var elmDiv = document.getElementById('elm-main'),
 // elmChat = initElmChat(elmChatDiv, "game");
 
 // TODO: we have to init elm game & channel with proper auth token (encoded player_id)
-var game = _socket2["default"].channel("games:ID_GRY5", { player: { id: 1, name: "User1", ready: false } });
+var currentUser = GameEnv.currentUser;
+var game = _socket2["default"].channel("games:ID_GRY6", {
+  player: {
+    id: currentUser.id,
+    name: currentUser.name,
+    ready: false
+  }
+});
 game.join().receive("ok", function (initialModel) {
   console.log("Joined game channel successfully", initialModel);
   elmFamiliadaGame = Elm.embed(Elm.FamiliadaGame, elmDiv, { backendModel: initialModel });
