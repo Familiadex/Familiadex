@@ -31,24 +31,42 @@ end
 defmodule Familiada.ChatChannel do
 
   use Familiada.Web, :channel
+  alias Familiada.ChatUsers
 
-  def join(room_id, message, socket) do
-    {:ok, store} = Familiada.ChatUsers.new
-    :ok = Familiada.ChatUsers.add(store, room_id, "Hello")
-    IO.puts "JOIN #{socket.channel}:#{socket.topic}"
-    {:ok, %{username: message["username"], content: "Hello I've just joinded this chat!"}, socket}
+  def join(room_id, p, socket) do
+    socket = assign(socket, :user, p["user"])
+    store = get_user_store
+    ChatUsers.add(store, room_id, p["user"]["name"])
+    send(self, :after_join)
+    {:ok, %{ userlist: ChatUsers.get(store, socket.topic) }, socket}
+  end
+
+  def handle_info(:after_join, socket) do
+    store = get_user_store
+    broadcast socket, "back:userlist", %{ userlist: ChatUsers.get(store, socket.topic) }
+    {:noreply, socket}
+  end
+
+  def leave(_reason, socket) do
+    store = get_user_store
+    ChatUsers.remove(store, socket.topic, socket.assigns.user["name"])
+    broadcast socket, "back:userlist", %{ userlist: ChatUsers.get(store, socket.topic) }
+    {:ok, socket}
   end
 
   def handle_in("front:msg", message, socket) do
-    broadcast socket, "back:msg", %{content: message["content"], username: message["username"]}
+    broadcast socket, "back:msg", %{content: message["content"], username: socket.assigns.user["name"]}
     {:noreply, socket}
   end
 
-  def handle_in("front:joined", message, socket) do
-    broadcast socket, "back:userlist", %{
-      # content: Familiada.ChatUsers.get(self, message["room_id"]),
-      username: "chat"
-    }
-    {:noreply, socket}
+  defp get_user_store do
+    store_pid = Process.whereis(:kv)
+    store = if store_pid do
+      store_pid
+    else
+      {:ok, store} = Familiada.ChatUsers.new
+      Process.register(store, :kv)
+      store
+    end
   end
 end

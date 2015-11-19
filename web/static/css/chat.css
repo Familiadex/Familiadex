@@ -4,8 +4,17 @@
   font-family: monospace;
   padding: 10px;
   padding-bottom: 0px;
+  position: relative;
+}
+.chat .msglist{
+  overflow-y: scroll;
+  height: 200px;
+  max-height: 200px;
 }
 .chat .userlist{
+  position: absolute;
+  right: 30px;
+  top: 0px;
   border-left: dotted yellow;
   padding-left: 10px
 }

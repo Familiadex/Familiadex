@@ -612,7 +612,7 @@ Elm.Chat.make = function (_elm) {
       _L.fromArray([A2($Html.div,
                    _L.fromArray([$Html$Attributes.$class("row row-list")]),
                    _L.fromArray([A2($Html.div,
-                                _L.fromArray([$Html$Attributes.$class("col-xs-9")]),
+                                _L.fromArray([$Html$Attributes.$class("col-xs-9 msglist")]),
                                 _L.fromArray([viewMsgList(model.msgList)]))
                                 ,A2($Html.div,
                                 _L.fromArray([$Html$Attributes.$class("col-xs-3")]),
@@ -27592,22 +27592,17 @@ var _elm_chat = require("./elm_chat");
 
 var _elm_chat2 = _interopRequireDefault(_elm_chat);
 
+var currentUser = GameEnv.currentUser;
 var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmGlobalChatDiv = document.getElementById('elm-chat-global'),
     elmFamiliadaGame,
-    elmGlobalChat = (0, _elm_chat2["default"])(elmGlobalChatDiv, "global");
+    elmGlobalChat = (0, _elm_chat2["default"])(elmGlobalChatDiv, "global", currentUser);
 // elmChat = initElmChat(elmChatDiv, "game");
 
 // TODO: we have to init elm game & channel with proper auth token (encoded player_id)
-var currentUser = GameEnv.currentUser;
-var game = _socket2["default"].channel("games:ID_GRY6", {
-  player: {
-    id: currentUser.id,
-    name: currentUser.name,
-    ready: false
-  }
-});
+var game = _socket2["default"].channel("games:ID_GRY6", { player: currentUser });
+
 game.join().receive("ok", function (initialModel) {
   console.log("Joined game channel successfully", initialModel);
   elmFamiliadaGame = Elm.embed(Elm.FamiliadaGame, elmDiv, { backendModel: initialModel });
@@ -27640,16 +27635,17 @@ var _socket = require("./socket");
 
 var _socket2 = _interopRequireDefault(_socket);
 
-function initElmChat(domElement, chatUUID) {
+function initElmChat(domElement, chatUUID, currentUser) {
   var room_id = "chats:" + chatUUID;
   var elmChat = Elm.embed(Elm.Chat, domElement, {
     incMsg: { username: "Chat", content: "Welcome!" },
-    userListUpdate: { userlist: ["Anonymous"] }
+    userListUpdate: { userlist: [currentUser.name] }
   });
 
-  var chats = _socket2["default"].channel(room_id, {});
-  chats.join().receive("ok", function (resp) {
-    console.log("Joined " + room_id + " successfully", resp);
+  var chats = _socket2["default"].channel(room_id, { user: currentUser });
+  chats.join().receive("ok", function (userlist) {
+    console.log("Joined " + room_id + " successfully", userlist);
+    elmChat.ports.userListUpdate.send(userlist);
   }).receive("error", function (resp) {
     console.log("Unable to join " + room_id, resp);
   });

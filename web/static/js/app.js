@@ -21,22 +21,17 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 import socket from "./socket"
 import initElmChat from "./elm_chat"
 
+let currentUser = GameEnv.currentUser;
 var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmGlobalChatDiv = document.getElementById('elm-chat-global'),
     elmFamiliadaGame,
-    elmGlobalChat = initElmChat(elmGlobalChatDiv, "global");
+    elmGlobalChat = initElmChat(elmGlobalChatDiv, "global", currentUser);
     // elmChat = initElmChat(elmChatDiv, "game");
 
 // TODO: we have to init elm game & channel with proper auth token (encoded player_id)
-let currentUser = GameEnv.currentUser;
-let game = socket.channel("games:ID_GRY6", {
-  player: {
-    id: currentUser.id,
-    name: currentUser.name,
-    ready: false
-  }
-});
+let game = socket.channel("games:ID_GRY6", {player: currentUser});
+
 game.join()
   .receive("ok", initialModel => {
     console.log("Joined game channel successfully", initialModel)

@@ -97,7 +97,7 @@ view : Signal.Address Action -> Model -> Html
 view address model =
     div [class "chat"]
     [ div [class "row row-list"]
-      [ div [class "col-xs-9"] [(viewMsgList model.msgList)]
+      [ div [class "col-xs-9 msglist"] [(viewMsgList model.msgList)]
       , div [class "col-xs-3"] [(viewUserList model.users)]
       ]
     , div [class "row"]

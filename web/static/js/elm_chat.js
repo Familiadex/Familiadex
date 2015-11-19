@@ -1,16 +1,17 @@
 import socket from "./socket"
 
-function initElmChat (domElement, chatUUID){
+function initElmChat (domElement, chatUUID, currentUser){
   let room_id = "chats:" + chatUUID;
   let elmChat = Elm.embed(Elm.Chat, domElement,  {
     incMsg: {username: "Chat", content: "Welcome!"},
-    userListUpdate: {userlist: ["Anonymous"]}
+    userListUpdate: {userlist: [currentUser.name]}
   });
 
-  let chats = socket.channel(room_id, {})
+  let chats = socket.channel(room_id, {user: currentUser})
   chats.join()
-    .receive("ok", resp => {
-      console.log(`Joined ${room_id} successfully`, resp)
+    .receive("ok", userlist => {
+      console.log(`Joined ${room_id} successfully`, userlist)
+      elmChat.ports.userListUpdate.send(userlist)
     })
     .receive("error", resp => { console.log(`Unable to join ${room_id}`, resp) })
 
