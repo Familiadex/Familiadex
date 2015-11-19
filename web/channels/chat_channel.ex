@@ -6,7 +6,11 @@ defmodule Familiada.ChatUsers do
     if Enum.member?(users, username) do
       users
     else
-      [username | users]
+      if username do
+        [username | users]
+      else
+        users
+      end
     end
   end
 

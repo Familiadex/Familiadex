@@ -27633,7 +27633,7 @@ function initElmChat(domElement, chatUUID, currentUser) {
   var room_id = "chats:" + chatUUID;
   var elmChat = Elm.embed(Elm.Chat, domElement, {
     incMsg: { username: "Chat", content: "Welcome!" },
-    userListUpdate: { userlist: [currentUser.name] }
+    userListUpdate: { userlist: [currentUser.name || "Anonymous"] }
   });
 
   var chats = _socket2["default"].channel(room_id, { user: currentUser });

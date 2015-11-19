@@ -4,7 +4,7 @@ function initElmChat (domElement, chatUUID, currentUser){
   let room_id = "chats:" + chatUUID;
   let elmChat = Elm.embed(Elm.Chat, domElement,  {
     incMsg: {username: "Chat", content: "Welcome!"},
-    userListUpdate: {userlist: [currentUser.name]}
+    userListUpdate: {userlist: [currentUser.name || "Anonymous"]}
   });
 
   let chats = socket.channel(room_id, {user: currentUser})
