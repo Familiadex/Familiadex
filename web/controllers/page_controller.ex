@@ -8,7 +8,7 @@ defmodule Familiada.PageController do
   end
 
   def game(conn, _params) do
-    render conn, "game.html"
+    render conn, "game.html", game_env: "var GameEnv = { currentUser: #{Familiada.User.to_json(current_user(conn))} };"
   end
 
   defp authenticate(conn, :login) do

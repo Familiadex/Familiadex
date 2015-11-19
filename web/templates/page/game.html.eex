@@ -1,3 +1,6 @@
+<script>
+  <%= raw @game_env %>
+</script>
 <div id="elm-main">
 </div>
 <div id="elm-chat-global">

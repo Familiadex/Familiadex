@@ -28,4 +28,10 @@ defmodule Familiada.User do
     |> validate_confirmation(:password, message: "does not match")
   end
 
+  def to_json(model) do
+    Poison.encode! %{
+      id: model.id,
+      name: String.split(model.email, "@") |> Enum.at(0) }
+  end
+
 end
