@@ -467,15 +467,15 @@ Elm.Chat.make = function (_elm) {
    var viewUserList = function (userList) {
       return function () {
          var header = A2($Html.a,
-         _L.fromArray([$Html$Attributes.$class("list-group-item active")]),
+         _L.fromArray([]),
          _L.fromArray([$Html.text("Users in chat:")]));
          var userView = function (u) {
             return A2($Html.div,
-            _L.fromArray([$Html$Attributes.$class("list-group")]),
+            _L.fromArray([]),
             _L.fromArray([$Html.text(u)]));
          };
          return A2($Html.div,
-         _L.fromArray([$Html$Attributes.$class("list-group-item")]),
+         _L.fromArray([$Html$Attributes.$class("userlist")]),
          A2($List._op["::"],
          header,
          A2($List.map,
@@ -487,7 +487,7 @@ Elm.Chat.make = function (_elm) {
       return function () {
          var msgView = function (m) {
             return A2($Html.div,
-            _L.fromArray([$Html$Attributes.$class("list-group")]),
+            _L.fromArray([]),
             _L.fromArray([$Html.text(A2($Basics._op["++"],
             m.username,
             A2($Basics._op["++"],
@@ -495,7 +495,7 @@ Elm.Chat.make = function (_elm) {
             m.content)))]));
          };
          return A2($Html.div,
-         _L.fromArray([$Html$Attributes.$class("list-group-item")]),
+         _L.fromArray([]),
          A2($List.map,msgView,msgList));
       }();
    };
@@ -514,7 +514,7 @@ Elm.Chat.make = function (_elm) {
               model);
             case "InputUsername":
             return _U.replace([["currentUser"
-                               ,action._0]],
+                               ,action._0.newUsername]],
               model);
             case "NewMsg":
             return _U.replace([["msgList"
@@ -526,9 +526,13 @@ Elm.Chat.make = function (_elm) {
             case "SendMsg":
             return _U.replace([["inputMsg"
                                ,""]],
+              model);
+            case "UserListUpdate":
+            return _U.replace([["users"
+                               ,action._0]],
               model);}
          _U.badCase($moduleName,
-         "between lines 65 and 70");
+         "between lines 81 and 87");
       }();
    });
    var model = {_: {}
@@ -538,6 +542,17 @@ Elm.Chat.make = function (_elm) {
                                        ,content: "Welcome!"
                                        ,username: "Chat"}])
                ,users: _L.fromArray(["Anonymous"])};
+   var userListUpdate = Elm.Native.Port.make(_elm).inboundSignal("userListUpdate",
+   "{ userlist : List String }",
+   function (v) {
+      return typeof v === "object" && "userlist" in v ? {_: {}
+                                                        ,userlist: typeof v.userlist === "object" && v.userlist instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.userlist.map(function (v) {
+                                                           return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",
+                                                           v);
+                                                        })) : _U.badPort("an array",
+                                                        v.userlist)} : _U.badPort("an object with fields `userlist`",
+      v);
+   });
    var incMsg = Elm.Native.Port.make(_elm).inboundSignal("incMsg",
    "Chat.Msg",
    function (v) {
@@ -548,10 +563,25 @@ Elm.Chat.make = function (_elm) {
                                                                           v.content)} : _U.badPort("an object with fields `username`, `content`",
       v);
    });
+   var UserListUpdate = function (a) {
+      return {ctor: "UserListUpdate"
+             ,_0: a};
+   };
+   var userListUpdates = A2($Signal.map,
+   function (m) {
+      return UserListUpdate(m.userlist);
+   },
+   userListUpdate);
    var InputUsername = function (a) {
       return {ctor: "InputUsername"
              ,_0: a};
    };
+   var buildUsernameInput = F2(function (model,
+   newName) {
+      return InputUsername({_: {}
+                           ,newUsername: newName
+                           ,oldUsername: model.currentUser});
+   });
    var SendMsg = function (a) {
       return {ctor: "SendMsg"
              ,_0: a};
@@ -578,7 +608,7 @@ Elm.Chat.make = function (_elm) {
    var view = F2(function (address,
    model) {
       return A2($Html.div,
-      _L.fromArray([]),
+      _L.fromArray([$Html$Attributes.$class("chat")]),
       _L.fromArray([A2($Html.div,
                    _L.fromArray([$Html$Attributes.$class("row row-list")]),
                    _L.fromArray([A2($Html.div,
@@ -588,7 +618,7 @@ Elm.Chat.make = function (_elm) {
                                 _L.fromArray([$Html$Attributes.$class("col-xs-3")]),
                                 _L.fromArray([viewUserList(model.users)]))]))
                    ,A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("row row-list")]),
+                   _L.fromArray([$Html$Attributes.$class("row")]),
                    _L.fromArray([A2($Html.input,
                                 _L.fromArray([$Html$Attributes.$class("col-xs-3")
                                              ,$Html$Attributes.value(model.currentUser)
@@ -596,7 +626,7 @@ Elm.Chat.make = function (_elm) {
                                              "input",
                                              $Html$Events.targetValue,
                                              function ($) {
-                                                return $Signal.message(address)(InputUsername($));
+                                                return $Signal.message(address)(buildUsernameInput(model)($));
                                              })]),
                                 _L.fromArray([$Html.text("Send")]))
                                 ,A2($Html.input,
@@ -645,8 +675,41 @@ Elm.Chat.make = function (_elm) {
       mapToMsg,
       onlySendMsg);
    }());
+   var newUser = Elm.Native.Port.make(_elm).outboundSignal("newUser",
+   function (v) {
+      return {oldUsername: v.oldUsername
+             ,newUsername: v.newUsername};
+   },
+   function () {
+      var mapToSth = function (action) {
+         return function () {
+            switch (action.ctor)
+            {case "InputUsername":
+               return action._0;}
+            return {_: {}
+                   ,newUsername: "WTF?"
+                   ,oldUsername: "WTF?"};
+         }();
+      };
+      var onlyThis = function (a) {
+         return function () {
+            switch (a.ctor)
+            {case "InputUsername":
+               return true;}
+            return false;
+         }();
+      };
+      var goodSignal = A3($Signal.filter,
+      onlyThis,
+      NoOp,
+      actions.signal);
+      return A2($Signal.map,
+      mapToSth,
+      goodSignal);
+   }());
    var mainSignal = $Signal.mergeMany(_L.fromArray([actions.signal
-                                                   ,incMsgActions]));
+                                                   ,incMsgActions
+                                                   ,userListUpdates]));
    var mergedModel = A3($Signal.foldp,
    update,
    model,
@@ -677,13 +740,16 @@ Elm.Chat.make = function (_elm) {
                       ,InputMsg: InputMsg
                       ,SendMsg: SendMsg
                       ,InputUsername: InputUsername
+                      ,UserListUpdate: UserListUpdate
                       ,incMsgActions: incMsgActions
+                      ,userListUpdates: userListUpdates
                       ,model: model
                       ,mainSignal: mainSignal
                       ,mergedModel: mergedModel
                       ,update: update
                       ,mkMessage: mkMessage
                       ,view: view
+                      ,buildUsernameInput: buildUsernameInput
                       ,sendMessage: sendMessage
                       ,viewMsgList: viewMsgList
                       ,viewUserList: viewUserList
@@ -27568,16 +27634,17 @@ var _socket = require("./socket");
 var _socket2 = _interopRequireDefault(_socket);
 
 function initElmChat(domElement, chatUUID) {
-  var channelName = "chats:" + chatUUID;
+  var room_id = "chats:" + chatUUID;
   var elmChat = Elm.embed(Elm.Chat, domElement, {
-    incMsg: { username: "Chat", content: "Welcome!" }
+    incMsg: { username: "Chat", content: "Welcome!" },
+    userListUpdate: { userlist: ["Anonymous"] }
   });
 
-  var chats = _socket2["default"].channel(channelName, {});
+  var chats = _socket2["default"].channel(room_id, {});
   chats.join().receive("ok", function (resp) {
-    console.log("Joined " + channelName + " successfully", resp);
+    console.log("Joined " + room_id + " successfully", resp);
   }).receive("error", function (resp) {
-    console.log("Unable to join " + channelName, resp);
+    console.log("Unable to join " + room_id, resp);
   });
 
   // Push into elm ports
@@ -27587,7 +27654,8 @@ function initElmChat(domElement, chatUUID) {
   });
 
   chats.on("back:userlist", function (ul) {
-    elmChat.ports.incMsg.send(msg);
+    console.log("back:userlist", ul);
+    elmChat.ports.userListUpdate.send(ul);
   });
 
   // Subsribe to elm ports
@@ -27596,9 +27664,14 @@ function initElmChat(domElement, chatUUID) {
     chats.push("front:msg", msg);
   });
 
-  // elmChat.ports.joinChat.subscribe(function(username){
-  //   chats.push("front:joined", username);
-  // })
+  elmChat.ports.newUser.subscribe(function (nameChange) {
+    console.log("front:joined", nameChange);
+    chats.push("front:joined", {
+      room_id: room_id,
+      newUsername: nameChange.newUsername,
+      oldUsername: nameChange.oldUsername
+    });
+  });
 
   return elmChat;
 }

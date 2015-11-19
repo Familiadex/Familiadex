@@ -1,0 +1,14 @@
+.chat{
+  color: yellow;
+  background-color: black;
+  font-family: monospace;
+  padding: 10px;
+  padding-bottom: 0px;
+}
+.chat .userlist{
+  border-left: dotted yellow;
+  padding-left: 10px
+}
+.chat input{
+  background-color: black;
+}

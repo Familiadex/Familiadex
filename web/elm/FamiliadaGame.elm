@@ -93,7 +93,6 @@ viewTeamPlayers team =
       ul [] (List.map viewPlayer team.players)
     ]
 
-
 ---- INPUTS ----
 port backendModel : Signal Model
 port modelUpdateCmd : Signal BackendCmd
