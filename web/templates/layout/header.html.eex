@@ -1,5 +1,4 @@
 <div class="header">
-  <div class="jumbotron logo"> Familiadex </div>
   <ul class="nav nav-pills pull-right">
     <li>
       <%= link "Home", to: page_path(@conn, :public) %>
@@ -23,4 +22,5 @@
       </li>
     <% end %>
   </ul>
+  <div class="jumbotron"> Familiadex </div>
 </div>
