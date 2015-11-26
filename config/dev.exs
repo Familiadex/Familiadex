@@ -35,7 +35,7 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :familiada, Familiada.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "damiantrojnar",
+  username: System.get_env("FAMILIADEX_DB_USER"),
   password: "",
   database: "familiada_dev",
   hostname: "localhost",
