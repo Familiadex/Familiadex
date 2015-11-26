@@ -3,6 +3,10 @@
 [![Join the chat at https://gitter.im/Familiadex/Familiadex](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Familiadex/Familiadex?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [Trello board](https://trello.com/b/4t4cuGYZ/workflow)
 
+## Dependencies
+  1. PostgreSQL
+  2. Redis
+
 ## Start the App
   1. Install dependencies with `mix deps.get`
   2. `mix ecto.create` seems to be broken, run `psql` & `create database familiada_dev owner <your_username>;`
