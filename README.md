@@ -27,6 +27,10 @@ https://familiadex.herokuapp.com/
 === familiadex Buildpack URLs
   1. https://github.com/HashNuke/heroku-buildpack-elixir
   2. https://github.com/Machiaweliczny/heroku-buildpack-elm
+  3. 
+  
+### Deploy to heroku
+  1. Add priv/static files to git before pushing to heroku
 
 ## Learn more
 
