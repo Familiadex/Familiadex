@@ -76,108 +76,35 @@ end
 
 defmodule Familiada.GameState do
   import Exredis
-  alias Familiada.GameActions
+  alias Familiada.GameModel
+  alias Familiada.Actions
+  alias Familiada.Reactions
 
   def update(room_id, player_id, action_name, action_params \\ []) do
     IO.puts "^^^^^^^^^ #{action_name}"
     # NOTE: You should never symbolize user provided strings
-    room = get_room(room_id)
+    game_model = get_room(room_id)
     # This is required because from Elm we get actions in CamelizedFormat
     underscored_action = Mix.Utils.underscore(action_name)
-    if Enum.member?(allowed_actions, underscored_action) do
+    if Actions.allowed(game_model, underscored_action) do
       action = String.to_atom(underscored_action) # change to symbol so can be dynamically called
-      new_room = apply(GameActions, action, [room | [player_id | action_params]]) # dynamic action call
-      set_room(new_room, room_id)
-      new_room
+      updated_model = apply(Reactions, action, [game_model | [player_id | action_params]]) # dynamic action call
+      set_room(updated_model, room_id)
+      updated_model
     else
-      room
+      game_model
     end
   end
 
   # This uses Redis as depencency so I would need to change it probably
   def get_room(room_id) do
      room = start_link |> elem(1) |> query ["GET", room_id]
-     room != :undefined && Poison.decode!(room) || initial_model
+     room != :undefined && Poison.decode!(room) || GameModel.initial_model
   end
   # NOTE: This should be in sync with BackendActions in Elm
-  defp allowed_actions do
-    [ "player_joined",
-      "player_left",
-      "toogle_player_ready",
-      "start_game"
-    ]
-  end
+
   #### #### #### #### ####
   defp set_room(room, room_id) do
     start_link |> elem(1) |> query ["SET", room_id, Poison.encode!(room)]
-  end
-
-  defp initial_model do
-    %{
-      mode: "WaitingForPlayers",
-      user_id: 0,
-      playersList: [],
-      readyQueue: []
-    }
-  end
-end
-
-defmodule Familiada.GameActions do
-  # Here we should have GameActions which should be similar to game actions on Frontend
-  # Although here we are concerned about authorization and changing game model only
-  # On frontend we are concerned about displaying this model and dispatching actions as update_cmd
-  alias Familiada.Utils
-
-  def player_joined(model, player_id, player) do
-    playersList = Dict.get(model, "playersList", [])
-    Dict.put(model, "playersList", Utils.uniq_add(playersList, player))
-  end
-
-  def player_left(model, player_id, player) do
-    playersList = Dict.get(model, "playersList", [])
-    Dict.put(model, "playersList",  Utils.without(playersList, player))
-  end
-
-  def toogle_player_ready(model, player_id) do
-    playersList = Dict.get(model, "playersList", [])
-    set_ready = fn(p) ->
-      if p["id"] == player_id do
-        Dict.put(p, "ready", !Dict.get(p, "ready"))
-      else
-        p
-      end
-    end
-    nplayersList = Enum.map(playersList, set_ready)
-    Dict.put(model, "playersList", nplayersList)
-  end
-
-  defp get_game_id(model) do
-    next_game_id = Dict.get(model, "nextGameId", 0)
-    Dict.put(model, "nextGameId", next_game_id + 1)
-  end
-
-  def start_game(model, player_id) do
-    readyQueue = Dict.get(model, "readyQueue", []) # rigid 2 players
-    if [red_team_player, blue_team_player] = readyQueue do
-      Dict.put(model, "redTeam", [red_team_player]) |> Dict.put("blueTeam", [blue_team_player])
-    else
-      model
-    end
-  end
-end
-
-defmodule Familiada.Utils do
-  # Required
-  def uniq_add(list, x) do
-    ids = Enum.map(list, fn(r) -> r["id"] end)
-    if Enum.member?(ids, x["id"] || x) do
-      list
-    else
-      [x | list]
-    end
-  end
-
-  def without(enumerable, to_remove) do
-    Enum.filter(enumerable, fn(x) -> x != to_remove end)
   end
 end
