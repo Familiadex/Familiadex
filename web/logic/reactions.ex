@@ -28,22 +28,34 @@ defmodule Familiada.Reactions do
     Dict.put(model, "playersList", nplayersList)
   end
 
-  defp sits_already(model, player, team_id) do
-    model["redTeam"]["p1"]["id"] == player["id"] ||
-    model["redTeam"]["p2"]["id"] == player["id"] ||
-    model["redTeam"]["p3"]["id"] == player["id"] ||
-    model["blueTeam"]["p1"]["id"] == player["id"] ||
-    model["blueTeam"]["p2"]["id"] == player["id"] ||
-    model["blueTeam"]["p3"]["id"] == player["id"]
+  defp sits_already(model, player) do
+    model["redTeam"]["p1"]["id"] == player["id"] && ["redTeam", "p1"] ||
+    model["redTeam"]["p2"]["id"] == player["id"] && ["redTeam", "p2"]||
+    model["redTeam"]["p3"]["id"] == player["id"] && ["redTeam", "p3"] ||
+    model["blueTeam"]["p1"]["id"] == player["id"] && ["blueTeam", "p1"] ||
+    model["blueTeam"]["p2"]["id"] == player["id"] && ["blueTeam", "p2"] ||
+    model["blueTeam"]["p3"]["id"] == player["id"] && ["blueTeam", "p3"]
   end
 
   def sit_down(model, player, team_id, position) do
-    if sits_already(model, player, team_id) do
+    if sits_already(model, player) != false do
       model
     else
       team = model[team_id]
       seated = Dict.put(team, position, player)
       Dict.put(model, team_id, seated)
+    end
+  end
+
+  def stand_up(model, player) do
+    seated_at = sits_already(model, player)
+    if seated_at != false do
+      [team_id, position] = seated_at
+      team = model[team_id]
+      without = Dict.put(team, position, %{id: 0, name: "FREE SLOT"})
+      Dict.put(model, team_id, without)
+    else
+      model
     end
   end
 
