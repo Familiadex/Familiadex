@@ -2,11 +2,12 @@ module FamiliadaBackendActions where
 
 type BackendAction = PlayerJoined
                    | PlayerLeft
-                   | TooglePlayerReady
+                   | SitDown
+                   | StandUp
                    | StartGame
                    | NoAction
 
-type alias BackendCmd = {cmd: String, params: List Int}
+type alias BackendCmd = {cmd: String, params: List String}
 
-mkBackendCmd : BackendAction -> List Int -> BackendCmd
+mkBackendCmd : BackendAction -> List String -> BackendCmd
 mkBackendCmd action params = {cmd = toString action, params = params}

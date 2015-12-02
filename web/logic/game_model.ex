@@ -1,21 +1,23 @@
 defmodule Familiada.GameModel do
   def initial_model do
     %{
-      user_id: 0,
-      mode: "WaitingForPlayers",
-      playerList: [],
-      readyQueue: [],
+      "user_id" => 0,
+      "mode" => "WaitingForPlayers",
+      "playerList" => [],
+      "readyQueue" => [],
+      "redTeam" => %{
+        "id" => "redTeam",
+        "p1" => %{id: 0, name: "FREE SLOT"},
+        "p2" => %{id: 0, name: "FREE SLOT"},
+        "p3" => %{id: 0, name: "FREE SLOT"},
+      },
+      "blueTeam" => %{
+        "id" => "blueTeam",
+        "p1" => %{id: 0, name: "FREE SLOT"},
+        "p2" => %{id: 0, name: "FREE SLOT"},
+        "p3" => %{id: 0, name: "FREE SLOT"},
+      },
       # roomSize: 6,
-      # redTeam: %{
-      #   p1: %{}, # player
-      #   p2: %{},
-      #   p3: %{},
-      # },
-      # blueTeam: %{
-      #   p1: %{},
-      #   p2: %{},
-      #   p3: %{},
-      # },
       # pointsToTake: 0,
       # redTeamPoints: 0,
       # blueTeamPoints: 0,

@@ -5,20 +5,20 @@ defmodule Familiada.Reactions do
   # On frontend we are concerned about displaying this model and dispatching actions as update_cmd
   alias Familiada.Utils
 
-  def player_joined(model, player_id, player) do
+  def player_joined(model, player) do
     playersList = Dict.get(model, "playersList", [])
     Dict.put(model, "playersList", Utils.uniq_add(playersList, player))
   end
 
-  def player_left(model, player_id, player) do
+  def player_left(model, player) do
     playersList = Dict.get(model, "playersList", [])
     Dict.put(model, "playersList",  Utils.without(playersList, player))
   end
 
-  def toogle_player_ready(model, player_id) do
+  def toogle_player_ready(model, player) do
     playersList = Dict.get(model, "playersList", [])
     set_ready = fn(p) ->
-      if p["id"] == player_id do
+      if p["id"] == player["id"] do
         Dict.put(p, "ready", !Dict.get(p, "ready"))
       else
         p
@@ -28,12 +28,31 @@ defmodule Familiada.Reactions do
     Dict.put(model, "playersList", nplayersList)
   end
 
+  defp sits_already(model, player, team_id) do
+    model["redTeam"]["p1"]["id"] == player["id"] ||
+    model["redTeam"]["p2"]["id"] == player["id"] ||
+    model["redTeam"]["p3"]["id"] == player["id"] ||
+    model["blueTeam"]["p1"]["id"] == player["id"] ||
+    model["blueTeam"]["p2"]["id"] == player["id"] ||
+    model["blueTeam"]["p3"]["id"] == player["id"]
+  end
+
+  def sit_down(model, player, team_id, position) do
+    if sits_already(model, player, team_id) do
+      model
+    else
+      team = model[team_id]
+      seated = Dict.put(team, position, player)
+      Dict.put(model, team_id, seated)
+    end
+  end
+
   defp get_game_id(model) do
     next_game_id = Dict.get(model, "nextGameId", 0)
     Dict.put(model, "nextGameId", next_game_id + 1)
   end
 
-  def start_game(model, player_id) do
+  def start_game(model, player) do
     readyQueue = Dict.get(model, "readyQueue", []) # rigid 2 players
     if [red_team_player, blue_team_player] = readyQueue do
       Dict.put(model, "redTeam", [red_team_player]) |> Dict.put("blueTeam", [blue_team_player])

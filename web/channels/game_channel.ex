@@ -19,7 +19,7 @@ defmodule Familiada.GameChannel do
     socket = assign(socket, :player, payload["player"])
     # FIXME: Adding ready to play in
     proper_player = Dict.put(player(socket), "ready", :false)
-    game_state = GameState.update(socket.topic, player(socket)["id"], "player_joined", [proper_player])
+    game_state = GameState.update(socket.topic, player(socket), "player_joined")
     game_state = Dict.put(game_state, "user_id", player(socket)["id"])
     # Callback to action that should happen after users join game room
     send(self, :after_join)
@@ -40,7 +40,6 @@ defmodule Familiada.GameChannel do
   intercept ["back:modelUpdate"]
   def handle_out("back:modelUpdate", msg, socket) do
     model = Dict.get(msg, :model)
-    IO.puts "HANDLE_OUT ***** #{Poison.encode! model}"
     user_model = Dict.put(model, "user_id", player(socket)["id"])
     customized_msg = Dict.put(msg, :model, user_model)
     push socket, "back:modelUpdate", customized_msg
@@ -49,7 +48,7 @@ defmodule Familiada.GameChannel do
 
   # TO CONFIRM: Action that happens when users leaves socket ?
   def leave(_reason, socket) do
-    game_state = GameState.update(socket.topic, player(socket)["id"], "player_left")
+    game_state = GameState.update(socket.topic, player(socket), "player_left")
     broadcast socket, "back:modelUpdate", %{ model: game_state }
     {:ok, socket}
   end
@@ -58,7 +57,7 @@ defmodule Familiada.GameChannel do
   # They send us cmd = %{cmd: cmdName, params[strings]}
   def handle_in("modelUpdateCmd", cmd, socket) do
     # TODO: Check if action authorized given user and state - which layer?
-    game_state = GameState.update(socket.topic, player(socket)["id"], cmd["cmd"], cmd["params"])
+    game_state = GameState.update(socket.topic, player(socket), cmd["cmd"], cmd["params"])
     broadcast socket, "back:modelUpdate", %{ model: game_state }
     {:noreply, socket}
   end
@@ -80,7 +79,7 @@ defmodule Familiada.GameState do
   alias Familiada.Actions
   alias Familiada.Reactions
 
-  def update(room_id, player_id, action_name, action_params \\ []) do
+  def update(room_id, player, action_name, action_params \\ []) do
     IO.puts "^^^^^^^^^ #{action_name}"
     # NOTE: You should never symbolize user provided strings
     game_model = get_room(room_id)
@@ -88,7 +87,7 @@ defmodule Familiada.GameState do
     underscored_action = Mix.Utils.underscore(action_name)
     if Actions.allowed(underscored_action, game_model) do
       action = String.to_atom(underscored_action) # change to symbol so can be dynamically called
-      updated_model = apply(Reactions, action, [game_model | [player_id | action_params]]) # dynamic action call
+      updated_model = apply(Reactions, action, [game_model | [player | action_params]]) # dynamic action call
       set_room(updated_model, room_id)
       updated_model
     else
