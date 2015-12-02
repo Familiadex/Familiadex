@@ -1,7 +1,8 @@
 defmodule Familiada.Actions do
   def allowed(action_name, model) do
     # This should also use ActioonAuthorization
-    Enum.member?(model[model.mode], action_name)
+    current_mode = model[:mode] || model["mode"]
+    Enum.member?(allowed_actions[current_mode], action_name)
   end
 
   # This should be called actions tree

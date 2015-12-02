@@ -86,7 +86,7 @@ defmodule Familiada.GameState do
     game_model = get_room(room_id)
     # This is required because from Elm we get actions in CamelizedFormat
     underscored_action = Mix.Utils.underscore(action_name)
-    if Actions.allowed(game_model, underscored_action) do
+    if Actions.allowed(underscored_action, game_model) do
       action = String.to_atom(underscored_action) # change to symbol so can be dynamically called
       updated_model = apply(Reactions, action, [game_model | [player_id | action_params]]) # dynamic action call
       set_room(updated_model, room_id)
