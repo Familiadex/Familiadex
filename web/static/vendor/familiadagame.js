@@ -2070,7 +2070,14 @@ Elm.FamiliadaGame.make = function (_elm) {
                       _L.fromArray([teamView(model.redTeam)]))
                       ,A2($Html.div,
                       _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-info")]),
-                      _L.fromArray([teamView(model.blueTeam)]))]));
+                      _L.fromArray([teamView(model.blueTeam)]))
+                      ,A2($Html.button,
+                      _L.fromArray([A2($Html$Events.onClick,
+                      ba,
+                      A2($FamiliadaBackendActions.mkBackendCmd,
+                      $FamiliadaBackendActions.StandUp,
+                      _L.fromArray([])))]),
+                      _L.fromArray([$Html.text("Wstan")]))]));
       }();
    });
    var currentPlayer = function (model) {

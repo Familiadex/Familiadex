@@ -74,6 +74,7 @@ viewTeamBoards address ba model =
     div [class "row row-lis"]
       [ div [class "col-xs-6 alert-danger"] [teamView model.redTeam]
       , div [class "col-xs-6 alert-info"] [teamView model.blueTeam]
+      , button [onClick ba (mkBackendCmd FBA.StandUp [])] [text "Wstan"]
       ]
 
 -- viewPlayersList : Address Action -> Address BackendAction -> Model -> Html
