@@ -16,10 +16,15 @@ import Signal exposing (Signal, Address)
 type Action
     = NoOp
     | AnswersListAction AnswersList.Action
-    | BackendAction
 
 allPlayersReady : Model -> Bool
-allPlayersReady model = List.all (\x -> x.ready == True) model.playersList
+allPlayersReady model =
+  model.redTeam.p1.id /= 0 &&
+  model.redTeam.p2.id /= 0 &&
+  model.redTeam.p3.id /= 0 &&
+  model.blueTeam.p1.id /= 0 &&
+  model.blueTeam.p2.id /= 0 &&
+  model.blueTeam.p3.id /= 0
 
 -- How we update our Model on a given Action?
 update : Action -> Model -> Model
@@ -33,14 +38,14 @@ update action model =
       --    { model | currentQuestion <- updatedCurrentQuestions }
 ---- VIEW ----
 
-view : Address Action -> Address BackendAction -> Model -> Html
+view : Address Action -> Address BackendCmd -> Model -> Html
 view address ba model = case model.mode of
-    "WaitingForPlayers" -> queueView address ba model
+    "WaitingForPlayers" -> viewTeamBoards address ba model
     -- "Started" -> boardView address model
 
-queueView: Address Action -> Address BackendAction -> Model -> Html
-queueView address ba model =
-  viewPlayersList address ba model
+-- queueView: Address Action -> Address BackendAction -> Model -> Html
+-- queueView address ba model =
+--   viewPlayersList address ba model
 
 -- boardView: Address Action -> Model -> Html
 -- boardView address model =
@@ -57,46 +62,51 @@ currentPlayer : Model -> Maybe Player
 currentPlayer model =
   List.filter (\x -> x.id == model.user_id) model.playersList |> List.head
 
-
-viewPlayersList : Address Action -> Address BackendAction -> Model -> Html
-viewPlayersList address ba model =
-  let readyClass p = if p then class "alert alert-success pointer" else class "alert alert-danger pointer"
-      readyText p = if p then " READY" else " NOT READY"
-      viewPlayer p = li [] [ div
-                             [readyClass p.ready] [text (p.name ++ " - "++ (readyText p.ready))]
-                           ]
-      startButton = if allPlayersReady model
-        then
-          div [onClick ba FBA.TooglePlayerReady, class "btn btn-success"] [text "Start Game"]
-        else
-          div [] [text "Waiting for all players ready..."]
-      toogleButton = case (currentPlayer model) of
-        Just p ->
-          let toogleText = if p.ready then "I'm not ready" else "I'm ready"
-          in
-            div [onClick ba FBA.TooglePlayerReady, class "btn btn-info"] [text toogleText]
+viewTeamBoards : Address Action -> Address BackendCmd -> Model -> Html
+viewTeamBoards address ba model =
+  let playerView p = div [class "btn"] [text p.name]
+      teamView t = ul [class "list-group"]
+                   [ li [onClick ba (mkBackendCmd FBA.SitDown [t.id, "p1"]), class "list-group-item"] [playerView t.p1]
+                   , li [onClick ba (mkBackendCmd FBA.SitDown [t.id, "p2"]), class "list-group-item"] [playerView t.p2]
+                   , li [onClick ba (mkBackendCmd FBA.SitDown [t.id, "p3"]), class "list-group-item"] [playerView t.p3]
+                   ]
   in
-    div []
-    [ text "Players in Que"
-    , ul [] (List.map viewPlayer model.playersList)
-    , toogleButton
-    , startButton
-    ]
+    div [class "row row-lis"]
+      [ div [class "col-xs-6 alert-danger"] [teamView model.redTeam]
+      , div [class "col-xs-6 alert-info"] [teamView model.blueTeam]
+      , button [onClick ba (mkBackendCmd FBA.StandUp [])] [text "Wstan"]
+      ]
 
-viewTeamPlayers : Team -> Html
-viewTeamPlayers team =
-  let viewPlayer p = li [] [text p.name]
-  in
-    div []
-    [
-      text (team.name ++ " " ++ "players"),
-      ul [] (List.map viewPlayer team.players)
-    ]
+-- viewPlayersList : Address Action -> Address BackendAction -> Model -> Html
+-- viewPlayersList address ba model =
+--   let readyClass p = if p then class "alert alert-success pointer" else class "alert alert-danger pointer"
+--       readyText p = if p then " READY" else " NOT READY"
+--       viewPlayer p = li [] [ div
+--                              [readyClass p.ready] [text (p.name ++ " - "++ (readyText p.ready))]
+--                            ]
+--       startButton = if allPlayersReady model
+--         then
+--           div [onClick ba FBA.TooglePlayerReady, class "btn btn-success"] [text "Start Game"]
+--         else
+--           div [] [text "Waiting for all players ready..."]
+--       toogleButton = case (currentPlayer model) of
+--         Just p ->
+--           let toogleText = if p.ready then "I'm not ready" else "I'm ready"
+--           in
+--             div [onClick ba FBA.TooglePlayerReady, class "btn btn-info"] [text toogleText]
+--   in
+--     div []
+--     [ text "Players in Que"
+--     , ul [] (List.map viewPlayer model.playersList)
+--     , toogleButton
+--     , startButton
+--     ]
+
 
 ---- INPUTS ----
 port backendModel : Signal Model
 port modelUpdateCmd : Signal BackendCmd
-port modelUpdateCmd = Signal.map (\a -> mkBackendCmd a []) baBox.signal
+port modelUpdateCmd = baBox.signal
 
 -- wire the entire application together
 main : Signal Html
@@ -113,5 +123,5 @@ actions : Signal.Mailbox Action
 actions =
   Signal.mailbox NoOp
 
-baBox : Signal.Mailbox BackendAction
-baBox = Signal.mailbox FBA.NoAction
+baBox : Signal.Mailbox BackendCmd
+baBox = Signal.mailbox (mkBackendCmd FBA.NoAction [])

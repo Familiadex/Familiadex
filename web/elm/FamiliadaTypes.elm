@@ -5,18 +5,20 @@ type alias Model =
     , user_id : Int
     , playersList : List Player
     , readyQueue : List Int
+    , redTeam : Team
+    , blueTeam : Team
     }
 
 type alias Player =
     { id : Int
     , name : String
-    , ready : Bool
     }
 
 type alias Team =
-    { id: Int
-    , name: String
-    , players: List Player
+    { id : String
+    , p1 : Player
+    , p2 : Player
+    , p3 : Player
     }
 
 type alias Question =

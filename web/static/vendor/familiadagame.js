@@ -1909,13 +1909,15 @@ Elm.FamiliadaBackendActions.make = function (_elm) {
    });
    var NoAction = {ctor: "NoAction"};
    var StartGame = {ctor: "StartGame"};
-   var TooglePlayerReady = {ctor: "TooglePlayerReady"};
+   var StandUp = {ctor: "StandUp"};
+   var SitDown = {ctor: "SitDown"};
    var PlayerLeft = {ctor: "PlayerLeft"};
    var PlayerJoined = {ctor: "PlayerJoined"};
    _elm.FamiliadaBackendActions.values = {_op: _op
                                          ,PlayerJoined: PlayerJoined
                                          ,PlayerLeft: PlayerLeft
-                                         ,TooglePlayerReady: TooglePlayerReady
+                                         ,SitDown: SitDown
+                                         ,StandUp: StandUp
                                          ,StartGame: StartGame
                                          ,NoAction: NoAction
                                          ,BackendCmd: BackendCmd
@@ -1944,7 +1946,9 @@ Elm.FamiliadaGame.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var baBox = $Signal.mailbox($FamiliadaBackendActions.NoAction);
+   var baBox = $Signal.mailbox(A2($FamiliadaBackendActions.mkBackendCmd,
+   $FamiliadaBackendActions.NoAction,
+   _L.fromArray([])));
    var modelUpdateCmd = Elm.Native.Port.make(_elm).outboundSignal("modelUpdateCmd",
    function (v) {
       return {cmd: v.cmd
@@ -1952,61 +1956,130 @@ Elm.FamiliadaGame.make = function (_elm) {
                 return v;
              })};
    },
-   A2($Signal.map,
-   function (a) {
-      return A2($FamiliadaBackendActions.mkBackendCmd,
-      a,
-      _L.fromArray([]));
-   },
-   baBox.signal));
+   baBox.signal);
    var backendModel = Elm.Native.Port.make(_elm).inboundSignal("backendModel",
    "FamiliadaTypes.Model",
    function (v) {
-      return typeof v === "object" && "mode" in v && "user_id" in v && "playersList" in v && "readyQueue" in v ? {_: {}
-                                                                                                                 ,mode: typeof v.mode === "string" || typeof v.mode === "object" && v.mode instanceof String ? v.mode : _U.badPort("a string",
-                                                                                                                 v.mode)
-                                                                                                                 ,user_id: typeof v.user_id === "number" ? v.user_id : _U.badPort("a number",
-                                                                                                                 v.user_id)
-                                                                                                                 ,playersList: typeof v.playersList === "object" && v.playersList instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.playersList.map(function (v) {
-                                                                                                                    return typeof v === "object" && "id" in v && "name" in v && "ready" in v ? {_: {}
-                                                                                                                                                                                               ,id: typeof v.id === "number" ? v.id : _U.badPort("a number",
-                                                                                                                                                                                               v.id)
-                                                                                                                                                                                               ,name: typeof v.name === "string" || typeof v.name === "object" && v.name instanceof String ? v.name : _U.badPort("a string",
-                                                                                                                                                                                               v.name)
-                                                                                                                                                                                               ,ready: typeof v.ready === "boolean" ? v.ready : _U.badPort("a boolean (true or false)",
-                                                                                                                                                                                               v.ready)} : _U.badPort("an object with fields `id`, `name`, `ready`",
-                                                                                                                    v);
-                                                                                                                 })) : _U.badPort("an array",
-                                                                                                                 v.playersList)
-                                                                                                                 ,readyQueue: typeof v.readyQueue === "object" && v.readyQueue instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.readyQueue.map(function (v) {
-                                                                                                                    return typeof v === "number" ? v : _U.badPort("a number",
-                                                                                                                    v);
-                                                                                                                 })) : _U.badPort("an array",
-                                                                                                                 v.readyQueue)} : _U.badPort("an object with fields `mode`, `user_id`, `playersList`, `readyQueue`",
+      return typeof v === "object" && "mode" in v && "user_id" in v && "playersList" in v && "readyQueue" in v && "redTeam" in v && "blueTeam" in v ? {_: {}
+                                                                                                                                                      ,mode: typeof v.mode === "string" || typeof v.mode === "object" && v.mode instanceof String ? v.mode : _U.badPort("a string",
+                                                                                                                                                      v.mode)
+                                                                                                                                                      ,user_id: typeof v.user_id === "number" ? v.user_id : _U.badPort("a number",
+                                                                                                                                                      v.user_id)
+                                                                                                                                                      ,playersList: typeof v.playersList === "object" && v.playersList instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.playersList.map(function (v) {
+                                                                                                                                                         return typeof v === "object" && "id" in v && "name" in v ? {_: {}
+                                                                                                                                                                                                                    ,id: typeof v.id === "number" ? v.id : _U.badPort("a number",
+                                                                                                                                                                                                                    v.id)
+                                                                                                                                                                                                                    ,name: typeof v.name === "string" || typeof v.name === "object" && v.name instanceof String ? v.name : _U.badPort("a string",
+                                                                                                                                                                                                                    v.name)} : _U.badPort("an object with fields `id`, `name`",
+                                                                                                                                                         v);
+                                                                                                                                                      })) : _U.badPort("an array",
+                                                                                                                                                      v.playersList)
+                                                                                                                                                      ,readyQueue: typeof v.readyQueue === "object" && v.readyQueue instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.readyQueue.map(function (v) {
+                                                                                                                                                         return typeof v === "number" ? v : _U.badPort("a number",
+                                                                                                                                                         v);
+                                                                                                                                                      })) : _U.badPort("an array",
+                                                                                                                                                      v.readyQueue)
+                                                                                                                                                      ,redTeam: typeof v.redTeam === "object" && "id" in v.redTeam && "p1" in v.redTeam && "p2" in v.redTeam && "p3" in v.redTeam ? {_: {}
+                                                                                                                                                                                                                                                                                    ,id: typeof v.redTeam.id === "string" || typeof v.redTeam.id === "object" && v.redTeam.id instanceof String ? v.redTeam.id : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                    v.redTeam.id)
+                                                                                                                                                                                                                                                                                    ,p1: typeof v.redTeam.p1 === "object" && "id" in v.redTeam.p1 && "name" in v.redTeam.p1 ? {_: {}
+                                                                                                                                                                                                                                                                                                                                                                              ,id: typeof v.redTeam.p1.id === "number" ? v.redTeam.p1.id : _U.badPort("a number",
+                                                                                                                                                                                                                                                                                                                                                                              v.redTeam.p1.id)
+                                                                                                                                                                                                                                                                                                                                                                              ,name: typeof v.redTeam.p1.name === "string" || typeof v.redTeam.p1.name === "object" && v.redTeam.p1.name instanceof String ? v.redTeam.p1.name : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                                                                                                              v.redTeam.p1.name)} : _U.badPort("an object with fields `id`, `name`",
+                                                                                                                                                                                                                                                                                    v.redTeam.p1)
+                                                                                                                                                                                                                                                                                    ,p2: typeof v.redTeam.p2 === "object" && "id" in v.redTeam.p2 && "name" in v.redTeam.p2 ? {_: {}
+                                                                                                                                                                                                                                                                                                                                                                              ,id: typeof v.redTeam.p2.id === "number" ? v.redTeam.p2.id : _U.badPort("a number",
+                                                                                                                                                                                                                                                                                                                                                                              v.redTeam.p2.id)
+                                                                                                                                                                                                                                                                                                                                                                              ,name: typeof v.redTeam.p2.name === "string" || typeof v.redTeam.p2.name === "object" && v.redTeam.p2.name instanceof String ? v.redTeam.p2.name : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                                                                                                              v.redTeam.p2.name)} : _U.badPort("an object with fields `id`, `name`",
+                                                                                                                                                                                                                                                                                    v.redTeam.p2)
+                                                                                                                                                                                                                                                                                    ,p3: typeof v.redTeam.p3 === "object" && "id" in v.redTeam.p3 && "name" in v.redTeam.p3 ? {_: {}
+                                                                                                                                                                                                                                                                                                                                                                              ,id: typeof v.redTeam.p3.id === "number" ? v.redTeam.p3.id : _U.badPort("a number",
+                                                                                                                                                                                                                                                                                                                                                                              v.redTeam.p3.id)
+                                                                                                                                                                                                                                                                                                                                                                              ,name: typeof v.redTeam.p3.name === "string" || typeof v.redTeam.p3.name === "object" && v.redTeam.p3.name instanceof String ? v.redTeam.p3.name : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                                                                                                              v.redTeam.p3.name)} : _U.badPort("an object with fields `id`, `name`",
+                                                                                                                                                                                                                                                                                    v.redTeam.p3)} : _U.badPort("an object with fields `id`, `p1`, `p2`, `p3`",
+                                                                                                                                                      v.redTeam)
+                                                                                                                                                      ,blueTeam: typeof v.blueTeam === "object" && "id" in v.blueTeam && "p1" in v.blueTeam && "p2" in v.blueTeam && "p3" in v.blueTeam ? {_: {}
+                                                                                                                                                                                                                                                                                          ,id: typeof v.blueTeam.id === "string" || typeof v.blueTeam.id === "object" && v.blueTeam.id instanceof String ? v.blueTeam.id : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                          v.blueTeam.id)
+                                                                                                                                                                                                                                                                                          ,p1: typeof v.blueTeam.p1 === "object" && "id" in v.blueTeam.p1 && "name" in v.blueTeam.p1 ? {_: {}
+                                                                                                                                                                                                                                                                                                                                                                                       ,id: typeof v.blueTeam.p1.id === "number" ? v.blueTeam.p1.id : _U.badPort("a number",
+                                                                                                                                                                                                                                                                                                                                                                                       v.blueTeam.p1.id)
+                                                                                                                                                                                                                                                                                                                                                                                       ,name: typeof v.blueTeam.p1.name === "string" || typeof v.blueTeam.p1.name === "object" && v.blueTeam.p1.name instanceof String ? v.blueTeam.p1.name : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                                                                                                                       v.blueTeam.p1.name)} : _U.badPort("an object with fields `id`, `name`",
+                                                                                                                                                                                                                                                                                          v.blueTeam.p1)
+                                                                                                                                                                                                                                                                                          ,p2: typeof v.blueTeam.p2 === "object" && "id" in v.blueTeam.p2 && "name" in v.blueTeam.p2 ? {_: {}
+                                                                                                                                                                                                                                                                                                                                                                                       ,id: typeof v.blueTeam.p2.id === "number" ? v.blueTeam.p2.id : _U.badPort("a number",
+                                                                                                                                                                                                                                                                                                                                                                                       v.blueTeam.p2.id)
+                                                                                                                                                                                                                                                                                                                                                                                       ,name: typeof v.blueTeam.p2.name === "string" || typeof v.blueTeam.p2.name === "object" && v.blueTeam.p2.name instanceof String ? v.blueTeam.p2.name : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                                                                                                                       v.blueTeam.p2.name)} : _U.badPort("an object with fields `id`, `name`",
+                                                                                                                                                                                                                                                                                          v.blueTeam.p2)
+                                                                                                                                                                                                                                                                                          ,p3: typeof v.blueTeam.p3 === "object" && "id" in v.blueTeam.p3 && "name" in v.blueTeam.p3 ? {_: {}
+                                                                                                                                                                                                                                                                                                                                                                                       ,id: typeof v.blueTeam.p3.id === "number" ? v.blueTeam.p3.id : _U.badPort("a number",
+                                                                                                                                                                                                                                                                                                                                                                                       v.blueTeam.p3.id)
+                                                                                                                                                                                                                                                                                                                                                                                       ,name: typeof v.blueTeam.p3.name === "string" || typeof v.blueTeam.p3.name === "object" && v.blueTeam.p3.name instanceof String ? v.blueTeam.p3.name : _U.badPort("a string",
+                                                                                                                                                                                                                                                                                                                                                                                       v.blueTeam.p3.name)} : _U.badPort("an object with fields `id`, `name`",
+                                                                                                                                                                                                                                                                                          v.blueTeam.p3)} : _U.badPort("an object with fields `id`, `p1`, `p2`, `p3`",
+                                                                                                                                                      v.blueTeam)} : _U.badPort("an object with fields `mode`, `user_id`, `playersList`, `readyQueue`, `redTeam`, `blueTeam`",
       v);
    });
    var model = backendModel;
-   var viewTeamPlayers = function (team) {
+   var viewTeamBoards = F3(function (address,
+   ba,
+   model) {
       return function () {
-         var viewPlayer = function (p) {
-            return A2($Html.li,
-            _L.fromArray([]),
+         var playerView = function (p) {
+            return A2($Html.div,
+            _L.fromArray([$Html$Attributes.$class("btn")]),
             _L.fromArray([$Html.text(p.name)]));
          };
+         var teamView = function (t) {
+            return A2($Html.ul,
+            _L.fromArray([$Html$Attributes.$class("list-group")]),
+            _L.fromArray([A2($Html.li,
+                         _L.fromArray([A2($Html$Events.onClick,
+                                      ba,
+                                      A2($FamiliadaBackendActions.mkBackendCmd,
+                                      $FamiliadaBackendActions.SitDown,
+                                      _L.fromArray([t.id,"p1"])))
+                                      ,$Html$Attributes.$class("list-group-item")]),
+                         _L.fromArray([playerView(t.p1)]))
+                         ,A2($Html.li,
+                         _L.fromArray([A2($Html$Events.onClick,
+                                      ba,
+                                      A2($FamiliadaBackendActions.mkBackendCmd,
+                                      $FamiliadaBackendActions.SitDown,
+                                      _L.fromArray([t.id,"p2"])))
+                                      ,$Html$Attributes.$class("list-group-item")]),
+                         _L.fromArray([playerView(t.p2)]))
+                         ,A2($Html.li,
+                         _L.fromArray([A2($Html$Events.onClick,
+                                      ba,
+                                      A2($FamiliadaBackendActions.mkBackendCmd,
+                                      $FamiliadaBackendActions.SitDown,
+                                      _L.fromArray([t.id,"p3"])))
+                                      ,$Html$Attributes.$class("list-group-item")]),
+                         _L.fromArray([playerView(t.p3)]))]));
+         };
          return A2($Html.div,
-         _L.fromArray([]),
-         _L.fromArray([$Html.text(A2($Basics._op["++"],
-                      team.name,
-                      A2($Basics._op["++"],
-                      " ",
-                      "players")))
-                      ,A2($Html.ul,
-                      _L.fromArray([]),
-                      A2($List.map,
-                      viewPlayer,
-                      team.players))]));
+         _L.fromArray([$Html$Attributes.$class("row row-lis")]),
+         _L.fromArray([A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-danger")]),
+                      _L.fromArray([teamView(model.redTeam)]))
+                      ,A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-info")]),
+                      _L.fromArray([teamView(model.blueTeam)]))
+                      ,A2($Html.button,
+                      _L.fromArray([A2($Html$Events.onClick,
+                      ba,
+                      A2($FamiliadaBackendActions.mkBackendCmd,
+                      $FamiliadaBackendActions.StandUp,
+                      _L.fromArray([])))]),
+                      _L.fromArray([$Html.text("Wstan")]))]));
       }();
-   };
+   });
    var currentPlayer = function (model) {
       return $List.head(A2($List.filter,
       function (x) {
@@ -2015,103 +2088,39 @@ Elm.FamiliadaGame.make = function (_elm) {
       },
       model.playersList));
    };
+   var view = F3(function (address,
+   ba,
+   model) {
+      return function () {
+         var _v0 = model.mode;
+         switch (_v0)
+         {case "WaitingForPlayers":
+            return A3(viewTeamBoards,
+              address,
+              ba,
+              model);}
+         _U.badCase($moduleName,
+         "between lines 42 and 44");
+      }();
+   });
    var update = F2(function (action,
    model) {
       return function () {
          switch (action.ctor)
          {case "NoOp": return model;}
          _U.badCase($moduleName,
-         "between lines 27 and 33");
+         "between lines 32 and 38");
       }();
    });
    var allPlayersReady = function (model) {
-      return A2($List.all,
-      function (x) {
-         return _U.eq(x.ready,true);
-      },
-      model.playersList);
+      return !_U.eq(model.redTeam.p1.id,
+      0) && (!_U.eq(model.redTeam.p2.id,
+      0) && (!_U.eq(model.redTeam.p3.id,
+      0) && (!_U.eq(model.blueTeam.p1.id,
+      0) && (!_U.eq(model.blueTeam.p2.id,
+      0) && !_U.eq(model.blueTeam.p3.id,
+      0)))));
    };
-   var viewPlayersList = F3(function (address,
-   ba,
-   model) {
-      return function () {
-         var toogleButton = function () {
-            var _v1 = currentPlayer(model);
-            switch (_v1.ctor)
-            {case "Just":
-               return function () {
-                    var toogleText = _v1._0.ready ? "I\'m not ready" : "I\'m ready";
-                    return A2($Html.div,
-                    _L.fromArray([A2($Html$Events.onClick,
-                                 ba,
-                                 $FamiliadaBackendActions.TooglePlayerReady)
-                                 ,$Html$Attributes.$class("btn btn-info")]),
-                    _L.fromArray([$Html.text(toogleText)]));
-                 }();}
-            _U.badCase($moduleName,
-            "between lines 73 and 78");
-         }();
-         var startButton = allPlayersReady(model) ? A2($Html.div,
-         _L.fromArray([A2($Html$Events.onClick,
-                      ba,
-                      $FamiliadaBackendActions.TooglePlayerReady)
-                      ,$Html$Attributes.$class("btn btn-success")]),
-         _L.fromArray([$Html.text("Start Game")])) : A2($Html.div,
-         _L.fromArray([]),
-         _L.fromArray([$Html.text("Waiting for all players ready...")]));
-         var readyText = function (p) {
-            return p ? " READY" : " NOT READY";
-         };
-         var readyClass = function (p) {
-            return p ? $Html$Attributes.$class("alert alert-success pointer") : $Html$Attributes.$class("alert alert-danger pointer");
-         };
-         var viewPlayer = function (p) {
-            return A2($Html.li,
-            _L.fromArray([]),
-            _L.fromArray([A2($Html.div,
-            _L.fromArray([readyClass(p.ready)]),
-            _L.fromArray([$Html.text(A2($Basics._op["++"],
-            p.name,
-            A2($Basics._op["++"],
-            " - ",
-            readyText(p.ready))))]))]));
-         };
-         return A2($Html.div,
-         _L.fromArray([]),
-         _L.fromArray([$Html.text("Players in Que")
-                      ,A2($Html.ul,
-                      _L.fromArray([]),
-                      A2($List.map,
-                      viewPlayer,
-                      model.playersList))
-                      ,toogleButton
-                      ,startButton]));
-      }();
-   });
-   var queueView = F3(function (address,
-   ba,
-   model) {
-      return A3(viewPlayersList,
-      address,
-      ba,
-      model);
-   });
-   var view = F3(function (address,
-   ba,
-   model) {
-      return function () {
-         var _v3 = model.mode;
-         switch (_v3)
-         {case "WaitingForPlayers":
-            return A3(queueView,
-              address,
-              ba,
-              model);}
-         _U.badCase($moduleName,
-         "between lines 37 and 39");
-      }();
-   });
-   var BackendAction = {ctor: "BackendAction"};
    var AnswersListAction = function (a) {
       return {ctor: "AnswersListAction"
              ,_0: a};
@@ -2126,14 +2135,11 @@ Elm.FamiliadaGame.make = function (_elm) {
    _elm.FamiliadaGame.values = {_op: _op
                                ,NoOp: NoOp
                                ,AnswersListAction: AnswersListAction
-                               ,BackendAction: BackendAction
                                ,allPlayersReady: allPlayersReady
                                ,update: update
                                ,view: view
-                               ,queueView: queueView
                                ,currentPlayer: currentPlayer
-                               ,viewPlayersList: viewPlayersList
-                               ,viewTeamPlayers: viewTeamPlayers
+                               ,viewTeamBoards: viewTeamBoards
                                ,main: main
                                ,model: model
                                ,actions: actions
@@ -2162,28 +2168,31 @@ Elm.FamiliadaTypes.make = function (_elm) {
              ,id: a
              ,question: b};
    });
-   var Team = F3(function (a,b,c) {
-      return {_: {}
-             ,id: a
-             ,name: b
-             ,players: c};
-   });
-   var Player = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,id: a
-             ,name: b
-             ,ready: c};
-   });
-   var Model = F4(function (a,
+   var Team = F4(function (a,
    b,
    c,
    d) {
       return {_: {}
+             ,id: a
+             ,p1: b
+             ,p2: c
+             ,p3: d};
+   });
+   var Player = F2(function (a,b) {
+      return {_: {},id: a,name: b};
+   });
+   var Model = F6(function (a,
+   b,
+   c,
+   d,
+   e,
+   f) {
+      return {_: {}
+             ,blueTeam: f
              ,mode: a
              ,playersList: c
              ,readyQueue: d
+             ,redTeam: e
              ,user_id: b};
    });
    _elm.FamiliadaTypes.values = {_op: _op
