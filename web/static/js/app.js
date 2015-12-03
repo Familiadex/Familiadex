@@ -30,7 +30,7 @@ var elmDiv = document.getElementById('elm-main'),
     // elmChat = initElmChat(elmChatDiv, "game");
 
 // TODO: we have to init elm game & channel with proper auth token (encoded player_id)
-let game = socket.channel("games:ID_GRY27", {player: currentUser});
+let game = socket.channel("games:ID_GRY28", {player: currentUser});
 
 game.join()
   .receive("ok", initialModel => {

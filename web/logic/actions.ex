@@ -13,26 +13,17 @@ defmodule Familiada.Actions do
        "player_left",
        "sit_down",
        "stand_up",
-       "toogle_player_ready"
+       "start_game" # Temp
      ],
      "EveryoneReady" => [
        "stand_up",
-       "toggle_player_ready",
        "start_game",
        "player_left",
        "player_joined"
      ],
-     "InGameRound1" => [
+     "InGameRound" => [
        "answer",
        "player_left"
-     ],
-     "InGameRound2" => [
-     ],
-     "InGameRound3" => [
-     ],
-     "InGameRound4" => [
-     ],
-     "InGameRound5" => [
      ],
      "InGameRoundGrandFinale" => [
        "ready",

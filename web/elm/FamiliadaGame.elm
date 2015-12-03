@@ -41,14 +41,27 @@ update action model =
 view : Address Action -> Address BackendCmd -> Model -> Html
 view address ba model = case model.mode of
     "WaitingForPlayers" -> viewTeamBoards address ba model
+    "InGameRound" -> viewAnswersBoard address ba model
     -- "Started" -> boardView address model
 
 -- queueView: Address Action -> Address BackendAction -> Model -> Html
 -- queueView address ba model =
 --   viewPlayersList address ba model
 
--- boardView: Address Action -> Model -> Html
--- boardView address model =
+viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
+viewAnswersBoard address ba model =
+  let answerView a = li [class "list-group-item"] [text a]
+  in
+    ul [class "list-group"]
+      [ answerView model.answersBoard.a1
+      , answerView model.answersBoard.a2
+      , answerView model.answersBoard.a3
+      , answerView model.answersBoard.a4
+      , answerView model.answersBoard.a5
+      , answerView model.answersBoard.a6
+      ]
+-- boardView: Address Action -> Adress BackendCmd -> Model -> Html
+-- boardView address ba model =
 --     div [ class "row row-list" ]
 --       [ div [class "col-xs-3"] [(viewTeamPlayers model.teamA)]
 --       , div [class "col-xs-6"]
@@ -74,7 +87,8 @@ viewTeamBoards address ba model =
     div [class "row row-lis"]
       [ div [class "col-xs-6 alert-danger"] [teamView model.redTeam]
       , div [class "col-xs-6 alert-info"] [teamView model.blueTeam]
-      , button [onClick ba (mkBackendCmd FBA.StandUp [])] [text "Wstan"]
+      , button [onClick ba (mkBackendCmd FBA.StandUp [])] [text "Free My Slot"]
+      , button [onClick ba (mkBackendCmd FBA.StartGame [])] [text "Start Game"]
       ]
 
 -- viewPlayersList : Address Action -> Address BackendAction -> Model -> Html

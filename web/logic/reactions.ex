@@ -59,17 +59,12 @@ defmodule Familiada.Reactions do
     end
   end
 
+  def start_game(model, player) do
+    Dict.put(model, "mode", "InGameRound")
+  end
+
   defp get_game_id(model) do
     next_game_id = Dict.get(model, "nextGameId", 0)
     Dict.put(model, "nextGameId", next_game_id + 1)
-  end
-
-  def start_game(model, player) do
-    readyQueue = Dict.get(model, "readyQueue", []) # rigid 2 players
-    if [red_team_player, blue_team_player] = readyQueue do
-      Dict.put(model, "redTeam", [red_team_player]) |> Dict.put("blueTeam", [blue_team_player])
-    else
-      model
-    end
   end
 end

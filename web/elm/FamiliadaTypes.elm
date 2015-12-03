@@ -7,6 +7,20 @@ type alias Model =
     , readyQueue : List Int
     , redTeam : Team
     , blueTeam : Team
+    , redTeamPoints: Int
+    , blueTeamPoints: Int
+    , currentQuestion: String
+    , answersBoard : AnswersBoard
+    , whoAnswering : Player
+    }
+
+type alias AnswersBoard =
+    { a1 : String
+    , a2 : String
+    , a3 : String
+    , a4 : String
+    , a5 : String
+    , a6 : String
     }
 
 type alias Player =
