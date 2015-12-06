@@ -19,20 +19,24 @@
   9. Start Phoenix endpoint with `mix phoenix.server`
   10. Install inotify(only linux) for automatic hot reload - http://www.phoenixframework.org/docs/installation
 
+### Facebook login config
+  `echo "export FACEBOOK_CLIENT_SECRET=[filtered]" >> ~/.bashrc`
+
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Test user
   * email: test@user.com
   * password: test
-  
+
+
 ## Heroku hosting
 https://familiadex.herokuapp.com/
 
 === familiadex Buildpack URLs
   1. https://github.com/HashNuke/heroku-buildpack-elixir
   2. https://github.com/Machiaweliczny/heroku-buildpack-elm
-  3. 
-  
+  3.
+
 ### Deploy to heroku
   1. Add priv/static files to git before pushing to heroku
 

@@ -1,5 +1,7 @@
 defmodule Familiada.Router do
   use Familiada.Web, :router
+  require Ueberauth
+
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -11,6 +13,19 @@ defmodule Familiada.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  pipeline :auth do
+    plug Ueberauth, base_path: "/auth"
+  end
+
+  scope "/auth", Familiada do
+    pipe_through [:browser, :auth]
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+    post "/:provider/callback", AuthController, :callback
+    delete "/logout", AuthController, :delete
   end
 
   scope "/", Familiada do

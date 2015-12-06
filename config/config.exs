@@ -19,6 +19,14 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+  config :ueberauth, Ueberauth,
+    providers: [
+      facebook: { Ueberauth.Strategy.Facebook, [] },
+    ]
+
+config :ueberauth, Ueberauth.Strategy.Facebook.OAuth,
+  client_id: "1648610882054753",
+  client_secret: System.get_env("FACEBOOK_CLIENT_SECRET")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
