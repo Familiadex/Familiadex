@@ -21,19 +21,31 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 import socket from "./socket"
 import initElmChat from "./elm_chat"
 
+let currentUser = GameEnv.currentUser;
 var elmDiv = document.getElementById('elm-main'),
     elmChatDiv = document.getElementById('elm-chat'),
     elmGlobalChatDiv = document.getElementById('elm-chat-global'),
-    elmApp = Elm.embed(Elm.FamiliadaGame, elmDiv),
-    elmGlobalChat = initElmChat(elmGlobalChatDiv, "global"),
-    elmChat = initElmChat(elmChatDiv, "game");
+    elmFamiliadaGame,
+    elmGlobalChat = initElmChat(elmGlobalChatDiv, "global", currentUser);
+    // elmChat = initElmChat(elmChatDiv, "game");
 
-// Now that you are connected, you can join channels with a topic:
-// let channel = socket.channel("questions:index", {})
-// channel.join()
-//   .receive("ok", resp => { console.log("Joined questions successfully", resp) })
-//   .receive("error", resp => { console.log("Unable to join questions", resp) })
-//
+// TODO: we have to init elm game & channel with proper auth token (encoded player_id)
+let game = socket.channel("games:ID_GRY27", {player: currentUser});
 
-//
-// sendMsg("dev", "wiadomosc powitalna");
+game.join()
+  .receive("ok", initialModel => {
+    console.log("Joined game channel successfully", initialModel)
+    elmFamiliadaGame = Elm.embed(Elm.FamiliadaGame, elmDiv, {backendModel: initialModel})
+    // game.push("modelUpdateCmd", {cmd: "SetPlayerReady", params: [123]})
+    // Send actions to backend
+    elmFamiliadaGame.ports.modelUpdateCmd.subscribe((cmd) => {
+      console.log("modelUpdateCmd", cmd)
+      game.push("modelUpdateCmd", cmd)
+    })
+    // Push model updates into Elm Game
+    game.on("back:modelUpdate", data => {
+      console.log("back:modelUpdate", data.model)
+      elmFamiliadaGame.ports.backendModel.send(data.model)
+    })
+  })
+  .receive("error", resp => { console.log("Joined game channel successfully", resp)})

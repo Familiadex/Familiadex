@@ -43,6 +43,8 @@ exports.config = {
       "deps/phoenix_html/web/static",
       "web/static",
       "test/static",
+      "web/elm/FamiliadaTypes.elm",
+      "web/elm/FamiliadaBackendActions.elm",
       "web/elm/FamiliadaGame.elm",
       "web/elm/Chat.elm"
     ],

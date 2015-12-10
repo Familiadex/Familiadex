@@ -35,8 +35,11 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :familiada, Familiada.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "space",
+  username: System.get_env("FAMILIADEX_DB_USER"),
   password: "",
   database: "familiada_dev",
   hostname: "localhost",
   pool_size: 10
+
+# Fake redistogo
+System.put_env("REDISTOGO_URL", "redis://127.0.0.1:6379")

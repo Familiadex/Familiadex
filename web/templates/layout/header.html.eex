@@ -1,0 +1,26 @@
+<div class="header">
+  <ul class="nav nav-pills pull-right">
+    <li>
+      <%= link "Home", to: page_path(@conn, :public) %>
+    </li>
+    <li>
+      <%= link "Game", to: page_path(@conn, :game) %>
+    </li>
+    <%= if logged_in?(@conn) do %>
+      <li>
+        <%= link current_user(@conn).email, to: "http://google.com" %>
+      </li>
+      <li>
+        <%= link "Logout", to: session_path(@conn, :delete)%>
+      </li>
+    <% else %>
+      <li>
+        <%= link "Login", to: session_path(@conn, :new) %>
+      </li>
+      <li>
+        <%= link "Register", to: registration_path(@conn, :new) %>
+      </li>
+    <% end %>
+  </ul>
+  <div class="jumbotron"> Familiadex </div>
+</div>

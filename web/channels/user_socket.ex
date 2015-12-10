@@ -4,6 +4,7 @@ defmodule Familiada.UserSocket do
   ## Channels
   channel "chats:*", Familiada.ChatChannel
   channel "questions:*", Familiada.QuestionChannel
+  channel "games:*", Familiada.GameChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?><php><datatypes db="php">
+	<group color="rgb(238,238,170)">
+		<type label="Public" sql="public"/>
+	</group>
+
+	<group color="rgb(255,200,200)">
+		<type label="Private" sql="private"/>
+	</group>
+
+	<group color="rgb(200,255,200)">
+		<type label="Protected" sql="protected"/>
+	</group>
+
+</datatypes><table x="875" y="217" name="U¿ytownik" interface="true"><association clasa="loguje_siê"></association><association clasa="koñczy_gre"></association><association clasa="wychodzi_z_pokoju"></association><association clasa="modyfikuje_swoje_konto"></association></table><table x="549" y="40" name="zak³ada_konto" interface="false"><association clasa="U¿ytownik"></association></table><table x="298" y="380" name="blokuje_konto" interface="false"></table><table x="407" y="169" name="loguje_siê" interface="false"><dependency clasa="wchodzi_do_menu"></dependency></table><table x="587" y="336" name="admin" interface="true"><extend clasa="U¿ytownik"></extend><association clasa="blokuje_konto"></association><association clasa="modyfikuje_cudze_konto"></association></table><table x="108" y="262" name="weryfikuj_u¿ytkownika" interface="false"><dependency clasa="loguje_siê"></dependency><dependency clasa="blokuje_konto"></dependency></table><table x="757" y="606" name="wchodzi_do_pokoju" interface="false"><association clasa="U¿ytownik"></association></table><table x="1093" y="362" name="za³o¿yciel_pokoju" interface="true"><extend clasa="U¿ytownik"></extend><association clasa="rozpoczyna_gre"></association></table><table x="1131" y="238" name="koñczy_gre" interface="false"><dependency clasa="wychodzi_z_pokoju"></dependency></table><table x="1065" y="697" name="wchodzi_do_gry" interface="false"><realization clasa="wchodzi_do_pokoju"></realization></table><table x="1403" y="483" name="rozpoczyna_gre" interface="false"><dependency clasa="wchodzi_do_gry"></dependency></table><table x="1165" y="103" name="wychodzi_z_pokoju" interface="false"></table><table x="1426" y="145" name="zamyka_pokój" interface="false"><association clasa="za³o¿yciel_pokoju"></association><realization clasa="wychodzi_z_pokoju"></realization></table><table x="1033" y="505" name="zak³ada_pokój" interface="false"><association clasa="za³o¿yciel_pokoju"></association><dependency clasa="wchodzi_do_pokoju"></dependency></table><table x="74" y="112" name="wchodzi_do_menu" interface="false"></table><table x="98" y="473" name="System" interface="true"><association clasa="weryfikuj_u¿ytkownika"></association></table><table x="249" y="529" name="dodaje_pytania" interface="false"><association clasa="System"></association><association clasa="admin"></association></table><table x="830" y="58" name="modyfikuje_swoje_konto" interface="false"></table><table x="479" y="606" name="modyfikuje_cudze_konto" interface="false"></table></php>
