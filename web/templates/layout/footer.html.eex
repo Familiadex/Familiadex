@@ -17,3 +17,8 @@
 </script>
 
 <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
+
+<a class="btn btn-primary btn-lg" href="/auth/facebook">
+      <i class="fa fa-facebook"></i>
+      Sign in with Facebook
+    </a>

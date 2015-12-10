@@ -8,7 +8,7 @@
     </li>
     <%= if logged_in?(@conn) do %>
       <li>
-        <%= link current_user(@conn).email, to: "http://google.com" %>
+        <img src="<%= Plug.Conn.get_session(@conn, :current_user).avatar %>" class="img-circle"/>
       </li>
       <li>
         <%= link "Logout", to: session_path(@conn, :delete)%>
