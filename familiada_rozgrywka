@@ -1,0 +1,153 @@
+
+
+Przed rozpoczęciem rozgrywki:
+- są dwie drużyny: niebieska i czerwona;
+- kolejność zawodników w rozgrywce = kolejność, w jakiej dołączali do drużyny;
+- kapitan_czerwony = ten, który najwcześniej dołączył do czerwonych (ma on możliwość wypraszania z drużyny, zmiany kolejności
+w drużynie, może też wyznaczyć na kapitana kogo innego, jednocześnie zrzekając się swoich uprawnień);
+- kapitan_niebieski analogicznie;
+
+
+Zakładamy, że drużyny nie muszą być równoliczne.
+
+
+Gra rozpoczyna się, gdy wszyscy klikną start.
+
+licznik_rundy = ile punktów zostało zdobytych w danej rundzie (po każdej zmianie zaktualizowane punkty mają się wyświetlać)
+licznik_całości_niebieski = ile punktów czerwoni zarobili w całej grze (aktualizuje się po rundzie)
+licznik_całości_czerwony = ile punktów niebiescy zarobili w całej grze (aktualizuje się po rundzie)
+gracz_do_pulpitu_niebieski/czerwony = na początku kapitan, następnie pierwsza w kolejce osoba, która nie
+była jeszcze przy pulpicie
+aktualny_gracz_w_rundzie_niebieski/czerwony = osoba, która będzie odpowiadać. po każdym pytaniu zmienia się
+na następną w kolejności
+bledy_w_rundzie = ile bledow popelnila druzyna grajaca w danej rundzie
+
+
+Algorytm rozgrywki (z perspektywy prowadzącego/serwera):
+
+Puść muzykę, intro i przywitaj się.
+Wylosuj żart i opowiedz go/wyświetl.
+(runda) Wylosuj pytanie (pierwsze z 6 odpowiedziami bez mnożenia, drugie z 5 odpowiedziami bez mnożenia, 3 z pięcioma x2,
+4 z trzema x3, kolejne z trzema x3).
+licznik_rundy = 0, liczniki_całości = 0, bledy_w_rundzie = 0, mnoznik = 
+(rozgrywka początkowa) Zaproś zawodników, którzy są graczami_do_pulpitu do pulpitu z przyciskami.
+gracz_do_pulpitu w obu drużynach zmienia się na następnego
+Zadaj pytanie.
+Jeśli ktoś się zgłosił:
+	Sprawdź, który z pytanych nacisnął przycisk pierwszy (jego drużynę w tym kontekście będziemy nazywać pierwszą).
+	Sprawdź odpowiedź od niego.
+	Jeśli jest to odpowiedź najwyżej punktowana:
+		licznik_rundy+=punktacja_odpowiedzi //jeśli jest to runda z mnożnikiem,  od razu mnożymy uzyskane punkty
+		wyświetl odpowiedź na tablicy
+		gra jego drużyna (wlasciwa_gra_w_rundzie)
+
+	Jeśli nie jest to odpowiedź najwyżej punktowana:
+		Jeśli ta odpowiedź w ogóle nie jest punktowana (czy też odpowiedzi nie było):
+			Wyświetl wielki krzyż po stronie pierwszej drużyny i zgaś po paru sekundach.
+			Zapytaj gracza z drugiej drużyny przy pulpicie.
+			Jeśli poda odpowiedź punktowaną, gra jego drużyna, (wlasciwa gra w rundzie).
+			W przeciwnym razie:
+				pytaj kolejnych graczy z obu drużyn na przemian, dopóki nie będzie punktowanej odpowiedzi i dopóki jej nie ma
+				wyświetlaj i gaś duże krzyże po odpowiedziach zawodników //pętla
+				tura = odpowiedź k-tego zawodnika z pierwszej drużyny i k-tego z drugiej drużyny
+				jeśli gracz z drużyny x da punktowaną odpowiedź:
+					licznik_rundy+=punktacja_odpowiedzi
+					wyświetl odpowiedź na tablicy
+					wyświetl punktację gry na tablicy
+					jeśli x to druga drużyna, gra druga drużyna. (wlasciwa gra w rundzie) break
+					jeśli to najwyżej punktowana odpowiedź, gra drużyna x (wlasciwa gra w rundzie). break
+					w przeciwnym razie:
+						zadaj pytanie kolejnej osobie z drugiej drużyny.
+						jeśli brak odpowiedzi wyświetl duży krzyż i gra pierwsza z drużyn. break
+						wyswietl odpowiedź
+						licznik_rundy+=punktacja_odpowiedzi_tej_osoby
+						gra druzyna, ktora w bieżącej turze, udzieliła lepiej punktowanej odpowiedzi, (wlasciwa gra w rundzie)
+		
+		
+		Jeśli była to odpowiedź punktowana:
+			wyświetl ją
+			dodaj punkty do licznika rundy
+			zapytaj gracza z drugiej drużyny przy pulpicie.
+			jeśli da odpowiedź punktowaną:
+				wyświetl ją
+				dodaj punkty do licznika rundy
+			jeśli nie, wyświetl krzyż.
+			porównaj punktacje, gra drużyna której gracz przy pulpicie udzielił lepiej punktowanej odpowiedzi, (wlasciwa
+			gra w rundzie).
+			
+Jeśli nikt się nie zgłosił:
+	powtórz (rozgrywka początkowa)
+	
+//krzyze wyswietla sie z dzwiekiem :D	
+	
+Po zakończeniu rozgrywki początkowej.
+	
+(właściwa gra w rundzie)
+kolejnym graczom druzyny (nazwijmy ją x, drugą nazwijmy y), która wygrała rozgrywkę początkową zadawaj wylosowane pytanie.
+jeśli odpowiedź jest zła:
+	wyświetl kolejny mały krzyżyk i zwiększ licznik błędów bledy_w_rundzie.
+	jesli bledy = 2: druga druzyna naradza się (cokolwiek to znaczy), kontynuuj zadawanie pytan biezacej druzynie
+	jesli bledy = 3: 
+		odpowiada kapitan druzyny y
+		jesli jego odpowiedz jest punktowana:
+			wyswietl ja.
+			dodaj punkty do punktacji rundy (z odp. mnożnikiem).
+			dodaj punkty z licznika rundy do licznika druzyny y 
+			wyzeruj licznik_rundy
+			koniec_rundy = true
+			druzyna_zwycieska = y
+			wyswietl kolejno pozostale nieodkryte odpowiedzi na tablicy
+		w przeciwnym razie:
+			dodaj punkty z licznika rundy do licznika druzyny y 
+			wyzeruj licznik_rundy
+			koniec_rundy = true
+			druzyna_zwycieska = x
+			wyswietl kolejno pozostale nieodkryte odpowiedzi na tablicy
+			
+			
+jesli dobra i sa jeszcze odpowiedzi do odgadniecia, wyswietl ja, dodaj punkty do licznika_rundy i kontynuuj zadawanie pytan.
+
+w przeciwnym razie: dodaj punkty z odpowiedzi do punktów rundy, punkty z rundy do licznika pierwszej druzyny, a
+następnie wyzeruj punkty z rundy, koniec_rundy = true, druzyna_zwycieska = x
+
+jeśli licznik_druzyny_zwycieskiej>=300: druzyna zwycieska przechodzi do finalu, (final)
+jesli nie: (runda),(rozgrywka początkowa), (właściwa gra w rundzie)
+
+
+(final)
+Poproś kapitana o wybór 2 graczy do gry (chyba że to drużyna jednoosobowa).
+jeśli jednoosobowa, to wszystko poza słuchaniem muzyki i niewidzeniem odpowiedzi drugiego odpowiadającego odbywa się tak samo.
+Wylosuj 5 pytań. ustaw je w kolejce
+(odpowiedz)
+Zadaj je kolejno pierwszemu graczowi (ma na odpowiedzi 20 sekund)
+Wyświetlaj odpowiedzi na tablicy na razie bez punktacji, jeśli na pytanie została udzielona odpowiedź, usuń
+je z kolejki.
+Gracz może odpowiedzieć "dalej" (nacisnąć przycisk następne). Jeśli "dalej", to zadaj kolejne pytanie (kolejne = takie pierwsze w kolejce, na ktore nie bylo jeszcze odpowiedzi grającego), a bieżące przesuń na koniec kolejki.
+
+(podsumowanie)
+Po zakończeniu odpowiadania przez  pierwszego gracza, wyświetl przy jego odpowiedziach punktację na tablicy.
+Jednak tak żeby drugi, który ma odpowiadać ich nie widział (wszyscy inni mogą).
+Dodaj zsumowane punkty za odpowiedzi do punktacji rundy.
+Wyświetl punktację rundy (dla wszystkich)
+
+Drugi wyznaczony do odpowiedzi w tym czasie słuchał muzyki.
+Teraz wywołaj go.
+Powtórz procedurę (odpowiedz), z tymi zastrzeżeniemi:
+	odpowiada drugi gracz,
+	jego odpowiedzi na dane pytnaie nie mogą pokrywać się z odpowiedziami pierwszego.
+	Gdy odpowiedź powtórzy się, nie zapisuj jej, wydaj charakterystyczny dzwiek i czekaj na nastepna.
+	Gracz ma 25 sekund zamiast 20.
+	
+Powtórz (podsumowanie), z tym że już wszyscy widzą wszystko.
+Jeśli punktacja rundy > 200, druzyna wygrywa 15000 zl (radosc)
+jesli nie, to nie wygrywa, ale i tak (radosc, tylko troche mniejsza)
+
+Machanie na pozegnanie
+koniec!
+
+
+
+
+
+
+
