@@ -12,7 +12,7 @@
   2. `mix ecto.create` seems to be broken, run `psql` & `create database familiada_dev owner <your_username>;`
   3. ~~edit `config/dev.exs` and set proper database user as <your_username>;"~~ `echo "export FAMILIADEX_DB_USER=your_username" >> ~/.bashrc"`
   4. If it complains about password please run `psql` & `alter user your_username with password '';`
-  5. Migrate your database with `mix ecto.create && mix ecto.migrate`
+  5. Migrate your database with `mix ecto.create && mix ecto.migrate`, then seed `mix run priv/repo/seeds.exs`
   6. Run `npm install`
   7. Run `npm install -g elm`
   8. Run `cd web/elm` & `elm-package install`

@@ -22,13 +22,15 @@ defmodule Familiada.AuthController do
   end
 
   def callback(%{ assigns: %{ ueberauth_auth: auth } } = conn, params) do
-    require IEx
-    # IEx.pry
-    case Familiada.User.find_or_create(auth) do
+    case Familiada.User.find_fb_user(auth) do
       {:ok, user} ->
         conn
         |> put_flash(:info, "Successfully authenticated.")
         |> put_session(:current_user, user)
+        |> redirect(to: "/")
+      {:new_user, _} ->
+        conn
+        |> put_flash(:error, "new user")
         |> redirect(to: "/")
       {:error, reason} ->
         conn
