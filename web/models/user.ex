@@ -7,7 +7,7 @@ defmodule Familiada.User do
     field :crypted_password,      :string
     field :password,              :string,  virtual:  true
     field :password_confirmation, :string,  virtual:  true
-    field :fb,                    :boolean
+    # field :fb,                    :boolean
     field :fb_uid,                :integer
     field :avatar,                :string
 
@@ -15,7 +15,7 @@ defmodule Familiada.User do
   end
 
   @required_fields ~w(email password password_confirmation)
-  @optional_fields ~w(fb fb_uid avatar)
+  @optional_fields ~w(fb_uid avatar) #fb
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -54,7 +54,7 @@ defmodule Familiada.User do
   def find_fb_user(%Auth{} = auth) do
     uid = String.to_integer(auth.uid)
     query = from u in Familiada.User,
-            where: u.fb == true and u.fb_uid == ^uid,
+            where: u.fb_uid == ^uid, #u.fb == true
             limit: 1
 
     case Familiada.Repo.all(query) do

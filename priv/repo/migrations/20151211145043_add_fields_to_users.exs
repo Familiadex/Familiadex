@@ -3,7 +3,7 @@ defmodule Familiada.Repo.Migrations.AddFieldsToUsers do
 
   def change do
     alter table(:users) do
-      add :fb,     :bool, default: false
+      # add :fb,     :bool, default: false
       add :fb_uid, :bigint
       add :avatar, :string
     end

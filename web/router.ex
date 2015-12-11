@@ -36,7 +36,9 @@ defmodule Familiada.Router do
     resources "/questions", QuestionController
 
     get "/register", RegistrationController, :new
+    get "/register_fb", RegistrationController, :fb_new
     post "/register", RegistrationController, :create
+    post "/register_fb", RegistrationController, :fb_create
     get "/login", SessionController, :new
     post "/login", SessionController, :create
     get "/logout", SessionController, :delete
