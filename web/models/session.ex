@@ -17,10 +17,10 @@ defmodule Familiada.Session do
   end
 
   def current_user(conn) do
-    id = Plug.Conn.get_session(conn, :current_user)
+    id = Plug.Conn.get_session(conn, :current_user_id)
     if id, do: Familiada.Repo.get(User, id)
   end
 
-  def logged_in?(conn), do: !!Plug.Conn.get_session(conn, :current_user)
+  def logged_in?(conn), do: !!Plug.Conn.get_session(conn, :current_user_id)
 
 end

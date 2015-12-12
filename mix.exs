@@ -18,8 +18,15 @@ defmodule Familiada.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Familiada, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger,
-                    :phoenix_ecto, :postgrex]]
+     applications: [:phoenix,
+                    :phoenix_html,
+                    :cowboy,
+                    :logger,
+                    :phoenix_ecto,
+                    :postgrex,
+                    :ueberauth,
+                    :ueberauth_facebook
+                    ]]
   end
 
   # Specifies which paths to compile per environment.
@@ -37,7 +44,9 @@ defmodule Familiada.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:comeonin, "~>1.0"},
-     {:exredis, ">= 0.2.2"}]
+     {:exredis, ">= 0.2.2"},
+     {:ueberauth, "~> 0.2"},
+     {:ueberauth_facebook, "~> 0.1"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

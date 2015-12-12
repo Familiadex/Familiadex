@@ -12,27 +12,31 @@
   2. `mix ecto.create` seems to be broken, run `psql` & `create database familiada_dev owner <your_username>;`
   3. ~~edit `config/dev.exs` and set proper database user as <your_username>;"~~ `echo "export FAMILIADEX_DB_USER=your_username" >> ~/.bashrc"`
   4. If it complains about password please run `psql` & `alter user your_username with password '';`
-  5. Migrate your database with `mix ecto.create && mix ecto.migrate`
+  5. Migrate your database with `mix ecto.create && mix ecto.migrate`, then seed `mix run priv/repo/seeds.exs`
   6. Run `npm install`
   7. Run `npm install -g elm`
   8. Run `cd web/elm` & `elm-package install`
   9. Start Phoenix endpoint with `mix phoenix.server`
   10. Install inotify(only linux) for automatic hot reload - http://www.phoenixframework.org/docs/installation
 
+### Facebook login config
+  `echo "export FACEBOOK_CLIENT_SECRET=[filtered]" >> ~/.bashrc`
+
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Test user
   * email: test@user.com
   * password: test
-  
+
+
 ## Heroku hosting
 https://familiadex.herokuapp.com/
 
 === familiadex Buildpack URLs
   1. https://github.com/HashNuke/heroku-buildpack-elixir
   2. https://github.com/Machiaweliczny/heroku-buildpack-elm
-  3. 
-  
+  3.
+
 ### Deploy to heroku
   1. Add priv/static files to git before pushing to heroku
 

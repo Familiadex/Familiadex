@@ -1,5 +1,7 @@
 defmodule Familiada.Router do
   use Familiada.Web, :router
+  require Ueberauth
+
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,6 +15,19 @@ defmodule Familiada.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug Ueberauth, base_path: "/auth"
+  end
+
+  scope "/auth", Familiada do
+    pipe_through [:browser, :auth]
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+    post "/:provider/callback", AuthController, :callback
+    delete "/logout", AuthController, :delete
+  end
+
   scope "/", Familiada do
     pipe_through :browser # Use the default browser stack
 
@@ -21,7 +36,9 @@ defmodule Familiada.Router do
     resources "/questions", QuestionController
 
     get "/register", RegistrationController, :new
+    get "/register_fb", RegistrationController, :fb_new
     post "/register", RegistrationController, :create
+    post "/register_fb", RegistrationController, :fb_create
     get "/login", SessionController, :new
     post "/login", SessionController, :create
     get "/logout", SessionController, :delete
