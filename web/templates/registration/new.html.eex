@@ -22,6 +22,11 @@
     <label>Password confirmation</label>
     <%= password_input f, :password_confirmation, class: "form-control" %>
 
-    <%= submit "Signup", class: "btn btn-primary" %>
+    <%= submit "Sign up", class: "btn btn-primary" %>
   </div>
 <% end %>
+
+<a class="btn btn-primary btn-lg" href="/auth/facebook">
+  <i class="fa fa-facebook"></i>
+  Sign up with Facebook
+</a>
