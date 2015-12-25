@@ -14,13 +14,18 @@ type alias Model =
     , whoAnswering : Player
     }
 
+type alias BoardAnswer =
+    { answer: String,
+      points: Int
+    }
+
 type alias AnswersBoard =
-    { a1 : String
-    , a2 : String
-    , a3 : String
-    , a4 : String
-    , a5 : String
-    , a6 : String
+    { a1 : BoardAnswer
+    , a2 : BoardAnswer
+    , a3 : BoardAnswer
+    , a4 : BoardAnswer
+    , a5 : BoardAnswer
+    , a6 : BoardAnswer
     }
 
 type alias Player =

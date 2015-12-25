@@ -50,7 +50,7 @@ view address ba model = case model.mode of
 
 viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
 viewAnswersBoard address ba model =
-  let answerView a = li [class "list-group-item"] [text a]
+  let answerView boardAnswer = li [class "list-group-item"] [text boardAnswer.answer]
   in
     ul [class "list-group"]
       [ answerView model.answersBoard.a1

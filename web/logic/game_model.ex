@@ -21,9 +21,9 @@ defmodule Familiada.GameModel do
       blueTeamPoints: 0,
       currentQuestion: "To jest currentQuestion?",
       answersBoard: %{
-        a1: %{answer: "???", points: "33"},  a4: %{answer: "???", points: "33"},
-        a2: %{answer: "???", points: "33"},  a5: %{answer: "???", points: "33"},
-        a3: %{answer: "???", points: "33"},  a6: %{answer: "???", points: "33"},
+        a1: %{answer: "???", points: 33},  a4: %{answer: "???", points: 33},
+        a2: %{answer: "???", points: 33},  a5: %{answer: "???", points: 33},
+        a3: %{answer: "???", points: 33},  a6: %{answer: "???", points: 33},
       },
       whoAnswering: %{id: 0, name: "ImieXYZ"},
       # roomSize: 6,
