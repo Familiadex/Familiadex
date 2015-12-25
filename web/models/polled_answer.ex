@@ -1,5 +1,6 @@
 defmodule Familiada.PolledAnswer do
   use Familiada.Web, :model
+  use Ecto.Schema 
 
   schema "polled_answers" do
     field :answer, :string

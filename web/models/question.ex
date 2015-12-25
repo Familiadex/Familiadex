@@ -1,5 +1,6 @@
 defmodule Familiada.Question do
   use Familiada.Web, :model
+  use Ecto.Schema
 
   schema "questions" do
     field :question, :string

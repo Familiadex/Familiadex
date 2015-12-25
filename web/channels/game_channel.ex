@@ -47,7 +47,7 @@ defmodule Familiada.GameChannel do
   end
 
   # TO CONFIRM: Action that happens when users leaves socket ?
-  def leave(_reason, socket) do
+  def terminate(_reason, socket) do
     game_state = GameState.update(socket.topic, player(socket), "player_left")
     broadcast socket, "back:modelUpdate", %{ model: game_state }
     {:ok, socket}
@@ -100,7 +100,6 @@ defmodule Familiada.GameState do
      room = start_link |> elem(1) |> query ["GET", room_id]
      room != :undefined && Poison.decode!(room) || GameModel.initial_model
   end
-  # NOTE: This should be in sync with BackendActions in Elm
 
   #### #### #### #### ####
   defp set_room(room, room_id) do
