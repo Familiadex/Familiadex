@@ -3,10 +3,11 @@ defmodule Familiada.Reactions do
   # Here we should have GameActions which should be similar to game actions on Frontend
   # Although here we are concerned about authorization and changing game model only
   # On frontend we are concerned about displaying this model and dispatching actions as update_cmd
+  import Ecto.Query
   alias Familiada.Utils
   # This is temporary
   alias Familiada.Repo
-  import Ecto.Query
+  alias Familiada.PolledAnswer
 
   def restart_game(_model, _player) do
     Familiada.GameModel.initial_model
@@ -70,16 +71,16 @@ defmodule Familiada.Reactions do
     Familiada.Question |> Repo.all |> Enum.at(0)
   end
   def top_answers(question_id) do
-    # Familiada.PolledAnswer
-    # |> where(question_id: question_id)
-    # |> order_by(:points)
-    # |> limit(6)
-    # |> Repo.all
+    PolledAnswer
+    |> where(question_id: ^question_id)
+    |> order_by(:points)
+    |> limit(6)
+    |> Repo.all
   end
   def start_game(model, player) do
     model = Dict.put(model, "mode", "InGameRound")
     question = sample_question
-    answers = top_answers(question)
+    answers = top_answers(question.id)
     answers_hash = %{
       a1: answers |> Enum.at(0),
       a2: answers |> Enum.at(1),
