@@ -3,6 +3,7 @@ defmodule Familiada.Reactions do
   # Here we should have GameActions which should be similar to game actions on Frontend
   # Although here we are concerned about authorization and changing game model only
   # On frontend we are concerned about displaying this model and dispatching actions as update_cmd
+  import Ecto
   import Ecto.Query
   alias Familiada.Utils
   # This is temporary
