@@ -15,6 +15,7 @@ import Signal exposing (Signal, Address)
 -- some alternatives: http://elm-lang.org/learn/Architecture.elm
 type Action
     = NoOp
+    | InputAnswer String
     | AnswersListAction AnswersList.Action
 
 allPlayersReady : Model -> Bool
@@ -31,6 +32,7 @@ update : Action -> Model -> Model
 update action model =
     case action of
       NoOp -> model
+      InputAnswer answer -> { model | answerValue <- answer }
       -- AnswersListAction act ->
       --   let currentQuestion = model.currentQuestion
       --       updatedCurrentQuestions = { currentQuestion | answers <- (AnswersList.update act currentQuestion.answers) }
@@ -51,15 +53,27 @@ view address ba model = case model.mode of
 viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
 viewAnswersBoard address ba model =
   let answerView boardAnswer = li [class "list-group-item"] [text boardAnswer.answer]
+      questionView question = li [class "list-group-item"] [text question]
+      sendAnswer backendCmd key =
+        if key == 13 then backendCmd else (mkBackendCmd FBA.NoAction [])
+      answerBox = input
+                  [ value model.answerValue
+                  , on "input" targetValue (Signal.message address << InputAnswer)
+                  , onKeyUp ba ((mkBackendCmd FBA.SendAnswer [model.answerValue]) |> sendAnswer)
+                  ] []
   in
-    ul [class "list-group"]
-      [ answerView model.answersBoard.a1
-      , answerView model.answersBoard.a2
-      , answerView model.answersBoard.a3
-      , answerView model.answersBoard.a4
-      , answerView model.answersBoard.a5
-      , answerView model.answersBoard.a6
-      ]
+    div []
+    [ ul [class "list-group"]
+        [ questionView model.currentQuestion
+        , answerView model.answersBoard.a1
+        , answerView model.answersBoard.a2
+        , answerView model.answersBoard.a3
+        , answerView model.answersBoard.a4
+        , answerView model.answersBoard.a5
+        , answerView model.answersBoard.a6
+        , answerBox
+        ]
+    ]
 -- boardView: Address Action -> Adress BackendCmd -> Model -> Html
 -- boardView address ba model =
 --     div [ class "row row-list" ]

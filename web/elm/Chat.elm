@@ -117,7 +117,6 @@ view address model =
 
 buildUsernameInput model newName = InputUsername {oldUsername = model.currentUser, newUsername = newName}
 
-
 sendMessage : Msg -> Int -> Action
 sendMessage msg key =
   if key == 13 then SendMsg msg else NoOp

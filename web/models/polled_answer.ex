@@ -1,6 +1,6 @@
 defmodule Familiada.PolledAnswer do
   use Familiada.Web, :model
-  use Ecto.Schema 
+  use Ecto.Schema
 
   schema "polled_answers" do
     field :answer, :string
@@ -22,5 +22,12 @@ defmodule Familiada.PolledAnswer do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+  end
+end
+
+defimpl Poison.Encoder, for: Familiada.PolledAnswer do
+  def encode(model, opts) do
+    %{answer: model.answer,
+      points: model.points} |> Poison.Encoder.encode(opts)
   end
 end

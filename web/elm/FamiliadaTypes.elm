@@ -12,6 +12,7 @@ type alias Model =
     , currentQuestion: String
     , answersBoard : AnswersBoard
     , whoAnswering : Player
+    , answerValue: String
     }
 
 type alias BoardAnswer =

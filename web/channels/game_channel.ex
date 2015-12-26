@@ -57,9 +57,13 @@ defmodule Familiada.GameChannel do
   # They send us cmd = %{cmd: cmdName, params[strings]}
   def handle_in("modelUpdateCmd", cmd, socket) do
     # TODO: Check if action authorized given user and state - which layer?
-    game_state = GameState.update(socket.topic, player(socket), cmd["cmd"], cmd["params"])
-    broadcast socket, "back:modelUpdate", %{ model: game_state }
-    {:noreply, socket}
+    if cmd["cmd"] == "NoAction" do
+      {:noreply, socket}
+    else
+      game_state = GameState.update(socket.topic, player(socket), cmd["cmd"], cmd["params"])
+      broadcast socket, "back:modelUpdate", %{ model: game_state }
+      {:noreply, socket}
+    end
   end
 
   #### #### HELPERS #### ####

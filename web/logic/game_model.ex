@@ -26,6 +26,7 @@ defmodule Familiada.GameModel do
         a3: %{answer: "???", points: 33},  a6: %{answer: "???", points: 33},
       },
       whoAnswering: %{id: 0, name: "ImieXYZ"},
+      answerValue: ""
       # roomSize: 6,
       # pointsToTake: 0,
       # redTeamErrors: 0,

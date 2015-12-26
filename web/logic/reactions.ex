@@ -69,7 +69,7 @@ defmodule Familiada.Reactions do
   end
 
   def sample_question do
-    Familiada.Question |> Repo.all |> Enum.at(0)
+    Familiada.Question |> Repo.all |> Enum.at(1)
   end
   def top_answers(question_id) do
     PolledAnswer
