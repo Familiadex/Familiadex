@@ -120,9 +120,15 @@ defmodule Familiada.Reactions do
       "blueTeam"
     end
   end
+  defp reset_teams_errors(model) do
+    model
+    |> Dict.put("redTeamErrors", 0)
+    |> Dict.put("blueTeamErrors", 0)
+  end
   defp end_possible_fight(model, player) do
     # Fight is ended only by correct answer
     model = Dict.put(model, "mode", "InGameRound")
+    model = reset_teams_errors(model)
     ptn = player_team_name(model, player)
     model = Dict.put(model, "answeringTeam", ptn)
   end
