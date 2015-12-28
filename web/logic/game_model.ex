@@ -29,7 +29,7 @@ defmodule Familiada.GameModel do
       },
       whoAnswering: %{id: 0, name: "ImieXYZ"},
       answerValue: "",
-      myTeamAnswering: false,
+      answeringTeam: "no one yet",
       # roomSize: 6,
       # pointsToTake: 0,
       # redTeamErrors: 0,

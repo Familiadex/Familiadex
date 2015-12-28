@@ -15,7 +15,7 @@ type alias Model =
     , answersBoard : AnswersBoard
     , whoAnswering : Player
     , answerValue: String
-    , myTeamAnswering: Bool -- each player get's this customized
+    , answeringTeam: String
     }
 
 type alias BoardAnswer =

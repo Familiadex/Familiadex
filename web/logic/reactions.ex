@@ -78,10 +78,6 @@ defmodule Familiada.Reactions do
     |> limit(6)
     |> Repo.all
   end
-  defp restart_teams(model) do
-    model
-    |> Dict.put("myTeamAnswering", false)
-  end
   def start_game(model, player) do
     model = Dict.put(model, "mode", "InGameRound")
     question = sample_question
@@ -119,7 +115,9 @@ defmodule Familiada.Reactions do
     end
   end
   defp end_possible_fight(model, player) do
-    Dict.put(model, "mode", "InGameRound")
+    model = Dict.put(model, "mode", "InGameRound")
+    ptn = player_team_name(model, player)
+    model = Dict.put(model, "answeringTeam", ptn)
   end
   def send_answer(model, player, answer) do
     good_answer = answer_exists(model, answer)
