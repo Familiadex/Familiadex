@@ -1,0 +1,3 @@
+module ViewMain where
+
+view
