@@ -33,7 +33,7 @@ update action model =
     case action of
       NoOp -> model
       InputAnswer answer -> { model | answerValue <- answer }
-      -- AnswersListAction act ->
+      -- AnswersListAction act -> -- this can be done much better
       --   let currentQuestion = model.currentQuestion
       --       updatedCurrentQuestions = { currentQuestion | answers <- (AnswersList.update act currentQuestion.answers) }
       --   in
@@ -46,10 +46,6 @@ view address ba model = case model.mode of
     "RoundFight" -> viewAnswersBoard address ba model
     "InGameRound" -> viewAnswersBoard address ba model
     -- "Started" -> boardView address model
-
--- queueView: Address Action -> Address BackendAction -> Model -> Html
--- queueView address ba model =
---   viewPlayersList address ba model
 
 viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
 viewAnswersBoard address ba model =
@@ -76,16 +72,6 @@ viewAnswersBoard address ba model =
         , answerBox model
         ]
     ]
--- boardView: Address Action -> Adress BackendCmd -> Model -> Html
--- boardView address ba model =
---     div [ class "row row-list" ]
---       [ div [class "col-xs-3"] [(viewTeamPlayers model.teamA)]
---       , div [class "col-xs-6"]
---           [ text "Odpowiedzi"
---           , (AnswersList.view (Signal.forwardTo address AnswersListAction) model.currentQuestion.answers)
---           ]
---       , div [class "col-xs-3"] [(viewTeamPlayers model.teamB)]
---       ]
 
 currentPlayer : Model -> Maybe Player
 currentPlayer model =
@@ -106,32 +92,6 @@ viewTeamBoards address ba model =
       , button [onClick ba (mkBackendCmd FBA.StandUp [])] [text "Free My Slot"]
       , button [onClick ba (mkBackendCmd FBA.StartGame [])] [text "Start Game"]
       ]
-
--- viewPlayersList : Address Action -> Address BackendAction -> Model -> Html
--- viewPlayersList address ba model =
---   let readyClass p = if p then class "alert alert-success pointer" else class "alert alert-danger pointer"
---       readyText p = if p then " READY" else " NOT READY"
---       viewPlayer p = li [] [ div
---                              [readyClass p.ready] [text (p.name ++ " - "++ (readyText p.ready))]
---                            ]
---       startButton = if allPlayersReady model
---         then
---           div [onClick ba FBA.TooglePlayerReady, class "btn btn-success"] [text "Start Game"]
---         else
---           div [] [text "Waiting for all players ready..."]
---       toogleButton = case (currentPlayer model) of
---         Just p ->
---           let toogleText = if p.ready then "I'm not ready" else "I'm ready"
---           in
---             div [onClick ba FBA.TooglePlayerReady, class "btn btn-info"] [text toogleText]
---   in
---     div []
---     [ text "Players in Que"
---     , ul [] (List.map viewPlayer model.playersList)
---     , toogleButton
---     , startButton
---     ]
-
 
 ---- INPUTS ----
 port backendModel : Signal Model
