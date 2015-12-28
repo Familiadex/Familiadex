@@ -121,21 +121,43 @@ defmodule Familiada.Reactions do
     end
   end
   defp end_possible_fight(model, player) do
+    # Fight is ended only by correct answer
     model = Dict.put(model, "mode", "InGameRound")
     ptn = player_team_name(model, player)
     model = Dict.put(model, "answeringTeam", ptn)
   end
-  def send_answer(model, player, answer) do
-    good_answer = answer_exists(model, answer)
-    if good_answer && answer_allowed(model, player) do
-      model = end_possible_fight(model, player)
-      model = update_team_points(model, player, answer)
-      answer = Dict.put(answer, "show", true)
-      model = Dict.put(model, good_answer, answer)
-    else
-      # FIXME: should notify user somehow about wrong answer
+  defp add_error_unless_fight(model, player) do
+    # NOTE: having this embbeded in model.player.team would simplify things
+    ptn = player_team_name(model, player)
+    if model["answeringTeam"] == nil do
       model
+    else
+      errors = ptn <> "Errors"
+      current_errors = model[errors]
+      Dict.put(model, errors, current_errors + 1)
     end
+  end
+  def send_answer(model, player, answer) do
+    if answer_allowed(model, player) do
+      if good_answer do
+        # NOTE: player could be embeded in model it would clarify this code
+        model = end_possible_fight(model, player)
+        model = update_team_points(model, player, answer)
+        answer = Dict.put(answer, "show", true)
+        model = Dict.put(model, good_answer, answer)
+      else
+        # FIXME: should notify user somehow about wrong answer
+        model
+      end
+    else # Answer not allowed
+      if good_answer do
+        model
+      else
+        add_error_unless_fight(model, player)
+      end
+    end
+    good_answer = answer_exists(model, answer)
+
   end
 
   defp get_game_id(model) do
