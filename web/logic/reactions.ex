@@ -100,6 +100,12 @@ defmodule Familiada.Reactions do
       model[x].show == false && model[x].answer == answer
     end |> Enum.at(0)
   end
+  # NOTE: this should be in action_authorization.ex
+  defp answer_allowed(model, player) do
+    ptn = player_team_name(model, player)
+    # Either it's fight or answers round
+    model["answeringTeam"] == nil || model["answeringTeam"] == ptn
+  end
   defp update_team_points(model, player, answer) do
     ptm = player_team_name(model, player) <> "Points"
     # NOTE: hack possible from client side if answer not from DB by id
@@ -121,7 +127,7 @@ defmodule Familiada.Reactions do
   end
   def send_answer(model, player, answer) do
     good_answer = answer_exists(model, answer)
-    if good_answer do
+    if good_answer && answer_allowed(model, player) do
       model = end_possible_fight(model, player)
       model = update_team_points(model, player, answer)
       answer = Dict.put(answer, "show", true)
