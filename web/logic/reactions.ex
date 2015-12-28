@@ -78,6 +78,10 @@ defmodule Familiada.Reactions do
     |> limit(6)
     |> Repo.all
   end
+  defp restart_teams(model) do
+    model
+    |> Dict.put("myTeamAnswering", false)
+  end
   def start_game(model, player) do
     model = Dict.put(model, "mode", "InGameRound")
     question = sample_question
@@ -114,9 +118,13 @@ defmodule Familiada.Reactions do
       "blueTeam"
     end
   end
+  defp end_possible_fight(model, player) do
+    Dict.put(model, "mode", "InGameRound")
+  end
   def send_answer(model, player, answer) do
     good_answer = answer_exists(model, answer)
     if good_answer do
+      model = end_possible_fight(model, player)
       model = update_team_points(model, player, answer)
       answer = Dict.put(answer, "show", true)
       model = Dict.put(model, good_answer, answer)
