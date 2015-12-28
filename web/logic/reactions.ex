@@ -79,7 +79,7 @@ defmodule Familiada.Reactions do
     |> Repo.all
   end
   def start_game(model, player) do
-    model = Dict.put(model, "mode", "InGameRound")
+    model = Dict.put(model, "mode", "RoundFight")
     question = sample_question
     answers = top_answers(question.id)
     answers_hash = %{
@@ -92,6 +92,7 @@ defmodule Familiada.Reactions do
     }
     model = Dict.put(model, "currentQuestion", question.question)
     model = Dict.put(model, "answersBoard", answers_hash)
+    model = Dict.put(model, "answeringTeam", "NONE")
   end
 
   # The team who first answer takes round
@@ -104,7 +105,7 @@ defmodule Familiada.Reactions do
   defp answer_allowed(model, player) do
     ptn = player_team_name(model, player)
     # Either it's fight or answers round
-    model["answeringTeam"] == nil || model["answeringTeam"] == ptn
+    model["answeringTeam"] == "NONE" || model["answeringTeam"] == ptn
   end
   defp update_team_points(model, player, answer) do
     ptm = player_team_name(model, player) <> "Points"
@@ -113,7 +114,7 @@ defmodule Familiada.Reactions do
     Dict.put(model, ptm, current_points + answer["points"])
   end
   defp player_team_name(model, player) do
-    red_team = Enum.any (Enum.map ["p1", "p2", "p3"], (x) -> model["redTeam"][x]["id"] == player["id"])
+    red_team = Enum.any (Enum.map ["p1", "p2", "p3"], fn (x) -> model["redTeam"][x]["id"] == player["id"] end)
     if red_team do
       "redTeam"
     else
@@ -135,7 +136,7 @@ defmodule Familiada.Reactions do
   defp add_error_unless_fight(model, player) do
     # NOTE: having this embbeded in model.player.team would simplify things
     ptn = player_team_name(model, player)
-    if model["answeringTeam"] == nil do
+    if model["answeringTeam"] == "NONE" do
       model
     else
       errors = ptn <> "Errors"
@@ -144,6 +145,7 @@ defmodule Familiada.Reactions do
     end
   end
   def send_answer(model, player, answer) do
+    good_answer = answer_exists(model, answer)
     if answer_allowed(model, player) do
       if good_answer do
         # NOTE: player could be embeded in model it would clarify this code
@@ -162,7 +164,6 @@ defmodule Familiada.Reactions do
         add_error_unless_fight(model, player)
       end
     end
-    good_answer = answer_exists(model, answer)
 
   end
 
