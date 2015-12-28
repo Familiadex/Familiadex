@@ -43,6 +43,7 @@ update action model =
 view : Address Action -> Address BackendCmd -> Model -> Html
 view address ba model = case model.mode of
     "WaitingForPlayers" -> viewTeamBoards address ba model
+    "RoundFight" -> viewAnswersBoard address ba model
     "InGameRound" -> viewAnswersBoard address ba model
     -- "Started" -> boardView address model
 
@@ -52,14 +53,15 @@ view address ba model = case model.mode of
 
 viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
 viewAnswersBoard address ba model =
-  let answerView boardAnswer = li [class "list-group-item"] [text boardAnswer.answer]
+  let answerText answer = if answer.show then answer.answer else "?"
+      answerView boardAnswer = li [class "list-group-item"] [text (answerText boardAnswer)]
       questionView question = li [class "list-group-item"] [text question]
       sendAnswer backendCmd key =
         if key == 13 then backendCmd else (mkBackendCmd FBA.NoAction [])
-      answerBox = input
+      answerBox model = input
                   [ value model.answerValue
-                  , on "input" targetValue (Signal.message address << InputAnswer)
                   , onKeyUp ba ((mkBackendCmd FBA.SendAnswer [model.answerValue]) |> sendAnswer)
+                  , on "input" targetValue (Signal.message address << InputAnswer)
                   ] []
   in
     div []
@@ -71,7 +73,7 @@ viewAnswersBoard address ba model =
         , answerView model.answersBoard.a4
         , answerView model.answersBoard.a5
         , answerView model.answersBoard.a6
-        , answerBox
+        , answerBox model
         ]
     ]
 -- boardView: Address Action -> Adress BackendCmd -> Model -> Html

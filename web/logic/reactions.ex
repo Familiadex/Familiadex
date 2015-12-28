@@ -96,10 +96,14 @@ defmodule Familiada.Reactions do
   end
 
   # The team who first answer takes round
-  defp answer_exists(model, answer) do
-    Enum.filter [:a1,:a2, :a3, :a4, :a5, :a6], fn (x) ->
-      model[x].show == false && model[x].answer == answer
-    end |> Enum.at(0)
+  defp answer_exists(model, answer_text) do
+    IO.puts "answer_text = #{answer_text}"
+    answers_board = model["answersBoard"]
+    correct_answer = Enum.filter ["a1","a2", "a3", "a4", "a5", "a6"], fn (x) ->
+      IO.puts "ODP##{x} #{answers_board[x]["answer"]}"
+      answers_board[x]["answer"] == answer_text
+    end
+    correct_answer |> Enum.at(0)
   end
   # NOTE: this should be in action_authorization.ex
   defp answer_allowed(model, player) do
@@ -114,7 +118,7 @@ defmodule Familiada.Reactions do
     Dict.put(model, ptm, current_points + answer["points"])
   end
   defp player_team_name(model, player) do
-    red_team = Enum.any (Enum.map ["p1", "p2", "p3"], fn (x) -> model["redTeam"][x]["id"] == player["id"] end)
+    red_team = Enum.any? (Enum.map ["p1", "p2", "p3"], fn (x) -> model["redTeam"][x]["id"] == player["id"] end)
     if red_team do
       "redTeam"
     else
@@ -144,16 +148,20 @@ defmodule Familiada.Reactions do
       Dict.put(model, errors, current_errors + 1)
     end
   end
-  def send_answer(model, player, answer) do
-    good_answer = answer_exists(model, answer)
+  def send_answer(model, player, answer_text) do
+    good_answer = answer_exists(model, answer_text)
     if answer_allowed(model, player) do
+      IO.puts "ANSWER IS ALLOWED"
       if good_answer do
+        IO.puts "GOOD ANSWER"
+        answer = model["answersBoard"][good_answer]
         # NOTE: player could be embeded in model it would clarify this code
         model = end_possible_fight(model, player)
         model = update_team_points(model, player, answer)
         answer = Dict.put(answer, "show", true)
         model = Dict.put(model, good_answer, answer)
       else
+        IO.puts "BAD ANSWER"
         # FIXME: should notify user somehow about wrong answer
         model
       end

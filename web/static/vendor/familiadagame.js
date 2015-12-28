@@ -2208,29 +2208,34 @@ Elm.FamiliadaGame.make = function (_elm) {
             $FamiliadaBackendActions.NoAction,
             _L.fromArray([]));
          });
-         var answerBox = A2($Html.input,
-         _L.fromArray([$Html$Attributes.value(model.answerValue)
-                      ,A3($Html$Events.on,
-                      "input",
-                      $Html$Events.targetValue,
-                      function ($) {
-                         return $Signal.message(address)(InputAnswer($));
-                      })
-                      ,A2($Html$Events.onKeyUp,
-                      ba,
-                      sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
-                      $FamiliadaBackendActions.SendAnswer,
-                      _L.fromArray([model.answerValue]))))]),
-         _L.fromArray([]));
+         var answerBox = function (model) {
+            return A2($Html.input,
+            _L.fromArray([$Html$Attributes.value(model.answerValue)
+                         ,A2($Html$Events.onKeyUp,
+                         ba,
+                         sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
+                         $FamiliadaBackendActions.SendAnswer,
+                         _L.fromArray([model.answerValue]))))
+                         ,A3($Html$Events.on,
+                         "input",
+                         $Html$Events.targetValue,
+                         function ($) {
+                            return $Signal.message(address)(InputAnswer($));
+                         })]),
+            _L.fromArray([]));
+         };
          var questionView = function (question) {
             return A2($Html.li,
             _L.fromArray([$Html$Attributes.$class("list-group-item")]),
             _L.fromArray([$Html.text(question)]));
          };
+         var answerText = function (answer) {
+            return answer.show ? answer.answer : "?";
+         };
          var answerView = function (boardAnswer) {
             return A2($Html.li,
             _L.fromArray([$Html$Attributes.$class("list-group-item")]),
-            _L.fromArray([$Html.text(boardAnswer.answer)]));
+            _L.fromArray([$Html.text(answerText(boardAnswer))]));
          };
          return A2($Html.div,
          _L.fromArray([]),
@@ -2243,7 +2248,7 @@ Elm.FamiliadaGame.make = function (_elm) {
                       ,answerView(model.answersBoard.a4)
                       ,answerView(model.answersBoard.a5)
                       ,answerView(model.answersBoard.a6)
-                      ,answerBox]))]));
+                      ,answerBox(model)]))]));
       }();
    });
    var view = F3(function (address,
@@ -2257,13 +2262,18 @@ Elm.FamiliadaGame.make = function (_elm) {
               address,
               ba,
               model);
+            case "RoundFight":
+            return A3(viewAnswersBoard,
+              address,
+              ba,
+              model);
             case "WaitingForPlayers":
             return A3(viewTeamBoards,
               address,
               ba,
               model);}
          _U.badCase($moduleName,
-         "between lines 44 and 47");
+         "between lines 44 and 48");
       }();
    });
    var NoOp = {ctor: "NoOp"};
