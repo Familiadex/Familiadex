@@ -2,17 +2,8 @@ module FamiliadaGame where
 import FamiliadaTypes exposing(Model, Player, Team, Question)
 import FamiliadaBackendActions as FBA exposing(BackendAction, BackendCmd, mkBackendCmd)
 
-import AnswersList exposing (Answer)
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import Signal exposing (Signal, Address)
-
----- UPDATE ----
-type Action
-    = NoOp
-    | InputAnswer String
-    | AnswersListAction AnswersList.Action
+import Signal exposing (Signal)
+import ViewMain exposing (view)
 
 allPlayersReady : Model -> Bool
 allPlayersReady model =

@@ -1,5 +1,13 @@
 module ViewAnswersBoard where
 
+import FamiliadaBackendActions as FBA exposing(BackendAction, BackendCmd, mkBackendCmd)
+import Signal exposing (Address)
+import FamiliadaTypes exposing (Model, Action)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+
 viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
 viewAnswersBoard address ba model =
   let answerText answer = if answer.show then answer.answer else "?"
