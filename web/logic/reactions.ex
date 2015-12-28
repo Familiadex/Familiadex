@@ -94,6 +94,22 @@ defmodule Familiada.Reactions do
     model = Dict.put(model, "answersBoard", answers_hash)
   end
 
+  defp answer_exists(model, answer) do
+    Enum.filter [:a1,:a2, :a3, :a4, :a5, :a6], fn (x) ->
+      model[x].answer == answer
+    end |> Enum.at(0)
+  end
+  def send_answer(model, player, answer) do
+    good_answer = answer_exists(model, answer)
+    if good_answer do
+      answer = Dict.put(answer, "show", true)
+      model = Dict.put(model, good_answer, answer)
+    else
+      # FIXME: should notify user somehow about wrong answer
+      model
+    end
+  end
+
   defp get_game_id(model) do
     next_game_id = Dict.get(model, "nextGameId", 0)
     Dict.put(model, "nextGameId", next_game_id + 1)

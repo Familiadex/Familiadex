@@ -25,7 +25,7 @@ defmodule Familiada.Actions do
      ],
      "InGameRound" => [
        "restart_game",
-       "answer",
+       "send_answer",
        "player_left"
      ],
      "InGameRoundGrandFinale" => [

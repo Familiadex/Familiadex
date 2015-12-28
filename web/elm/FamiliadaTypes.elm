@@ -17,7 +17,8 @@ type alias Model =
 
 type alias BoardAnswer =
     { answer: String,
-      points: Int
+      points: Int,
+      show: Bool
     }
 
 type alias AnswersBoard =

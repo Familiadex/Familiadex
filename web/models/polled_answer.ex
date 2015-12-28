@@ -28,6 +28,7 @@ end
 defimpl Poison.Encoder, for: Familiada.PolledAnswer do
   def encode(model, opts) do
     %{answer: model.answer,
+      show: false,
       points: model.points} |> Poison.Encoder.encode(opts)
   end
 end
