@@ -99,9 +99,24 @@ defmodule Familiada.Reactions do
       model[x].answer == answer
     end |> Enum.at(0)
   end
+  defp update_team_points(model, player, answer) do
+    ptm = player_team_name(model, player) <> "Points"
+    # NOTE: hack possible from client side if answer not from DB by id
+    current_points = model[ptm]
+    Dict.put(model, ptm, current_points + answer["points"])
+  end
+  defp player_team_name(model, player) do
+    red_team = Enum.any (Enum.map ["p1", "p2", "p3"], (x) -> model["redTeam"][x]["id"] == player["id"])
+    if red_team do
+      "redTeam"
+    else
+      "blueTeam"
+    end
+  end
   def send_answer(model, player, answer) do
     good_answer = answer_exists(model, answer)
     if good_answer do
+      model = update_team_points(model, player, answer)
       answer = Dict.put(answer, "show", true)
       model = Dict.put(model, good_answer, answer)
     else
