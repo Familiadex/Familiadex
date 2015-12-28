@@ -94,9 +94,10 @@ defmodule Familiada.Reactions do
     model = Dict.put(model, "answersBoard", answers_hash)
   end
 
+  # The team who first answer takes round
   defp answer_exists(model, answer) do
     Enum.filter [:a1,:a2, :a3, :a4, :a5, :a6], fn (x) ->
-      model[x].answer == answer
+      model[x].show == false && model[x].answer == answer
     end |> Enum.at(0)
   end
   defp update_team_points(model, player, answer) do

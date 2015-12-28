@@ -2,17 +2,20 @@ module FamiliadaTypes where
 
 type alias Model =
     { mode: String
-    , user_id : Int
+    , user_id : Int -- each player gets this customized -- should be caled current_user_id
     , playersList : List Player
     , readyQueue : List Int
     , redTeam : Team
     , blueTeam : Team
     , redTeamPoints: Int
     , blueTeamPoints: Int
+    , redTeamErrors: Int
+    , blueTeamErrors: Int
     , currentQuestion: String
     , answersBoard : AnswersBoard
     , whoAnswering : Player
     , answerValue: String
+    , myTeamAnswering: Bool -- each player get's this customized
     }
 
 type alias BoardAnswer =

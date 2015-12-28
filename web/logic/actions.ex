@@ -7,6 +7,10 @@ defmodule Familiada.Actions do
 
   # This should be called actions tree
   defp allowed_actions do
+    basic_actions  = [
+      "restart_game",
+      "player_left"
+    ]
     %{
      "WaitingForPlayers" => [
        "restart_game",
@@ -23,10 +27,11 @@ defmodule Familiada.Actions do
        "player_left",
        "player_joined"
      ],
-     "InGameRound" => [
-       "restart_game",
+     "RoundFight" => basic_actions ++ [
        "send_answer",
-       "player_left"
+     ],
+     "InGameRound" => basic_actions ++ [
+       "send_answer",
      ],
      "InGameRoundGrandFinale" => [
        "ready",

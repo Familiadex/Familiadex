@@ -19,6 +19,8 @@ defmodule Familiada.GameModel do
       },
       redTeamPoints: 0,
       blueTeamPoints: 0,
+      redTeamErrors: 0,
+      blueTeamErrors: 0,
       currentQuestion: "To jest currentQuestion?",
       answersBoard: %{
         a1: %{answer: "???", points: 33, show: false},  a4: %{answer: "???", points: 33, show: false},
@@ -26,7 +28,8 @@ defmodule Familiada.GameModel do
         a3: %{answer: "???", points: 33, show: false},  a6: %{answer: "???", points: 33, show: false},
       },
       whoAnswering: %{id: 0, name: "ImieXYZ"},
-      answerValue: ""
+      answerValue: "",
+      myTeamAnswering: false,
       # roomSize: 6,
       # pointsToTake: 0,
       # redTeamErrors: 0,
