@@ -1,24 +1,16 @@
 module FamiliadaGame where
-import FamiliadaTypes exposing(Model, Player, Team, Question)
+import FamiliadaTypes exposing(Model, Player, Team, Question, Action)
 import FamiliadaBackendActions as FBA exposing(BackendAction, BackendCmd, mkBackendCmd)
 
 import Signal exposing (Signal)
 import ViewMain exposing (view)
-
-allPlayersReady : Model -> Bool
-allPlayersReady model =
-  model.redTeam.p1.id /= 0 &&
-  model.redTeam.p2.id /= 0 &&
-  model.redTeam.p3.id /= 0 &&
-  model.blueTeam.p1.id /= 0 &&
-  model.blueTeam.p2.id /= 0 &&
-  model.blueTeam.p3.id /= 0
+import Html exposing(Html)
 
 update : Action -> Model -> Model
 update action model =
     case action of
-      NoOp -> model
-      InputAnswer answer -> { model | answerValue <- answer }
+      FamiliadaTypes.NoOp -> model
+      FamiliadaTypes.InputAnswer answer -> { model | answerValue <- answer }
 
 ---- INPUTS ----
 port backendModel : Signal Model
@@ -30,12 +22,15 @@ main : Signal Html
 main = Signal.map (view actions.address baBox.address) model
 
 -- manage the model of our application over time
+mainModel : Signal Model
+mainModel = Signal.map2 (\m a -> update a m) backendModel actions.signal
+
 model : Signal Model
-model = backendModel
+model = mainModel
 
 -- actions from user input
 actions : Signal.Mailbox Action
-actions = Signal.mailbox NoOp
+actions = Signal.mailbox FamiliadaTypes.NoOp
 
 baBox : Signal.Mailbox BackendCmd
 baBox = Signal.mailbox (mkBackendCmd FBA.NoAction [])

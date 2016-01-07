@@ -1,83 +1,4 @@
 var Elm = Elm || { Native: {} };
-Elm.AnswersList = Elm.AnswersList || {};
-Elm.AnswersList.make = function (_elm) {
-   "use strict";
-   _elm.AnswersList = _elm.AnswersList || {};
-   if (_elm.AnswersList.values)
-   return _elm.AnswersList.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "AnswersList",
-   $Basics = Elm.Basics.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var update = F2(function (action,
-   model) {
-      return function () {
-         switch (action.ctor)
-         {case "ShowAnswer":
-            return function () {
-                 var newAnswer = function (a) {
-                    return _U.eq(a.id,
-                    action._0) ? _U.replace([["visible"
-                                             ,true]],
-                    a) : a;
-                 };
-                 return A2($List.map,
-                 newAnswer,
-                 model);
-              }();}
-         _U.badCase($moduleName,
-         "between lines 20 and 24");
-      }();
-   });
-   var ShowAnswer = function (a) {
-      return {ctor: "ShowAnswer"
-             ,_0: a};
-   };
-   var viewAnswer = F2(function (address,
-   answer) {
-      return function () {
-         var answerText = answer.visible ? answer.answer : "........";
-         return A2($Html.div,
-         _L.fromArray([$Html$Attributes.$class("list-group-item")
-                      ,A2($Html$Events.onClick,
-                      address,
-                      ShowAnswer(answer.id))]),
-         _L.fromArray([$Html.text(answerText)]));
-      }();
-   });
-   var view = F2(function (address,
-   model) {
-      return A2($Html.div,
-      _L.fromArray([$Html$Attributes.$class("list-group")]),
-      A2($List.map,
-      viewAnswer(address),
-      model));
-   });
-   var Answer = F4(function (a,
-   b,
-   c,
-   d) {
-      return {_: {}
-             ,answer: b
-             ,id: a
-             ,points: c
-             ,visible: d};
-   });
-   _elm.AnswersList.values = {_op: _op
-                             ,update: update
-                             ,view: view
-                             ,Answer: Answer};
-   return _elm.AnswersList.values;
-};
 Elm.Array = Elm.Array || {};
 Elm.Array.make = function (_elm) {
    "use strict";
@@ -1937,20 +1858,19 @@ Elm.FamiliadaGame.make = function (_elm) {
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
    $moduleName = "FamiliadaGame",
-   $AnswersList = Elm.AnswersList.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $FamiliadaBackendActions = Elm.FamiliadaBackendActions.make(_elm),
    $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
    $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
+   $Signal = Elm.Signal.make(_elm),
+   $ViewMain = Elm.ViewMain.make(_elm);
    var baBox = $Signal.mailbox(A2($FamiliadaBackendActions.mkBackendCmd,
    $FamiliadaBackendActions.NoAction,
    _L.fromArray([])));
+   var actions = $Signal.mailbox($FamiliadaTypes.NoOp);
    var modelUpdateCmd = Elm.Native.Port.make(_elm).outboundSignal("modelUpdateCmd",
    function (v) {
       return {cmd: v.cmd
@@ -2097,76 +2017,6 @@ Elm.FamiliadaGame.make = function (_elm) {
                                                                                                                                                                                                                                                                                                                                                                               v.answeringTeam)} : _U.badPort("an object with fields `mode`, `user_id`, `playersList`, `readyQueue`, `redTeam`, `blueTeam`, `redTeamPoints`, `blueTeamPoints`, `redTeamErrors`, `blueTeamErrors`, `currentQuestion`, `answersBoard`, `whoAnswering`, `answerValue`, `answeringTeam`",
       v);
    });
-   var model = backendModel;
-   var viewTeamBoards = F3(function (address,
-   ba,
-   model) {
-      return function () {
-         var playerView = function (p) {
-            return A2($Html.div,
-            _L.fromArray([$Html$Attributes.$class("btn")]),
-            _L.fromArray([$Html.text(p.name)]));
-         };
-         var teamView = function (t) {
-            return A2($Html.ul,
-            _L.fromArray([$Html$Attributes.$class("list-group")]),
-            _L.fromArray([A2($Html.li,
-                         _L.fromArray([A2($Html$Events.onClick,
-                                      ba,
-                                      A2($FamiliadaBackendActions.mkBackendCmd,
-                                      $FamiliadaBackendActions.SitDown,
-                                      _L.fromArray([t.id,"p1"])))
-                                      ,$Html$Attributes.$class("list-group-item")]),
-                         _L.fromArray([playerView(t.p1)]))
-                         ,A2($Html.li,
-                         _L.fromArray([A2($Html$Events.onClick,
-                                      ba,
-                                      A2($FamiliadaBackendActions.mkBackendCmd,
-                                      $FamiliadaBackendActions.SitDown,
-                                      _L.fromArray([t.id,"p2"])))
-                                      ,$Html$Attributes.$class("list-group-item")]),
-                         _L.fromArray([playerView(t.p2)]))
-                         ,A2($Html.li,
-                         _L.fromArray([A2($Html$Events.onClick,
-                                      ba,
-                                      A2($FamiliadaBackendActions.mkBackendCmd,
-                                      $FamiliadaBackendActions.SitDown,
-                                      _L.fromArray([t.id,"p3"])))
-                                      ,$Html$Attributes.$class("list-group-item")]),
-                         _L.fromArray([playerView(t.p3)]))]));
-         };
-         return A2($Html.div,
-         _L.fromArray([$Html$Attributes.$class("row row-lis")]),
-         _L.fromArray([A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-danger")]),
-                      _L.fromArray([teamView(model.redTeam)]))
-                      ,A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-info")]),
-                      _L.fromArray([teamView(model.blueTeam)]))
-                      ,A2($Html.button,
-                      _L.fromArray([A2($Html$Events.onClick,
-                      ba,
-                      A2($FamiliadaBackendActions.mkBackendCmd,
-                      $FamiliadaBackendActions.StandUp,
-                      _L.fromArray([])))]),
-                      _L.fromArray([$Html.text("Free My Slot")]))
-                      ,A2($Html.button,
-                      _L.fromArray([A2($Html$Events.onClick,
-                      ba,
-                      A2($FamiliadaBackendActions.mkBackendCmd,
-                      $FamiliadaBackendActions.StartGame,
-                      _L.fromArray([])))]),
-                      _L.fromArray([$Html.text("Start Game")]))]));
-      }();
-   });
-   var currentPlayer = function (model) {
-      return $List.head(A2($List.filter,
-      function (x) {
-         return _U.eq(x.id,
-         model.user_id);
-      },
-      model.playersList));
-   };
    var update = F2(function (action,
    model) {
       return function () {
@@ -2177,123 +2027,25 @@ Elm.FamiliadaGame.make = function (_elm) {
               model);
             case "NoOp": return model;}
          _U.badCase($moduleName,
-         "between lines 33 and 40");
+         "between lines 11 and 13");
       }();
    });
-   var allPlayersReady = function (model) {
-      return !_U.eq(model.redTeam.p1.id,
-      0) && (!_U.eq(model.redTeam.p2.id,
-      0) && (!_U.eq(model.redTeam.p3.id,
-      0) && (!_U.eq(model.blueTeam.p1.id,
-      0) && (!_U.eq(model.blueTeam.p2.id,
-      0) && !_U.eq(model.blueTeam.p3.id,
-      0)))));
-   };
-   var AnswersListAction = function (a) {
-      return {ctor: "AnswersListAction"
-             ,_0: a};
-   };
-   var InputAnswer = function (a) {
-      return {ctor: "InputAnswer"
-             ,_0: a};
-   };
-   var viewAnswersBoard = F3(function (address,
-   ba,
-   model) {
-      return function () {
-         var sendAnswer = F2(function (backendCmd,
-         key) {
-            return _U.eq(key,
-            13) ? backendCmd : A2($FamiliadaBackendActions.mkBackendCmd,
-            $FamiliadaBackendActions.NoAction,
-            _L.fromArray([]));
-         });
-         var answerBox = function (model) {
-            return A2($Html.input,
-            _L.fromArray([$Html$Attributes.value(model.answerValue)
-                         ,A2($Html$Events.onKeyUp,
-                         ba,
-                         sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
-                         $FamiliadaBackendActions.SendAnswer,
-                         _L.fromArray([model.answerValue]))))
-                         ,A3($Html$Events.on,
-                         "input",
-                         $Html$Events.targetValue,
-                         function ($) {
-                            return $Signal.message(address)(InputAnswer($));
-                         })]),
-            _L.fromArray([]));
-         };
-         var questionView = function (question) {
-            return A2($Html.li,
-            _L.fromArray([$Html$Attributes.$class("list-group-item")]),
-            _L.fromArray([$Html.text(question)]));
-         };
-         var answerText = function (answer) {
-            return answer.show ? answer.answer : "?";
-         };
-         var answerView = function (boardAnswer) {
-            return A2($Html.li,
-            _L.fromArray([$Html$Attributes.$class("list-group-item")]),
-            _L.fromArray([$Html.text(answerText(boardAnswer))]));
-         };
-         return A2($Html.div,
-         _L.fromArray([]),
-         _L.fromArray([A2($Html.ul,
-         _L.fromArray([$Html$Attributes.$class("list-group")]),
-         _L.fromArray([questionView(model.currentQuestion)
-                      ,answerView(model.answersBoard.a1)
-                      ,answerView(model.answersBoard.a2)
-                      ,answerView(model.answersBoard.a3)
-                      ,answerView(model.answersBoard.a4)
-                      ,answerView(model.answersBoard.a5)
-                      ,answerView(model.answersBoard.a6)
-                      ,answerBox(model)]))]));
-      }();
-   });
-   var view = F3(function (address,
-   ba,
-   model) {
-      return function () {
-         var _v2 = model.mode;
-         switch (_v2)
-         {case "InGameRound":
-            return A3(viewAnswersBoard,
-              address,
-              ba,
-              model);
-            case "RoundFight":
-            return A3(viewAnswersBoard,
-              address,
-              ba,
-              model);
-            case "WaitingForPlayers":
-            return A3(viewTeamBoards,
-              address,
-              ba,
-              model);}
-         _U.badCase($moduleName,
-         "between lines 44 and 48");
-      }();
-   });
-   var NoOp = {ctor: "NoOp"};
-   var actions = $Signal.mailbox(NoOp);
+   var mainModel = A3($Signal.map2,
+   F2(function (m,a) {
+      return A2(update,a,m);
+   }),
+   backendModel,
+   actions.signal);
+   var model = mainModel;
    var main = A2($Signal.map,
-   A2(view,
+   A2($ViewMain.view,
    actions.address,
    baBox.address),
    model);
    _elm.FamiliadaGame.values = {_op: _op
-                               ,NoOp: NoOp
-                               ,InputAnswer: InputAnswer
-                               ,AnswersListAction: AnswersListAction
-                               ,allPlayersReady: allPlayersReady
                                ,update: update
-                               ,view: view
-                               ,viewAnswersBoard: viewAnswersBoard
-                               ,currentPlayer: currentPlayer
-                               ,viewTeamBoards: viewTeamBoards
                                ,main: main
+                               ,mainModel: mainModel
                                ,model: model
                                ,actions: actions
                                ,baBox: baBox};
@@ -2402,7 +2154,14 @@ Elm.FamiliadaTypes.make = function (_elm) {
          };
       };
    };
+   var InputAnswer = function (a) {
+      return {ctor: "InputAnswer"
+             ,_0: a};
+   };
+   var NoOp = {ctor: "NoOp"};
    _elm.FamiliadaTypes.values = {_op: _op
+                                ,NoOp: NoOp
+                                ,InputAnswer: InputAnswer
                                 ,Model: Model
                                 ,BoardAnswer: BoardAnswer
                                 ,AnswersBoard: AnswersBoard
@@ -13405,6 +13164,221 @@ Elm.Transform2D.make = function (_elm) {
                              ,scaleX: scaleX
                              ,scaleY: scaleY};
    return _elm.Transform2D.values;
+};
+Elm.ViewAnswersBoard = Elm.ViewAnswersBoard || {};
+Elm.ViewAnswersBoard.make = function (_elm) {
+   "use strict";
+   _elm.ViewAnswersBoard = _elm.ViewAnswersBoard || {};
+   if (_elm.ViewAnswersBoard.values)
+   return _elm.ViewAnswersBoard.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "ViewAnswersBoard",
+   $Basics = Elm.Basics.make(_elm),
+   $FamiliadaBackendActions = Elm.FamiliadaBackendActions.make(_elm),
+   $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var viewAnswersBoard = F3(function (address,
+   ba,
+   model) {
+      return function () {
+         var sendAnswer = F2(function (backendCmd,
+         key) {
+            return _U.eq(key,
+            13) ? backendCmd : A2($FamiliadaBackendActions.mkBackendCmd,
+            $FamiliadaBackendActions.NoAction,
+            _L.fromArray([]));
+         });
+         var answerBox = function (model) {
+            return A2($Html.input,
+            _L.fromArray([$Html$Attributes.value(model.answerValue)
+                         ,A3($Html$Events.on,
+                         "input",
+                         $Html$Events.targetValue,
+                         function ($) {
+                            return $Signal.message(address)($FamiliadaTypes.InputAnswer($));
+                         })
+                         ,A2($Html$Events.onKeyUp,
+                         ba,
+                         sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
+                         $FamiliadaBackendActions.SendAnswer,
+                         _L.fromArray([model.answerValue]))))]),
+            _L.fromArray([]));
+         };
+         var questionView = function (question) {
+            return A2($Html.li,
+            _L.fromArray([$Html$Attributes.$class("list-group-item")]),
+            _L.fromArray([$Html.text(question)]));
+         };
+         var answerText = function (answer) {
+            return answer.show ? answer.answer : "?";
+         };
+         var answerView = function (boardAnswer) {
+            return A2($Html.li,
+            _L.fromArray([$Html$Attributes.$class("list-group-item")]),
+            _L.fromArray([$Html.text(answerText(boardAnswer))]));
+         };
+         return A2($Html.div,
+         _L.fromArray([]),
+         _L.fromArray([A2($Html.ul,
+         _L.fromArray([$Html$Attributes.$class("list-group")]),
+         _L.fromArray([questionView(model.currentQuestion)
+                      ,answerView(model.answersBoard.a1)
+                      ,answerView(model.answersBoard.a2)
+                      ,answerView(model.answersBoard.a3)
+                      ,answerView(model.answersBoard.a4)
+                      ,answerView(model.answersBoard.a5)
+                      ,answerView(model.answersBoard.a6)
+                      ,answerBox(model)]))]));
+      }();
+   });
+   _elm.ViewAnswersBoard.values = {_op: _op
+                                  ,viewAnswersBoard: viewAnswersBoard};
+   return _elm.ViewAnswersBoard.values;
+};
+Elm.ViewMain = Elm.ViewMain || {};
+Elm.ViewMain.make = function (_elm) {
+   "use strict";
+   _elm.ViewMain = _elm.ViewMain || {};
+   if (_elm.ViewMain.values)
+   return _elm.ViewMain.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "ViewMain",
+   $Basics = Elm.Basics.make(_elm),
+   $FamiliadaBackendActions = Elm.FamiliadaBackendActions.make(_elm),
+   $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $ViewAnswersBoard = Elm.ViewAnswersBoard.make(_elm),
+   $ViewTeamboards = Elm.ViewTeamboards.make(_elm);
+   var view = F3(function (address,
+   ba,
+   model) {
+      return function () {
+         var _v0 = model.mode;
+         switch (_v0)
+         {case "InGameRound":
+            return A3($ViewAnswersBoard.viewAnswersBoard,
+              address,
+              ba,
+              model);
+            case "RoundFight":
+            return A3($ViewAnswersBoard.viewAnswersBoard,
+              address,
+              ba,
+              model);
+            case "WaitingForPlayers":
+            return A3($ViewTeamboards.viewTeamboards,
+              address,
+              ba,
+              model);}
+         _U.badCase($moduleName,
+         "between lines 11 and 15");
+      }();
+   });
+   _elm.ViewMain.values = {_op: _op
+                          ,view: view};
+   return _elm.ViewMain.values;
+};
+Elm.ViewTeamboards = Elm.ViewTeamboards || {};
+Elm.ViewTeamboards.make = function (_elm) {
+   "use strict";
+   _elm.ViewTeamboards = _elm.ViewTeamboards || {};
+   if (_elm.ViewTeamboards.values)
+   return _elm.ViewTeamboards.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "ViewTeamboards",
+   $Basics = Elm.Basics.make(_elm),
+   $FamiliadaBackendActions = Elm.FamiliadaBackendActions.make(_elm),
+   $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var viewTeamboards = F3(function (address,
+   ba,
+   model) {
+      return function () {
+         var playerView = function (p) {
+            return A2($Html.div,
+            _L.fromArray([$Html$Attributes.$class("btn")]),
+            _L.fromArray([$Html.text(p.name)]));
+         };
+         var teamView = function (t) {
+            return A2($Html.ul,
+            _L.fromArray([$Html$Attributes.$class("list-group")]),
+            _L.fromArray([A2($Html.li,
+                         _L.fromArray([A2($Html$Events.onClick,
+                                      ba,
+                                      A2($FamiliadaBackendActions.mkBackendCmd,
+                                      $FamiliadaBackendActions.SitDown,
+                                      _L.fromArray([t.id,"p1"])))
+                                      ,$Html$Attributes.$class("list-group-item")]),
+                         _L.fromArray([playerView(t.p1)]))
+                         ,A2($Html.li,
+                         _L.fromArray([A2($Html$Events.onClick,
+                                      ba,
+                                      A2($FamiliadaBackendActions.mkBackendCmd,
+                                      $FamiliadaBackendActions.SitDown,
+                                      _L.fromArray([t.id,"p2"])))
+                                      ,$Html$Attributes.$class("list-group-item")]),
+                         _L.fromArray([playerView(t.p2)]))
+                         ,A2($Html.li,
+                         _L.fromArray([A2($Html$Events.onClick,
+                                      ba,
+                                      A2($FamiliadaBackendActions.mkBackendCmd,
+                                      $FamiliadaBackendActions.SitDown,
+                                      _L.fromArray([t.id,"p3"])))
+                                      ,$Html$Attributes.$class("list-group-item")]),
+                         _L.fromArray([playerView(t.p3)]))]));
+         };
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.$class("row row-lis")]),
+         _L.fromArray([A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-danger")]),
+                      _L.fromArray([teamView(model.redTeam)]))
+                      ,A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-info")]),
+                      _L.fromArray([teamView(model.blueTeam)]))
+                      ,A2($Html.button,
+                      _L.fromArray([A2($Html$Events.onClick,
+                      ba,
+                      A2($FamiliadaBackendActions.mkBackendCmd,
+                      $FamiliadaBackendActions.StandUp,
+                      _L.fromArray([])))]),
+                      _L.fromArray([$Html.text("Free My Slot")]))
+                      ,A2($Html.button,
+                      _L.fromArray([A2($Html$Events.onClick,
+                      ba,
+                      A2($FamiliadaBackendActions.mkBackendCmd,
+                      $FamiliadaBackendActions.StartGame,
+                      _L.fromArray([])))]),
+                      _L.fromArray([$Html.text("Start Game")]))]));
+      }();
+   });
+   _elm.ViewTeamboards.values = {_op: _op
+                                ,viewTeamboards: viewTeamboards};
+   return _elm.ViewTeamboards.values;
 };
 Elm.VirtualDom = Elm.VirtualDom || {};
 Elm.VirtualDom.make = function (_elm) {
