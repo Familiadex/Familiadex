@@ -154,12 +154,14 @@ defmodule Familiada.Reactions do
       IO.puts "ANSWER IS ALLOWED"
       if good_answer do
         IO.puts "GOOD ANSWER"
-        answer = model["answersBoard"][good_answer]
+        answersBoard = model["answersBoard"]
+        answer = answersBoard[good_answer]
         # NOTE: player could be embeded in model it would clarify this code
         model = end_possible_fight(model, player)
         model = update_team_points(model, player, answer)
         answer = Dict.put(answer, "show", true)
-        model = Dict.put(model, good_answer, answer)
+        answersBoard = Dict.put(answersBoard, good_answer, answer)
+        Dict.put(model, "answersBoard", answersBoard)
       else
         IO.puts "BAD ANSWER"
         # FIXME: should notify user somehow about wrong answer
