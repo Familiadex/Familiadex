@@ -30,14 +30,17 @@ var elmDiv = document.getElementById('elm-main'),
     // elmChat = initElmChat(elmChatDiv, "game");
 
 // TODO: we have to init elm game & channel with proper auth token (encoded player_id)
-let game = socket.channel("games:ID_GRY27", {player: currentUser});
-
+let game = socket.channel("games:ID_GRY33", {player: currentUser});
 game.join()
   .receive("ok", initialModel => {
     console.log("Joined game channel successfully", initialModel)
     elmFamiliadaGame = Elm.embed(Elm.FamiliadaGame, elmDiv, {backendModel: initialModel})
     // game.push("modelUpdateCmd", {cmd: "SetPlayerReady", params: [123]})
     // Send actions to backend
+    // FIXME: for some reason I'm not working
+    window["restartGame"] = function(){
+      game.push("modelUpdateCmd", {cmd: "RestartGame", params: []})
+    }
     elmFamiliadaGame.ports.modelUpdateCmd.subscribe((cmd) => {
       console.log("modelUpdateCmd", cmd)
       game.push("modelUpdateCmd", cmd)

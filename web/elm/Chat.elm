@@ -2,7 +2,6 @@ module Chat where
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Task exposing (Task)
 import Html.Events exposing (onClick, on, targetValue, onKeyUp)
 
 type alias Msg = {
@@ -116,7 +115,6 @@ view address model =
     ]
 
 buildUsernameInput model newName = InputUsername {oldUsername = model.currentUser, newUsername = newName}
-
 
 sendMessage : Msg -> Int -> Action
 sendMessage msg key =

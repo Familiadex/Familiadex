@@ -19,7 +19,7 @@
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
       <p class="alert alert-success" role="alert"><%= get_flash(@conn, :success) %></p>
 
-      <%= @inner %>
+      <%= render @view_module, @view_template, assigns %>
 
     </div> <!-- /container -->
     <%= render "footer.html" %>

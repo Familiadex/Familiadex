@@ -47,7 +47,7 @@ defmodule Familiada.GameChannel do
   end
 
   # TO CONFIRM: Action that happens when users leaves socket ?
-  def leave(_reason, socket) do
+  def terminate(_reason, socket) do
     game_state = GameState.update(socket.topic, player(socket), "player_left")
     broadcast socket, "back:modelUpdate", %{ model: game_state }
     {:ok, socket}
@@ -57,9 +57,13 @@ defmodule Familiada.GameChannel do
   # They send us cmd = %{cmd: cmdName, params[strings]}
   def handle_in("modelUpdateCmd", cmd, socket) do
     # TODO: Check if action authorized given user and state - which layer?
-    game_state = GameState.update(socket.topic, player(socket), cmd["cmd"], cmd["params"])
-    broadcast socket, "back:modelUpdate", %{ model: game_state }
-    {:noreply, socket}
+    if cmd["cmd"] == "NoAction" do
+      {:noreply, socket}
+    else
+      game_state = GameState.update(socket.topic, player(socket), cmd["cmd"], cmd["params"])
+      broadcast socket, "back:modelUpdate", %{ model: game_state }
+      {:noreply, socket}
+    end
   end
 
   #### #### HELPERS #### ####
@@ -100,7 +104,6 @@ defmodule Familiada.GameState do
      room = start_link |> elem(1) |> query ["GET", room_id]
      room != :undefined && Poison.decode!(room) || GameModel.initial_model
   end
-  # NOTE: This should be in sync with BackendActions in Elm
 
   #### #### #### #### ####
   defp set_room(room, room_id) do

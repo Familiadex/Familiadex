@@ -5,6 +5,7 @@ type BackendAction = PlayerJoined
                    | SitDown
                    | StandUp
                    | StartGame
+                   | SendAnswer
                    | NoAction
 
 type alias BackendCmd = {cmd: String, params: List String}

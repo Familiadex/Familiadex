@@ -13,20 +13,20 @@
 user = %Familiada.User{email: "test@user.com", crypted_password: Comeonin.Bcrypt.hashpwsalt("test")}
 Familiada.Repo.insert!(user)
 
-q1 = Familiada.Repo.insert!(%Familiada.Question{question: "Popularny owoc"})
-Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q1.id, answer: "Jabłko", points: 60})
-Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q1.id, answer: "Gruszka", points: 40})
+# Musi być po co najmniej 6 odpowiedzi
 
 q2 = Familiada.Repo.insert!(%Familiada.Question{question: "Co kobieta ma w torebce?"})
-Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "szminka", points: 40})
+Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "szminka", points: 25})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "portfel", points: 30})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "telefon", points: 15})
+Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "klucze", points: 10})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "klucze", points: 10})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "buty", points: 5})
 
 q3 = Familiada.Repo.insert!(%Familiada.Question{question: "Co jemy na śniadanie"})
-Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q3.id, answer: "kanapki", points: 40})
+Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q3.id, answer: "kanapki", points: 25})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q3.id, answer: "płatki", points: 30})
+Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q3.id, answer: "naleśniki", points: 15})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q3.id, answer: "naleśniki", points: 15})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q3.id, answer: "jajecznicę", points: 10})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q3.id, answer: "parówki", points: 5})

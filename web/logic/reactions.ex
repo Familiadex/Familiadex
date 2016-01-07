@@ -3,7 +3,16 @@ defmodule Familiada.Reactions do
   # Here we should have GameActions which should be similar to game actions on Frontend
   # Although here we are concerned about authorization and changing game model only
   # On frontend we are concerned about displaying this model and dispatching actions as update_cmd
+  import Ecto
+  import Ecto.Query
   alias Familiada.Utils
+  # This is temporary
+  alias Familiada.Repo
+  alias Familiada.PolledAnswer
+
+  def restart_game(_model, _player) do
+    Familiada.GameModel.initial_model
+  end
 
   def player_joined(model, player) do
     playersList = Dict.get(model, "playersList", [])
@@ -59,17 +68,117 @@ defmodule Familiada.Reactions do
     end
   end
 
+  def sample_question do
+    Familiada.Question |> Repo.all |> Enum.at(1)
+  end
+  def top_answers(question_id) do
+    PolledAnswer
+    |> where(question_id: ^question_id)
+    |> order_by(:points)
+    |> limit(6)
+    |> Repo.all
+  end
+  def start_game(model, player) do
+    model = Dict.put(model, "mode", "RoundFight")
+    question = sample_question
+    answers = top_answers(question.id)
+    answers_hash = %{
+      a1: answers |> Enum.at(0),
+      a2: answers |> Enum.at(1),
+      a3: answers |> Enum.at(2),
+      a4: answers |> Enum.at(3),
+      a5: answers |> Enum.at(4),
+      a6: answers |> Enum.at(5),
+    }
+    model = Dict.put(model, "currentQuestion", question.question)
+    model = Dict.put(model, "answersBoard", answers_hash)
+    model = Dict.put(model, "answeringTeam", "NONE")
+  end
+
+  # The team who first answer takes round
+  defp answer_exists(model, answer_text) do
+    IO.puts "answer_text = #{answer_text}"
+    answers_board = model["answersBoard"]
+    correct_answer = Enum.filter ["a1","a2", "a3", "a4", "a5", "a6"], fn (x) ->
+      IO.puts "ODP##{x} #{answers_board[x]["answer"]}"
+      answers_board[x]["answer"] == answer_text
+    end
+    correct_answer |> Enum.at(0)
+  end
+  # NOTE: this should be in action_authorization.ex
+  defp answer_allowed(model, player) do
+    ptn = player_team_name(model, player)
+    # Either it's fight or answers round
+    model["answeringTeam"] == "NONE" || model["answeringTeam"] == ptn
+  end
+  defp update_team_points(model, player, answer) do
+    ptm = player_team_name(model, player) <> "Points"
+    # NOTE: hack possible from client side if answer not from DB by id
+    current_points = model[ptm]
+    Dict.put(model, ptm, current_points + answer["points"])
+  end
+  defp player_team_name(model, player) do
+    red_team = Enum.any? (Enum.map ["p1", "p2", "p3"], fn (x) -> model["redTeam"][x]["id"] == player["id"] end)
+    if red_team do
+      "redTeam"
+    else
+      "blueTeam"
+    end
+  end
+  defp reset_teams_errors(model) do
+    model
+    |> Dict.put("redTeamErrors", 0)
+    |> Dict.put("blueTeamErrors", 0)
+  end
+  defp end_possible_fight(model, player) do
+    # Fight is ended only by correct answer
+    model = Dict.put(model, "mode", "InGameRound")
+    model = reset_teams_errors(model)
+    ptn = player_team_name(model, player)
+    model = Dict.put(model, "answeringTeam", ptn)
+  end
+  defp add_error_unless_fight(model, player) do
+    # NOTE: having this embbeded in model.player.team would simplify things
+    ptn = player_team_name(model, player)
+    if model["answeringTeam"] == "NONE" do
+      model
+    else
+      errors = ptn <> "Errors"
+      current_errors = model[errors]
+      Dict.put(model, errors, current_errors + 1)
+    end
+  end
+  def send_answer(model, player, answer_text) do
+    good_answer = answer_exists(model, answer_text)
+    if answer_allowed(model, player) do
+      IO.puts "ANSWER IS ALLOWED"
+      if good_answer do
+        IO.puts "GOOD ANSWER"
+        answersBoard = model["answersBoard"]
+        answer = answersBoard[good_answer]
+        # NOTE: player could be embeded in model it would clarify this code
+        model = end_possible_fight(model, player)
+        model = update_team_points(model, player, answer)
+        answer = Dict.put(answer, "show", true)
+        answersBoard = Dict.put(answersBoard, good_answer, answer)
+        Dict.put(model, "answersBoard", answersBoard)
+      else
+        IO.puts "BAD ANSWER"
+        # FIXME: should notify user somehow about wrong answer
+        model
+      end
+    else # Answer not allowed
+      if good_answer do
+        model
+      else
+        add_error_unless_fight(model, player)
+      end
+    end
+
+  end
+
   defp get_game_id(model) do
     next_game_id = Dict.get(model, "nextGameId", 0)
     Dict.put(model, "nextGameId", next_game_id + 1)
-  end
-
-  def start_game(model, player) do
-    readyQueue = Dict.get(model, "readyQueue", []) # rigid 2 players
-    if [red_team_player, blue_team_player] = readyQueue do
-      Dict.put(model, "redTeam", [red_team_player]) |> Dict.put("blueTeam", [blue_team_player])
-    else
-      model
-    end
   end
 end

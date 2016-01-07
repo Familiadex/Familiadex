@@ -61,7 +61,7 @@ defmodule Familiada.ChatChannel do
     {:noreply, socket}
   end
 
-  def leave(_reason, socket) do
+  def terminate(_reason, socket) do
     ChatUsers.remove(socket.topic, socket.assigns.user["name"])
     broadcast socket, "back:userlist", %{ userlist: ChatUsers.get(socket.topic) }
     {:ok, socket}
