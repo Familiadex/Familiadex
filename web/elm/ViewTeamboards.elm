@@ -17,7 +17,7 @@ viewTeamboards address ba model =
                    , li [onClick ba (mkBackendCmd FBA.SitDown [t.id, "p3"]), class "list-group-item"] [playerView t.p3]
                    ]
   in
-    div [class "row row-lis"]
+    div [class "row row-list"]
       [ div [class "col-xs-6 alert-danger"] [teamView model.redTeam]
       , div [class "col-xs-6 alert-info"] [teamView model.blueTeam]
       , button [onClick ba (mkBackendCmd FBA.StandUp [])] [text "Free My Slot"]

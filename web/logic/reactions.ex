@@ -164,15 +164,10 @@ defmodule Familiada.Reactions do
         Dict.put(model, "answersBoard", answersBoard)
       else
         IO.puts "BAD ANSWER"
-        # FIXME: should notify user somehow about wrong answer
-        model
-      end
-    else # Answer not allowed
-      if good_answer do
-        model
-      else
         add_error_unless_fight(model, player)
       end
+    else
+      model
     end
 
   end

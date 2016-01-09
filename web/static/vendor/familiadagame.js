@@ -13185,7 +13185,9 @@ Elm.ViewAnswersBoard.make = function (_elm) {
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
+   $Signal = Elm.Signal.make(_elm),
+   $ViewTeamErrors = Elm.ViewTeamErrors.make(_elm),
+   $ViewTeamPoints = Elm.ViewTeamPoints.make(_elm);
    var viewAnswersBoard = F3(function (address,
    ba,
    model) {
@@ -13199,7 +13201,8 @@ Elm.ViewAnswersBoard.make = function (_elm) {
          });
          var answerBox = function (model) {
             return A2($Html.input,
-            _L.fromArray([$Html$Attributes.value(model.answerValue)
+            _L.fromArray([$Html$Attributes.$class("answer-input")
+                         ,$Html$Attributes.value(model.answerValue)
                          ,A3($Html$Events.on,
                          "input",
                          $Html$Events.targetValue,
@@ -13219,14 +13222,14 @@ Elm.ViewAnswersBoard.make = function (_elm) {
             _L.fromArray([$Html.text(question)]));
          };
          var answerText = function (answer) {
-            return answer.show ? answer.answer : "?";
+            return answer.show ? answer.answer : ".................................";
          };
          var answerView = function (boardAnswer) {
             return A2($Html.li,
             _L.fromArray([$Html$Attributes.$class("list-group-item")]),
             _L.fromArray([$Html.text(answerText(boardAnswer))]));
          };
-         return A2($Html.div,
+         var answersBoard = A2($Html.div,
          _L.fromArray([]),
          _L.fromArray([A2($Html.ul,
          _L.fromArray([$Html$Attributes.$class("list-group")]),
@@ -13238,6 +13241,19 @@ Elm.ViewAnswersBoard.make = function (_elm) {
                       ,answerView(model.answersBoard.a5)
                       ,answerView(model.answersBoard.a6)
                       ,answerBox(model)]))]));
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.$class("row row-list")]),
+         _L.fromArray([A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("col col-xs-2")]),
+                      _L.fromArray([$ViewTeamPoints.viewRedTeamPoints(model)
+                                   ,$ViewTeamErrors.viewRedTeamErrors(model)]))
+                      ,A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("col-xs-7")]),
+                      _L.fromArray([answersBoard]))
+                      ,A2($Html.div,
+                      _L.fromArray([$Html$Attributes.$class("col-xs-2")]),
+                      _L.fromArray([$ViewTeamPoints.viewBlueTeamPoints(model)
+                                   ,$ViewTeamErrors.viewBlueTeamErrors(model)]))]));
       }();
    });
    _elm.ViewAnswersBoard.values = {_op: _op
@@ -13293,6 +13309,102 @@ Elm.ViewMain.make = function (_elm) {
    _elm.ViewMain.values = {_op: _op
                           ,view: view};
    return _elm.ViewMain.values;
+};
+Elm.ViewTeamErrors = Elm.ViewTeamErrors || {};
+Elm.ViewTeamErrors.make = function (_elm) {
+   "use strict";
+   _elm.ViewTeamErrors = _elm.ViewTeamErrors || {};
+   if (_elm.ViewTeamErrors.values)
+   return _elm.ViewTeamErrors.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "ViewTeamErrors",
+   $Basics = Elm.Basics.make(_elm),
+   $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var viewErrors = function (n) {
+      return function () {
+         switch (n)
+         {case 0: return $Html.text("");
+            case 1: return $Html.text("X");
+            case 2: return A2($Html.div,
+              _L.fromArray([]),
+              _L.fromArray([$Html.text("X")
+                           ,A2($Html.br,
+                           _L.fromArray([]),
+                           _L.fromArray([]))
+                           ,$Html.text("X")]));
+            case 3: return A2($Html.div,
+              _L.fromArray([]),
+              _L.fromArray([$Html.text("X")
+                           ,A2($Html.br,
+                           _L.fromArray([]),
+                           _L.fromArray([]))
+                           ,$Html.text("X")
+                           ,A2($Html.br,
+                           _L.fromArray([]),
+                           _L.fromArray([]))
+                           ,$Html.text("X")]));}
+         _U.badCase($moduleName,
+         "between lines 10 and 14");
+      }();
+   };
+   var viewBlueTeamErrors = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("team-errors")]),
+      _L.fromArray([viewErrors(model.blueTeamErrors)]));
+   };
+   var viewRedTeamErrors = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("team-errors")]),
+      _L.fromArray([viewErrors(model.redTeamErrors)]));
+   };
+   _elm.ViewTeamErrors.values = {_op: _op
+                                ,viewErrors: viewErrors
+                                ,viewBlueTeamErrors: viewBlueTeamErrors
+                                ,viewRedTeamErrors: viewRedTeamErrors};
+   return _elm.ViewTeamErrors.values;
+};
+Elm.ViewTeamPoints = Elm.ViewTeamPoints || {};
+Elm.ViewTeamPoints.make = function (_elm) {
+   "use strict";
+   _elm.ViewTeamPoints = _elm.ViewTeamPoints || {};
+   if (_elm.ViewTeamPoints.values)
+   return _elm.ViewTeamPoints.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "ViewTeamPoints",
+   $Basics = Elm.Basics.make(_elm),
+   $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var viewBlueTeamPoints = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("team-points")]),
+      _L.fromArray([$Html.text($Basics.toString(model.blueTeamPoints))]));
+   };
+   var viewRedTeamPoints = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("team-points")]),
+      _L.fromArray([$Html.text($Basics.toString(model.redTeamPoints))]));
+   };
+   _elm.ViewTeamPoints.values = {_op: _op
+                                ,viewRedTeamPoints: viewRedTeamPoints
+                                ,viewBlueTeamPoints: viewBlueTeamPoints};
+   return _elm.ViewTeamPoints.values;
 };
 Elm.ViewTeamboards = Elm.ViewTeamboards || {};
 Elm.ViewTeamboards.make = function (_elm) {
@@ -13353,7 +13465,7 @@ Elm.ViewTeamboards.make = function (_elm) {
                          _L.fromArray([playerView(t.p3)]))]));
          };
          return A2($Html.div,
-         _L.fromArray([$Html$Attributes.$class("row row-lis")]),
+         _L.fromArray([$Html$Attributes.$class("row row-list")]),
          _L.fromArray([A2($Html.div,
                       _L.fromArray([$Html$Attributes.$class("col-xs-6 alert-danger")]),
                       _L.fromArray([teamView(model.redTeam)]))

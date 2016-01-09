@@ -86,3 +86,20 @@ form.link, form.button {
     border-bottom: 0;
   }
 }
+
+.team-errors{
+  color: yellow;
+  background-color: black;
+  font-family: monospace;
+  font-size: 20px;
+}
+
+.team-points{
+  color: yellow;
+  background-color: black;
+  font-family: monospace;
+}
+
+.answer-input{
+  width: 100%;
+}
