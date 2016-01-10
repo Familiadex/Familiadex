@@ -91,7 +91,7 @@ form.link, form.button {
   color: yellow;
   background-color: black;
   font-family: monospace;
-  font-size: 20px;
+  font-size: 50px;
 }
 
 .team-points{
@@ -100,6 +100,20 @@ form.link, form.button {
   font-family: monospace;
 }
 
+.answers-board{
+  color: yellow;
+  background-color: black;
+  font-family: monospace;
+}
+
+.blackbg{
+  background-color:black !important;
+}
+
 .answer-input{
   width: 100%;
+  background-color: grey;
+  font-family: fantasy;
+  font-weight: bold;
+  color: yellow;
 }
