@@ -49,7 +49,7 @@ viewAnswersBoard address ba model =
   in
     div [class "row row-list"]
     [
-      div [class "col-xs-2 alert-danger"] [
+      div [class "col-xs-2 alert-danger text-center"] [
         viewRedTeamPoints model
       , viewRedTeamPlayers model
       , showRedAnswering
@@ -59,7 +59,7 @@ viewAnswersBoard address ba model =
         div [class "text-center"] [showFight]
       , answersBoard
       ]
-    , div [class "col-xs-2 alert-info"] [
+    , div [class "col-xs-2 alert-info text-center"] [
         viewBlueTeamPoints model
       , viewBlueTeamPlayers model
       , showBlueAnswering

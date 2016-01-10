@@ -13295,7 +13295,7 @@ Elm.ViewAnswersBoard.make = function (_elm) {
          return A2($Html.div,
          _L.fromArray([$Html$Attributes.$class("row row-list")]),
          _L.fromArray([A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("col-xs-2 alert-danger")]),
+                      _L.fromArray([$Html$Attributes.$class("col-xs-2 alert-danger text-center")]),
                       _L.fromArray([$ViewTeamPoints.viewRedTeamPoints(model)
                                    ,$ViewTeamPlayers.viewRedTeamPlayers(model)
                                    ,showRedAnswering
@@ -13307,7 +13307,7 @@ Elm.ViewAnswersBoard.make = function (_elm) {
                                    _L.fromArray([showFight]))
                                    ,answersBoard]))
                       ,A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("col-xs-2 alert-info")]),
+                      _L.fromArray([$Html$Attributes.$class("col-xs-2 alert-info text-center")]),
                       _L.fromArray([$ViewTeamPoints.viewBlueTeamPoints(model)
                                    ,$ViewTeamPlayers.viewBlueTeamPlayers(model)
                                    ,showBlueAnswering
@@ -13416,12 +13416,12 @@ Elm.ViewTeamErrors.make = function (_elm) {
    };
    var viewBlueTeamErrors = function (model) {
       return A2($Html.div,
-      _L.fromArray([$Html$Attributes.$class("team-errors")]),
+      _L.fromArray([$Html$Attributes.$class("team-errors text-center")]),
       _L.fromArray([viewErrors(model.blueTeamErrors)]));
    };
    var viewRedTeamErrors = function (model) {
       return A2($Html.div,
-      _L.fromArray([$Html$Attributes.$class("team-errors")]),
+      _L.fromArray([$Html$Attributes.$class("team-errors text-center")]),
       _L.fromArray([viewErrors(model.redTeamErrors)]));
    };
    _elm.ViewTeamErrors.values = {_op: _op

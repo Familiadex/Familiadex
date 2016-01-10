@@ -14,7 +14,7 @@ viewErrors n = case n of
   3 -> div [] [text "X", br [] [], text "X", br [] [], text "X"]
 
 viewBlueTeamErrors : Model -> Html
-viewBlueTeamErrors model = div [class "team-errors"] [viewErrors model.blueTeamErrors]
+viewBlueTeamErrors model = div [class "team-errors text-center"] [viewErrors model.blueTeamErrors]
 
 viewRedTeamErrors : Model -> Html
-viewRedTeamErrors model = div [class "team-errors"] [viewErrors model.redTeamErrors]
+viewRedTeamErrors model = div [class "team-errors text-center"] [viewErrors model.redTeamErrors]
