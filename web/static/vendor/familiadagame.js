@@ -13214,6 +13214,18 @@ Elm.ViewAnswersBoard.make = function (_elm) {
    ba,
    model) {
       return function () {
+         var showFight = _U.eq(model.mode,
+         "RoundFight") ? $Html.text("FIGHT") : $Html.text(A2($Basics._op["++"],
+         "answering: ",
+         model.answeringTeam));
+         var showBlueAnswering = _U.eq(model.answeringTeam,
+         "blueTeam") ? A2($Html.span,
+         _L.fromArray([$Html$Attributes.$class("glyphicon glyphicon-phone-alt btn-info")]),
+         _L.fromArray([])) : $Html.text("");
+         var showRedAnswering = _U.eq(model.answeringTeam,
+         "redTeam") ? A2($Html.span,
+         _L.fromArray([$Html$Attributes.$class("glyphicon glyphicon-phone-alt btn-danger")]),
+         _L.fromArray([])) : $Html.text("");
          var sendAnswer = F2(function (backendCmd,
          key) {
             return _U.eq(key,
@@ -13283,17 +13295,22 @@ Elm.ViewAnswersBoard.make = function (_elm) {
          return A2($Html.div,
          _L.fromArray([$Html$Attributes.$class("row row-list")]),
          _L.fromArray([A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("col col-xs-2")]),
+                      _L.fromArray([$Html$Attributes.$class("col-xs-2 alert-danger")]),
                       _L.fromArray([$ViewTeamPoints.viewRedTeamPoints(model)
                                    ,$ViewTeamPlayers.viewRedTeamPlayers(model)
+                                   ,showRedAnswering
                                    ,$ViewTeamErrors.viewRedTeamErrors(model)]))
                       ,A2($Html.div,
                       _L.fromArray([$Html$Attributes.$class("col-xs-7")]),
-                      _L.fromArray([answersBoard]))
+                      _L.fromArray([A2($Html.div,
+                                   _L.fromArray([$Html$Attributes.$class("text-center")]),
+                                   _L.fromArray([showFight]))
+                                   ,answersBoard]))
                       ,A2($Html.div,
-                      _L.fromArray([$Html$Attributes.$class("col-xs-2")]),
+                      _L.fromArray([$Html$Attributes.$class("col-xs-2 alert-info")]),
                       _L.fromArray([$ViewTeamPoints.viewBlueTeamPoints(model)
                                    ,$ViewTeamPlayers.viewBlueTeamPlayers(model)
+                                   ,showBlueAnswering
                                    ,$ViewTeamErrors.viewBlueTeamErrors(model)]))]));
       }();
    });
@@ -13432,14 +13449,20 @@ Elm.ViewTeamPlayers.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var playerView = function (player) {
+   var realPlayer = function (player) {
       return A2($Html.div,
-      _L.fromArray([]),
+      _L.fromArray([$Html$Attributes.$class("player-info")]),
       _L.fromArray([A2($Html.img,
                    _L.fromArray([$Html$Attributes.src(player.avatar)
                                 ,$Html$Attributes.$class("avatar img-circle")]),
                    _L.fromArray([]))
                    ,$Html.text(player.name)]));
+   };
+   var playerView = function (player) {
+      return !_U.eq(player.id,
+      0) ? realPlayer(player) : A2($Html.div,
+      _L.fromArray([]),
+      _L.fromArray([]));
    };
    var viewRedTeamPlayers = function (model) {
       return A2($Html.div,
@@ -13457,6 +13480,7 @@ Elm.ViewTeamPlayers.make = function (_elm) {
    };
    _elm.ViewTeamPlayers.values = {_op: _op
                                  ,playerView: playerView
+                                 ,realPlayer: realPlayer
                                  ,viewRedTeamPlayers: viewRedTeamPlayers
                                  ,viewBlueTeamPlayers: viewBlueTeamPlayers};
    return _elm.ViewTeamPlayers.values;

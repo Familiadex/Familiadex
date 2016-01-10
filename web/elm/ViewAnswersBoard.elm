@@ -37,20 +37,32 @@ viewAnswersBoard address ba model =
           , answerBox model
           ]
         ]
+      showRedAnswering = if model.answeringTeam == "redTeam" then
+          span [class "glyphicon glyphicon-phone-alt btn-danger"] []
+        else
+          text ""
+      showBlueAnswering = if model.answeringTeam == "blueTeam" then
+          span [class "glyphicon glyphicon-phone-alt btn-info"] []
+        else
+          text ""
+      showFight = if model.mode == "RoundFight" then text "FIGHT" else text ("answering: " ++ model.answeringTeam)
   in
     div [class "row row-list"]
     [
-      div [class "col col-xs-2"] [
+      div [class "col-xs-2 alert-danger"] [
         viewRedTeamPoints model
       , viewRedTeamPlayers model
+      , showRedAnswering
       , viewRedTeamErrors model
       ]
     , div [class "col-xs-7"] [
-        answersBoard
+        div [class "text-center"] [showFight]
+      , answersBoard
       ]
-    , div [class "col-xs-2"] [
+    , div [class "col-xs-2 alert-info"] [
         viewBlueTeamPoints model
       , viewBlueTeamPlayers model
+      , showBlueAnswering
       , viewBlueTeamErrors model
       ]
     ]

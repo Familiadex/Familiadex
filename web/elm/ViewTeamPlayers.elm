@@ -7,7 +7,10 @@ import Html.Attributes exposing (..)
 -- import Html.Events exposing (..)
 
 playerView : Player -> Html
-playerView player = div [class "player-info"]
+playerView player = if player.id /= 0 then realPlayer player else div [] []
+
+realPlayer : Player -> Html
+realPlayer player = div [class "player-info"]
   [ img [src player.avatar, class "avatar img-circle"] []
   , text player.name
   ]
