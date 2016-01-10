@@ -13208,6 +13208,7 @@ Elm.ViewAnswersBoard.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $ViewTeamErrors = Elm.ViewTeamErrors.make(_elm),
+   $ViewTeamPlayers = Elm.ViewTeamPlayers.make(_elm),
    $ViewTeamPoints = Elm.ViewTeamPoints.make(_elm);
    var viewAnswersBoard = F3(function (address,
    ba,
@@ -13284,6 +13285,7 @@ Elm.ViewAnswersBoard.make = function (_elm) {
          _L.fromArray([A2($Html.div,
                       _L.fromArray([$Html$Attributes.$class("col col-xs-2")]),
                       _L.fromArray([$ViewTeamPoints.viewRedTeamPoints(model)
+                                   ,$ViewTeamPlayers.viewRedTeamPlayers(model)
                                    ,$ViewTeamErrors.viewRedTeamErrors(model)]))
                       ,A2($Html.div,
                       _L.fromArray([$Html$Attributes.$class("col-xs-7")]),
@@ -13291,6 +13293,7 @@ Elm.ViewAnswersBoard.make = function (_elm) {
                       ,A2($Html.div,
                       _L.fromArray([$Html$Attributes.$class("col-xs-2")]),
                       _L.fromArray([$ViewTeamPoints.viewBlueTeamPoints(model)
+                                   ,$ViewTeamPlayers.viewBlueTeamPlayers(model)
                                    ,$ViewTeamErrors.viewBlueTeamErrors(model)]))]));
       }();
    });
@@ -13409,6 +13412,54 @@ Elm.ViewTeamErrors.make = function (_elm) {
                                 ,viewBlueTeamErrors: viewBlueTeamErrors
                                 ,viewRedTeamErrors: viewRedTeamErrors};
    return _elm.ViewTeamErrors.values;
+};
+Elm.ViewTeamPlayers = Elm.ViewTeamPlayers || {};
+Elm.ViewTeamPlayers.make = function (_elm) {
+   "use strict";
+   _elm.ViewTeamPlayers = _elm.ViewTeamPlayers || {};
+   if (_elm.ViewTeamPlayers.values)
+   return _elm.ViewTeamPlayers.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "ViewTeamPlayers",
+   $Basics = Elm.Basics.make(_elm),
+   $FamiliadaTypes = Elm.FamiliadaTypes.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var playerView = function (player) {
+      return A2($Html.div,
+      _L.fromArray([]),
+      _L.fromArray([A2($Html.img,
+                   _L.fromArray([$Html$Attributes.src(player.avatar)
+                                ,$Html$Attributes.$class("avatar img-circle")]),
+                   _L.fromArray([]))
+                   ,$Html.text(player.name)]));
+   };
+   var viewRedTeamPlayers = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("team-players")]),
+      _L.fromArray([playerView(model.redTeam.p1)
+                   ,playerView(model.redTeam.p2)
+                   ,playerView(model.redTeam.p3)]));
+   };
+   var viewBlueTeamPlayers = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("team-players")]),
+      _L.fromArray([playerView(model.blueTeam.p1)
+                   ,playerView(model.blueTeam.p2)
+                   ,playerView(model.blueTeam.p3)]));
+   };
+   _elm.ViewTeamPlayers.values = {_op: _op
+                                 ,playerView: playerView
+                                 ,viewRedTeamPlayers: viewRedTeamPlayers
+                                 ,viewBlueTeamPlayers: viewBlueTeamPlayers};
+   return _elm.ViewTeamPlayers.values;
 };
 Elm.ViewTeamPoints = Elm.ViewTeamPoints || {};
 Elm.ViewTeamPoints.make = function (_elm) {

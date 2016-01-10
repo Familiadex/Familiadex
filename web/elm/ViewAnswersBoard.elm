@@ -10,6 +10,7 @@ import Html.Events exposing (..)
 
 import ViewTeamErrors exposing(viewBlueTeamErrors, viewRedTeamErrors)
 import ViewTeamPoints exposing(viewBlueTeamPoints, viewRedTeamPoints)
+import ViewTeamPlayers exposing(viewBlueTeamPlayers, viewRedTeamPlayers)
 
 viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
 viewAnswersBoard address ba model =
@@ -41,6 +42,7 @@ viewAnswersBoard address ba model =
     [
       div [class "col col-xs-2"] [
         viewRedTeamPoints model
+      , viewRedTeamPlayers model
       , viewRedTeamErrors model
       ]
     , div [class "col-xs-7"] [
@@ -48,6 +50,7 @@ viewAnswersBoard address ba model =
       ]
     , div [class "col-xs-2"] [
         viewBlueTeamPoints model
+      , viewBlueTeamPlayers model
       , viewBlueTeamErrors model
       ]
     ]

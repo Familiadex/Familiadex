@@ -117,3 +117,11 @@ form.link, form.button {
   font-weight: bold;
   color: yellow;
 }
+
+.team-players{
+  margin-top: 20px;
+}
+
+.player-info{
+  margin-top: 10px;
+}
