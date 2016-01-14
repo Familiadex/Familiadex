@@ -130,27 +130,20 @@ defmodule Familiada.Reactions do
     |> Dict.put("blueTeamErrors", 0)
   end
   defp next_player(team_players, current) do
-    next = %{"p1" => "p2", "p2" => "p3", "p3" => "NONE", "NONE" => "p1"}
+    next = %{"p1" => "p2", "p2" => "p3", "p3" => "p1"}
     current = next[current]
-    if team_players[current]["id"] != 0 || current == "NONE" do
+    if team_players[current]["id"] != 0 do
       current
     else
       next_player(team_players, next[current])
     end
   end
-  defp next_answering_player(model, answeringTeam) do
-    team_players = model[answeringTeam]
+  defp next_answering_player(model) do
+    team_players = model[model["answeringTeam"]]
     answering_before = model["answeringPlayerId"]
     next_answering = next_player(team_players, model["answeringPlayerId"])
-    if next_answering == "NONE" do
-      # noone is answering - next round
-      model = Dict.put(model, "mode", "RoundFight")
-      model = Dict.put(model, "answeringPlayer", %{"id" => 0, name: "x", avatar: "z"})
-      model = Dict.put(model, "answeringPlayerId", "NONE")
-    else
-      model = Dict.put(model, "answeringPlayerId", next_answering)
-      model = Dict.put(model, "answeringPlayer", team_players[next_answering])
-    end
+    model = Dict.put(model, "answeringPlayerId", next_answering)
+    model = Dict.put(model, "answeringPlayer", team_players[next_answering])
   end
   defp end_possible_fight(model, player) do
     # Fight is ended only by correct answer
@@ -158,6 +151,14 @@ defmodule Familiada.Reactions do
     model = reset_teams_errors(model)
     ptn = player_team_name(model, player)
     model = Dict.put(model, "answeringTeam", ptn)
+  end
+  defp change_answering_team(model) do
+    currently_answering = model["answeringTeam"]
+    team_change = %{"redTeam" => "blueTeam", "blueTeam" => "redTeam"}
+    now_answering = team_change[currently_answering]
+    model = Dict.put(model, "answeringTeam", now_answering)
+    # Reset anwsering player
+    model = Dict.put(model, "answeringPlayerId", "p3")
   end
   defp add_error_unless_fight(model, player) do
     # NOTE: having this embbeded in model.player.team would simplify things
@@ -167,7 +168,13 @@ defmodule Familiada.Reactions do
     else
       errors = ptn <> "Errors"
       current_errors = model[errors]
-      Dict.put(model, errors, current_errors + 1)
+      new_errors = current_errors + 1
+      model = Dict.put(model, errors, new_errors)
+      if new_errors == 3 do
+        change_answering_team(model)
+      else
+        model
+      end
     end
   end
   def send_answer(model, player, answer_text) do
@@ -187,12 +194,10 @@ defmodule Familiada.Reactions do
         IO.puts "BAD ANSWER"
         add_error_unless_fight(model, player)
       end
-      ptn = player_team_name(model, player)
-      model = next_answering_player(model, ptn)
+      model = next_answering_player(model)
     else
       model
     end
-
   end
 
   defp get_game_id(model) do
