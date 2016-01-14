@@ -68,8 +68,8 @@ defmodule Familiada.Reactions do
     end
   end
 
-  def sample_question do
-    Familiada.Question |> Repo.all |> Enum.at(1)
+  def sample_question(id) do
+    Familiada.Question |> Repo.all |> Enum.at(id)
   end
   def top_answers(question_id) do
     PolledAnswer
@@ -78,9 +78,8 @@ defmodule Familiada.Reactions do
     |> limit(6)
     |> Repo.all
   end
-  def start_game(model, player) do
-    model = Dict.put(model, "mode", "RoundFight")
-    question = sample_question
+  defp set_new_question(model, qid) do
+    question = sample_question(qid)
     answers = top_answers(question.id)
     answers_hash = %{
       a1: answers |> Enum.at(0),
@@ -93,6 +92,10 @@ defmodule Familiada.Reactions do
     model = Dict.put(model, "currentQuestion", question.question)
     model = Dict.put(model, "answersBoard", answers_hash)
     model = Dict.put(model, "answeringTeam", "NONE")
+  end
+  def start_game(model, player) do
+    model = Dict.put(model, "mode", "RoundFight")
+    set_new_question(model, 1)
   end
 
   # The team who first answer takes round
@@ -139,26 +142,45 @@ defmodule Familiada.Reactions do
     end
   end
   defp next_answering_player(model) do
-    team_players = model[model["answeringTeam"]]
-    answering_before = model["answeringPlayerId"]
-    next_answering = next_player(team_players, model["answeringPlayerId"])
-    model = Dict.put(model, "answeringPlayerId", next_answering)
-    model = Dict.put(model, "answeringPlayer", team_players[next_answering])
+    if model["mode"] == "RoundFight" do
+      model
+    else
+      team_players = model[model["answeringTeam"]]
+      answering_before = model["answeringPlayerId"]
+      next_answering = next_player(team_players, model["answeringPlayerId"])
+      model = Dict.put(model, "answeringPlayerId", next_answering)
+      model = Dict.put(model, "answeringPlayer", team_players[next_answering])
+    end
   end
   defp end_possible_fight(model, player) do
     # Fight is ended only by correct answer
-    model = Dict.put(model, "mode", "InGameRound")
-    model = reset_teams_errors(model)
-    ptn = player_team_name(model, player)
-    model = Dict.put(model, "answeringTeam", ptn)
+    if model["mode"] == "RoundFight" do
+      model = Dict.put(model, "mode", "InGameRound")
+      model = reset_teams_errors(model)
+      ptn = player_team_name(model, player)
+      model = Dict.put(model, "answeringTeam", ptn)
+    else
+      model
+    end
+  end
+  defp opposite_team(model) do
+    team_change = %{"redTeam" => "blueTeam", "blueTeam" => "redTeam"}
+    team_change[model["answeringTeam"]]
   end
   defp change_answering_team(model) do
     currently_answering = model["answeringTeam"]
-    team_change = %{"redTeam" => "blueTeam", "blueTeam" => "redTeam"}
-    now_answering = team_change[currently_answering]
+    now_answering = opposite_team(model)
     model = Dict.put(model, "answeringTeam", now_answering)
     # Reset anwsering player
     model = Dict.put(model, "answeringPlayerId", "p3")
+  end
+  defp set_round_fight(model) do
+    model = reset_teams_errors(model)
+    model = Dict.put(model, "answeringPlayerId", "p3")
+    model = Dict.put(model, "answeringTeam", "NONE")
+    model = Dict.put(model, "answeringPlayer", %{"id" => 0, "name" => "X", "avatar" => "Z"})
+    model = Dict.put(model, "mode", "RoundFight")
+    model = set_new_question(model, 2)
   end
   defp add_error_unless_fight(model, player) do
     # NOTE: having this embbeded in model.player.team would simplify things
@@ -171,7 +193,12 @@ defmodule Familiada.Reactions do
       new_errors = current_errors + 1
       model = Dict.put(model, errors, new_errors)
       if new_errors == 3 do
-        change_answering_team(model)
+        opposite_team_errors = model[opposite_team(model) <> "Errors"]
+        if opposite_team_errors > 0 do
+          set_round_fight(model)
+        else
+          change_answering_team(model)
+        end
       else
         model
       end
