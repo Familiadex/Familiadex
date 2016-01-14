@@ -130,12 +130,28 @@ defmodule Familiada.Reactions do
     |> Dict.put("redTeamErrors", 0)
     |> Dict.put("blueTeamErrors", 0)
   end
+  defp next_player(team_players, current) do
+    next = %{"p1" => "p2", "p2" => "p3", "p3" => "p1"}
+    current = next[current]
+    if team_players[current]["id"] != 0 do
+      current
+    else
+      next_player(team_players, next[current])
+    end
+  end
+  defp next_answering_player(model, answeringTeam) do
+    team_players = model[answeringTeam]
+    next_answering = next_player(team_players, model["answeringPlayerId"])
+    model = Dict.put(model, "answeringPlayerId", next_answering)
+    model = Dict.put(model, "answeringPlayer", team_players[next_answering])
+  end
   defp end_possible_fight(model, player) do
     # Fight is ended only by correct answer
     model = Dict.put(model, "mode", "InGameRound")
     model = reset_teams_errors(model)
     ptn = player_team_name(model, player)
     model = Dict.put(model, "answeringTeam", ptn)
+    model = next_answering_player(model, ptn)
   end
   defp add_error_unless_fight(model, player) do
     # NOTE: having this embbeded in model.player.team would simplify things
@@ -151,7 +167,6 @@ defmodule Familiada.Reactions do
   def send_answer(model, player, answer_text) do
     good_answer = answer_exists(model, answer_text)
     if answer_allowed(model, player) do
-      IO.puts "ANSWER IS ALLOWED"
       if good_answer do
         IO.puts "GOOD ANSWER"
         answersBoard = model["answersBoard"]

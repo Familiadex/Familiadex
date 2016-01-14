@@ -17,9 +17,10 @@ type alias Model =
     , blueTeamErrors: Int
     , currentQuestion: String
     , answersBoard : AnswersBoard
-    , whoAnswering : Player
     , answerValue: String
     , answeringTeam: String
+    , answeringPlayer: Player
+    , answeringPlayerId: String
     }
 
 type alias BoardAnswer =

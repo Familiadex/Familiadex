@@ -34,7 +34,7 @@ viewAnswersBoard address ba model =
           , answerView 4 model.answersBoard.a4
           , answerView 5 model.answersBoard.a5
           , answerView 6 model.answersBoard.a6
-          , answerBox model
+          , if model.mode == "RoundFight" || model.user_id == model.answeringPlayer.id then answerBox model else span [] []
           ]
         ]
       showRedAnswering = if model.answeringTeam == "redTeam" then
