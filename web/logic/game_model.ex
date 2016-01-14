@@ -29,7 +29,7 @@ defmodule Familiada.GameModel do
         a3: %{answer: "???", points: 33, show: false},  a6: %{answer: "???", points: 33, show: false},
       },
       answeringPlayer: sample_player,
-      answeringPlayerId: "p3",
+      answeringPlayerId: "NONE",
       answerValue: "",
       answeringTeam: "NONE",
       # roomSize: 6,
