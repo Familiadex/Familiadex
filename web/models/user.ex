@@ -35,7 +35,8 @@ defmodule Familiada.User do
   def to_json(model) do
     Poison.encode! %{
       id: model.id,
-      name: String.split(model.email, "@") |> Enum.at(0) }
+      name: String.split(model.email, "@") |> Enum.at(0),
+      avatar: model.avatar || "images/karol.jpg" }
   end
 
   # Ueberauth:

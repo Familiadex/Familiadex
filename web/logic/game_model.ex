@@ -1,5 +1,6 @@
 defmodule Familiada.GameModel do
   def initial_model do
+    sample_player = %{id: 0, name: "FREE SLOT", avatar: "images/karol.jpg"}
     %{
       "user_id" => 0,
       "mode" => "WaitingForPlayers",
@@ -7,15 +8,15 @@ defmodule Familiada.GameModel do
       "readyQueue" => [],
       "redTeam" => %{
         "id" => "redTeam",
-        "p1" => %{id: 0, name: "FREE SLOT"},
-        "p2" => %{id: 0, name: "FREE SLOT"},
-        "p3" => %{id: 0, name: "FREE SLOT"},
+        "p1" => sample_player,
+        "p2" => sample_player,
+        "p3" => sample_player,
       },
       "blueTeam" => %{
         "id" => "blueTeam",
-        "p1" => %{id: 0, name: "FREE SLOT"},
-        "p2" => %{id: 0, name: "FREE SLOT"},
-        "p3" => %{id: 0, name: "FREE SLOT"},
+        "p1" => sample_player,
+        "p2" => sample_player,
+        "p3" => sample_player,
       },
       redTeamPoints: 0,
       blueTeamPoints: 0,
@@ -27,7 +28,8 @@ defmodule Familiada.GameModel do
         a2: %{answer: "???", points: 33, show: false},  a5: %{answer: "???", points: 33, show: false},
         a3: %{answer: "???", points: 33, show: false},  a6: %{answer: "???", points: 33, show: false},
       },
-      whoAnswering: %{id: 0, name: "ImieXYZ"},
+      answeringPlayer: sample_player,
+      answeringPlayerId: "p2",
       answerValue: "",
       answeringTeam: "NONE",
       # roomSize: 6,

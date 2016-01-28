@@ -3,7 +3,7 @@ module FamiliadaTypes where
 type Action
     = NoOp
     | InputAnswer String
-    
+
 type alias Model =
     { mode: String
     , user_id : Int -- each player gets this customized -- should be caled current_user_id
@@ -17,9 +17,10 @@ type alias Model =
     , blueTeamErrors: Int
     , currentQuestion: String
     , answersBoard : AnswersBoard
-    , whoAnswering : Player
     , answerValue: String
     , answeringTeam: String
+    , answeringPlayer: Player
+    , answeringPlayerId: String
     }
 
 type alias BoardAnswer =
@@ -40,6 +41,7 @@ type alias AnswersBoard =
 type alias Player =
     { id : Int
     , name : String
+    , avatar : String
     }
 
 type alias Team =

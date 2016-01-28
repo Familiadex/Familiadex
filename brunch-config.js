@@ -46,6 +46,10 @@ exports.config = {
       "web/elm/FamiliadaTypes.elm",
       "web/elm/FamiliadaBackendActions.elm",
       "web/elm/FamiliadaGame.elm",
+      "web/elm/ViewMain.elm",
+      "web/elm/ViewTeamErrors.elm",
+      "web/elm/ViewTeamPoints.elm",
+      "web/elm/ViewAnswersBoard.elm",
       "web/elm/Chat.elm"
     ],
 
