@@ -69,7 +69,11 @@ defmodule Familiada.Reactions do
   end
 
   def sample_question(id) do
-    Familiada.Question |> Repo.all |> Enum.at(id)
+    questions = Familiada.Question |> Repo.all
+    number_of_questions = questions |> Enum.count
+    :random.seed(:erlang.now)
+    chosen = :random.uniform(number_of_questions)
+    Familiada.Question |> Repo.all |> Enum.at(chosen)
   end
   def top_answers(question_id) do
     PolledAnswer
