@@ -18,18 +18,14 @@ File.stream!("priv/repo/data.csv") |> CSV.decode(separator: ?\t) |> Enum.each fn
       ans4, score4,
       ans5, score5,
       ans6, score6] = row
-  IO.puts ("question: |" <> question <> "|")
-  IO.puts ("ans1: " <> ans1)
-  IO.puts ("score1: " <> score1)
-  IO.puts ("an6:" <> score6)
-  IO.puts "#########"
+  IO.puts("question:" <> question)
   q = Familiada.Repo.insert!(%Familiada.Question{question: question})
-  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans1, points: score1})
-  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans2, points: score2})
-  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans3, points: score3})
-  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans4, points: score4})
-  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans5, points: score5})
-  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans6, points: score6})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans1, points: String.to_integer(score1)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans2, points: String.to_integer(score2)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans3, points: String.to_integer(score3)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans4, points: String.to_integer(score4)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans5, points: String.to_integer(score5)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans6, points: String.to_integer(score6)})
 end
 
 
