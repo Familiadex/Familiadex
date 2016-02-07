@@ -49,6 +49,7 @@ defmodule Familiada.Mixfile do
      {:ueberauth_facebook, "~> 0.1"},
      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
      {:httpotion, "~> 2.1.0"},
+     {:csv, "~> 1.2.4"},
      {:credo, "~> 0.2", only: [:dev, :test]},
      {:dogma, "~> 0.0", only: :dev},]
   end

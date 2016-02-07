@@ -116,9 +116,8 @@ defmodule Familiada.Reactions do
   defp answer_exists(model, answer_text) do
     answers_board = model["answersBoard"]
     correct_answer = Enum.filter ["a1","a2", "a3", "a4", "a5", "a6"], fn (x) ->
-      correct_answer = answers_board[x]["answer"]
-      with_synonyms = [correct_answer | get_synonyms(correct_answer)]
-      Enum.member?(with_synonyms, answer_text)
+      possible_answers = answers_board[x]["possible_answers"]
+      Enum.member?(possible_answers, answer_text)
     end
     correct_answer |> Enum.at(0)
   end

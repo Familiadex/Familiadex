@@ -29,6 +29,7 @@ defimpl Poison.Encoder, for: Familiada.PolledAnswer do
   def encode(model, opts) do
     %{answer: model.answer,
       show: false,
+      possible_answers: [model.answer | Familiada.Reactions.get_synonyms(model.answer)],
       points: model.points} |> Poison.Encoder.encode(opts)
   end
 end
