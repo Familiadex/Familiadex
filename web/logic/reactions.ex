@@ -82,8 +82,8 @@ defmodule Familiada.Reactions do
     |> limit(6)
     |> Repo.all
   end
-  defp set_new_question(model, qid) do
-    question = sample_question(qid)
+  defp set_new_question(model) do
+    question = sample_question(1)
     answers = top_answers(question.id)
     answers_hash = %{
       a1: answers |> Enum.at(0),
@@ -99,7 +99,7 @@ defmodule Familiada.Reactions do
   end
   def start_game(model, player) do
     model = Dict.put(model, "mode", "RoundFight")
-    set_new_question(model, 1)
+    set_new_question(model)
   end
 
   # The team who first answer takes round
@@ -191,7 +191,7 @@ defmodule Familiada.Reactions do
     model = Dict.put(model, "answeringTeam", "NONE")
     model = Dict.put(model, "answeringPlayer", %{"id" => 0, "name" => "X", "avatar" => "Z"})
     model = Dict.put(model, "mode", "RoundFight")
-    model = set_new_question(model, 2)
+    model = set_new_question(model)
   end
   defp add_error_unless_fight(model, player) do
     # NOTE: having this embbeded in model.player.team would simplify things
@@ -215,6 +215,20 @@ defmodule Familiada.Reactions do
       end
     end
   end
+  defp round_ended?(model) do
+    if model["answeredQuestions"] == 6 do
+      model = set_new_question(model)
+      model = Dict.put(model, "mode", "RoundFight")
+      model = reset_teams_errors(model)
+      model = Dict.put(model, "answeredQuestions", 0)
+    else
+      model
+    end
+  end
+  def increment_good_answers(model) do
+    currently = model["answeredQuestions"]
+    Dict.put(model, "answeredQuestions", currently + 1)
+  end
   def send_answer(model, player, answer_text) do
     good_answer = answer_exists(model, answer_text)
     if answer_allowed(model, player) do
@@ -227,12 +241,14 @@ defmodule Familiada.Reactions do
         model = update_team_points(model, player, answer)
         answer = Dict.put(answer, "show", true)
         answersBoard = Dict.put(answersBoard, good_answer, answer)
+        model = increment_good_answers(model)
         Dict.put(model, "answersBoard", answersBoard)
       else
         IO.puts "BAD ANSWER"
         add_error_unless_fight(model, player)
       end
       model = next_answering_player(model)
+      model = round_ended?(model)
     else
       model
     end

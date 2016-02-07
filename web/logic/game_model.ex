@@ -32,6 +32,7 @@ defmodule Familiada.GameModel do
       answeringPlayerId: "p2",
       answerValue: "",
       answeringTeam: "NONE",
+      answeredQuestions: 0,
       # roomSize: 6,
       # pointsToTake: 0,
       # redTeamErrors: 0,
