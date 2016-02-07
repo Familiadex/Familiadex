@@ -73,6 +73,8 @@ defmodule Familiada.Reactions do
     number_of_questions = questions |> Enum.count
     :random.seed(:erlang.now)
     chosen = :random.uniform(number_of_questions)
+    # FIXME: temporary
+    chosen = 1
     Familiada.Question |> Repo.all |> Enum.at(chosen)
   end
   def top_answers(question_id) do
@@ -103,12 +105,20 @@ defmodule Familiada.Reactions do
   end
 
   # The team who first answer takes round
+  def get_synonyms(word) do
+    HTTPotion.start
+    synonyms = HTTPotion.get("https://wordsapiv1.p.mashape.com/words/#{word}/synonyms", [headers: [
+      "X-Mashape-Key": System.get_env("MASHAPE_KEY"),
+      "Accept": "application/json"
+    ]]).body |> Poison.decode! |> Dict.get("synonyms")
+    synonyms || []
+  end
   defp answer_exists(model, answer_text) do
-    IO.puts "answer_text = #{answer_text}"
     answers_board = model["answersBoard"]
     correct_answer = Enum.filter ["a1","a2", "a3", "a4", "a5", "a6"], fn (x) ->
-      IO.puts "ODP##{x} #{answers_board[x]["answer"]}"
-      answers_board[x]["answer"] == answer_text
+      correct_answer = answers_board[x]["answer"]
+      with_synonyms = [correct_answer | get_synonyms(correct_answer)]
+      Enum.member?(with_synonyms, answer_text)
     end
     correct_answer |> Enum.at(0)
   end
