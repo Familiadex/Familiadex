@@ -24,9 +24,9 @@ defmodule Familiada.GameModel do
       blueTeamErrors: 0,
       currentQuestion: "To jest currentQuestion?",
       answersBoard: %{
-        a1: %{answer: "???", points: 33, show: false},  a4: %{answer: "???", points: 33, show: false},
-        a2: %{answer: "???", points: 33, show: false},  a5: %{answer: "???", points: 33, show: false},
-        a3: %{answer: "???", points: 33, show: false},  a6: %{answer: "???", points: 33, show: false},
+        a1: %{answer: "???", points: 33, show: false, synonyms: []},  a4: %{answer: "???", points: 33, show: false, synonyms: []},
+        a2: %{answer: "???", points: 33, show: false, synonyms: []},  a5: %{answer: "???", points: 33, show: false, synonyms: []},
+        a3: %{answer: "???", points: 33, show: false, synonyms: []},  a6: %{answer: "???", points: 33, show: false, synonyms: []},
       },
       answeringPlayer: sample_player,
       answeringPlayerId: "p2",

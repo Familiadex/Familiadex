@@ -46,7 +46,12 @@ defmodule Familiada.Mixfile do
      {:comeonin, "~>1.0"},
      {:exredis, ">= 0.2.2"},
      {:ueberauth, "~> 0.2"},
-     {:ueberauth_facebook, "~> 0.1"}]
+     {:ueberauth_facebook, "~> 0.1"},
+     {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+     {:httpotion, "~> 2.1.0"},
+     {:csv, "~> 1.2.4"},
+     {:credo, "~> 0.2", only: [:dev, :test]},
+     {:dogma, "~> 0.0", only: :dev},]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

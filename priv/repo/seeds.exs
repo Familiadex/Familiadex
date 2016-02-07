@@ -14,7 +14,6 @@ user = %Familiada.User{email: "test@user.com", crypted_password: Comeonin.Bcrypt
 Familiada.Repo.insert!(user)
 
 # Musi być po co najmniej 6 odpowiedzi
-
 q2 = Familiada.Repo.insert!(%Familiada.Question{question: "Co kobieta ma w torebce?"})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "szminka", points: 25})
 Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q2.id, answer: "portfel", points: 30})
