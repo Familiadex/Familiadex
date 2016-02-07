@@ -73,14 +73,12 @@ defmodule Familiada.Reactions do
     number_of_questions = questions |> Enum.count
     :random.seed(:erlang.now)
     chosen = :random.uniform(number_of_questions)
-    # FIXME: temporary
-    chosen = 1
     Familiada.Question |> Repo.all |> Enum.at(chosen)
   end
   def top_answers(question_id) do
     PolledAnswer
     |> where(question_id: ^question_id)
-    |> order_by(:points)
+    |> order_by(desc: :points)
     |> limit(6)
     |> Repo.all
   end
