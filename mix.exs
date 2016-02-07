@@ -26,7 +26,6 @@ defmodule Familiada.Mixfile do
                     :postgrex,
                     :ueberauth,
                     :ueberauth_facebook,
-                    :connection,
                     ]]
   end
 
@@ -40,8 +39,8 @@ defmodule Familiada.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.1.4"},
      {:phoenix_html, "~> 2.3"},
-     {:phoenix_ecto, "~> 2.0.0"},
-     {:postgrex, "~> 0.10.0"},
+     {:phoenix_ecto, "~> 2.0"},
+     {:postgrex, "~> 0.11.0"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:comeonin, "~>1.0"},
