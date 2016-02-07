@@ -10,13 +10,27 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-File.stream!("priv/repo/data.csv") |> CSV.decode |> Enum.each fn row ->
-  IO.puts row
+File.stream!("priv/repo/data.csv") |> CSV.decode(separator: ?\t) |> Enum.each fn row ->
+  [question,
+      ans1, score1,
+      ans2, score2,
+      ans3, score3,
+      ans4, score4,
+      ans5, score5,
+      ans6, score6] = row
+  IO.puts ("question: " <> question)
+  IO.puts ("ans1: " <> ans1)
+  IO.puts ("score1: " <> score1)
   IO.puts "#########"
+  q = Familiada.Repo.insert!(%Familiada.Question{question: question})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans1, points: score1})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans2, points: score2})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans3, points: score3})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans4, points: score4})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans5, points: score5})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans6, points: score6})
 end
 
-# To ponizej daje liste wierszy, ale jako typ binary (bitstring)
-File.stream!("priv/repo/data.csv") |> CSV.decode |> Enum.to_list
 
 # user = %Familiada.User{email: "test@user.com", crypted_password: Comeonin.Bcrypt.hashpwsalt("test")}
 # Familiada.Repo.insert!(user)
