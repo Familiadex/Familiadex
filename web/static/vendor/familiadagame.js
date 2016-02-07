@@ -13261,7 +13261,13 @@ Elm.ViewAnswersBoard.make = function (_elm) {
             _L.fromArray([$Html.text(question)]));
          };
          var answerText = function (answer) {
-            return answer.show ? answer.answer : ".................................";
+            return answer.show ? A2($Basics._op["++"],
+            answer.answer,
+            A2($Basics._op["++"],
+            "( ",
+            A2($Basics._op["++"],
+            $Basics.toString(answer.points),
+            " )"))) : ".................................";
          };
          var answerView = F2(function (n,
          boardAnswer) {

@@ -112,9 +112,10 @@ defmodule Familiada.Reactions do
     synonyms || []
   end
   defp answer_exists(model, answer_text) do
+    answer_text = String.downcase(answer_text)
     answers_board = model["answersBoard"]
     correct_answer = Enum.filter ["a1","a2", "a3", "a4", "a5", "a6"], fn (x) ->
-      possible_answers = answers_board[x]["possible_answers"]
+      possible_answers = Enum.map answers_board[x]["possible_answers"], &String.downcase/1
       Enum.member?(possible_answers, answer_text)
     end
     correct_answer |> Enum.at(0)
@@ -218,7 +219,7 @@ defmodule Familiada.Reactions do
   defp round_ended?(model) do
     if model["answeredQuestions"] == 6 do
       model = set_new_question(model)
-      model = Dict.put(model, "mode", "RoundFight")
+      model = set_round_fight(model)
       model = reset_teams_errors(model)
       model = Dict.put(model, "answeredQuestions", 0)
     else
