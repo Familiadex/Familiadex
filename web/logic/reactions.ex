@@ -47,7 +47,7 @@ defmodule Familiada.Reactions do
   end
 
   def sit_down(model, player, team_id, position) do
-    if sits_already(model, player) != false do
+    if sits_already(model, player) do
       model
     else
       team = model[team_id]
@@ -58,7 +58,7 @@ defmodule Familiada.Reactions do
 
   def stand_up(model, player) do
     seated_at = sits_already(model, player)
-    if seated_at != false do
+    if seated_at do
       [team_id, position] = seated_at
       team = model[team_id]
       without = Dict.put(team, position, %{id: 0, name: "FREE SLOT", avatar: "images/karol.jpg"})
