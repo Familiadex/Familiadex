@@ -1,0 +1,44 @@
+<!doctype html>
+	<html lang="pl">
+		<head>
+			<meta charset="utf-8" />
+			<title>Dokumentacja użytkownika gry internetowej Familiadex</title>
+			<link rel="stylesheet" href="style.css" />
+			<!--[if IE]>
+			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+			<![endif]-->
+		</head>
+		<body>
+		<div><b>1. Dodawanie i usuwanie zapytań </b></div><br>
+		Znajdujemy się w bazie danych Familiada, do której administrator ma oczywiście pełen dostęp.
+		<br>
+		Dodawanie pytania:<br>
+		INSERT INTO question(question) VALUES ...;
+		Id pytania generuje się automatycznie.<br><br>
+		Odpowiedzi do pytania dodajemy, realizując zapytanie:<br>
+		INSERT INTO PolledAnswer(question_id, answer, points) VALUES (...);<br>
+		W podobny sposób odpowiedzi czy pytania można usuwać.<br><br>
+		
+		Można też skorzystać ze wzorcowego skryptu, który pozwala dodać większą  liczbę pytań z pliku .csv:
+		<br><br>
+		File.stream!("priv/repo/data.csv") |> CSV.decode(separator: ?\t) |> Enum.each fn row ->
+  [question,
+      ans1, score1,
+      ans2, score2,
+      ans3, score3,
+      ans4, score4,
+      ans5, score5,
+      ans6, score6] = row
+  IO.puts("question:" <> question)
+  q = Familiada.Repo.insert!(%Familiada.Question{question: question})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans1, points: String.to_integer(score1)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans2, points: String.to_integer(score2)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans3, points: String.to_integer(score3)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans4, points: String.to_integer(score4)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans5, points: String.to_integer(score5)})
+  Familiada.Repo.insert!(%Familiada.PolledAnswer{question_id: q.id, answer: ans6, points: String.to_integer(score6)})
+end
+
+		
+		</body>
+	</html>

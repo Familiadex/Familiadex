@@ -1,0 +1,23 @@
+<!doctype html>
+	<html lang="pl">
+		<head>
+			<meta charset="utf-8" />
+			<title>Dokumentacja użytkownika gry internetowej Familiadex</title>
+			<link rel="stylesheet" href="style.css" />
+			<!--[if IE]>
+			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+			<![endif]-->
+		</head>
+		<body>
+		<div><b>3. Znajdowanie użytkowników w bazie, usuwanie użytkowników z bazy </b></div><br>
+		Jak poprzednio jesteśmy w bazie Familiada.
+		Przy przypominaniu hasła, jeśli jesteśmy pewni wiarygodności użytkownika, znajdujemy użytkownika
+		zapytaniem: <br>
+		SELECT * FROM users WHERE email = email_uzytkownika;
+		<br>
+		Następnie generujemy dla niego nowe zaszyfrowane hasło, które zostaje mu przesłane mejlem.<br>
+		Usunięcie użytkownika następuje w standardowy sposób.
+
+		
+		</body>
+	</html>
