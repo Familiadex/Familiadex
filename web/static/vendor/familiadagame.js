@@ -13478,11 +13478,17 @@ Elm.ViewTeamPlayers.make = function (_elm) {
    var realPlayer = function (player) {
       return A2($Html.div,
       _L.fromArray([$Html$Attributes.$class("player-info")]),
-      _L.fromArray([A2($Html.img,
+      _L.fromArray([A2($Html.div,
+                   _L.fromArray([]),
+                   _L.fromArray([A2($Html.img,
                    _L.fromArray([$Html$Attributes.src(player.avatar)
                                 ,$Html$Attributes.$class("avatar img-circle")]),
-                   _L.fromArray([]))
-                   ,$Html.text(player.name)]));
+                   _L.fromArray([]))]))
+                   ,A2($Html.div,
+                   _L.fromArray([]),
+                   _L.fromArray([A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("badge")]),
+                   _L.fromArray([$Html.text(player.name)]))]))]));
    };
    var playerView = F2(function (player,
    answering) {

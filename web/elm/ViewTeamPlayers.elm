@@ -18,14 +18,14 @@ playerView player answering =
 
 realPlayer : Player -> Html
 realPlayer player = div [class "player-info"]
-  [ img [src player.avatar, class "avatar img-circle"] []
-  , text player.name
+  [ div [] [img [src player.avatar, class "avatar img-circle"] []]
+  , div [] [span [class "badge"] [text player.name]]
   ]
 
 answeringPlayer : Player -> Html
 answeringPlayer player = div [class "player-info alert-success"]
-  [ img [src player.avatar, class "avatar img-circle"] []
-  , span [class "alert-success"] [text player.name]
+  [ div [] [img [src player.avatar, class "avatar img-circle"] []]
+  , div [] [span [class "badge"] [text player.name]]
   ]
 
 viewRedTeamPlayers : Model -> Html
