@@ -111,6 +111,7 @@ defmodule Familiada.Reactions do
     ]])
     if response.status_code == 200 do
      synonyms = response.body |> Poison.decode! |> Dict.get("synonyms")
+     IO.puts "SYNONYMS(#{word}): #{Poison.encode!(synonyms)}"
      synonyms || []
     else
       []
