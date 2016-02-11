@@ -81,7 +81,7 @@ update action model =
       NoOp -> model
       InputMsg s -> { model | inputMsg <- s }
       SendMsg msg -> { model | inputMsg <- "" }
-      NewMsg msg -> { model | msgList <- ([msg | model.msgList]) }
+      NewMsg msg -> { model | msgList <- ([msg :: model.msgList]) }
       InputUsername u -> { model | currentUser <- u.newUsername }
       UserListUpdate ul -> { model | users <- ul}
 

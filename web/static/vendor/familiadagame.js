@@ -13241,7 +13241,6 @@ Elm.ViewAnswersBoard.make = function (_elm) {
          var answerBox = function (model) {
             return A2($Html.input,
             _L.fromArray([$Html$Attributes.$class("answer-input")
-                         ,$Html$Attributes.value(model.answerValue)
                          ,A3($Html$Events.on,
                          "input",
                          $Html$Events.targetValue,
@@ -13252,7 +13251,8 @@ Elm.ViewAnswersBoard.make = function (_elm) {
                          ba,
                          sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
                          $FamiliadaBackendActions.SendAnswer,
-                         _L.fromArray([model.answerValue]))))]),
+                         _L.fromArray([model.answerValue]))))
+                         ,$Html$Attributes.value(model.answerValue)]),
             _L.fromArray([]));
          };
          var questionView = function (question) {

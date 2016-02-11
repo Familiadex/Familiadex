@@ -105,11 +105,16 @@ defmodule Familiada.Reactions do
   # The team who first answer takes round
   def get_synonyms(word) do
     HTTPotion.start
-    synonyms = HTTPotion.get("https://wordsapiv1.p.mashape.com/words/#{word}/synonyms", [headers: [
+    response = HTTPotion.get("https://wordsapiv1.p.mashape.com/words/#{word}/synonyms", [headers: [
       "X-Mashape-Key": System.get_env("MASHAPE_KEY"),
       "Accept": "application/json"
-    ]]).body |> Poison.decode! |> Dict.get("synonyms")
-    synonyms || []
+    ]])
+    if response.status_code == 200 do
+     synonyms = response.body |> Poison.decode! |> Dict.get("synonyms")
+     synonyms || []
+    else
+      []
+    end
   end
   defp answer_exists(model, answer_text) do
     answer_text = String.downcase(answer_text)
@@ -150,7 +155,7 @@ defmodule Familiada.Reactions do
     if team_players[current]["id"] != 0 do
       current
     else
-      next_player(team_players, next[current])
+      next_player(team_players, current)
     end
   end
   defp next_answering_player(model) do
