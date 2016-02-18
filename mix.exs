@@ -25,7 +25,7 @@ defmodule Familiada.Mixfile do
                     :phoenix_ecto,
                     :postgrex,
                     :ueberauth,
-                    :ueberauth_facebook
+                    :ueberauth_facebook,
                     ]]
   end
 
@@ -37,16 +37,21 @@ defmodule Familiada.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.1"},
+    [{:phoenix, "~> 1.1.4"},
      {:phoenix_html, "~> 2.3"},
      {:phoenix_ecto, "~> 2.0"},
-     {:postgrex, ">= 0.0.0"},
+     {:postgrex, "~> 0.11.0"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:comeonin, "~>1.0"},
-     {:exredis, ">= 0.2.2"},
+     {:exredis, "~> 0.2"},
      {:ueberauth, "~> 0.2"},
-     {:ueberauth_facebook, "~> 0.1"}]
+     {:ueberauth_facebook, "~> 0.1"},
+     {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+     {:httpotion, "~> 2.1.0"},
+     {:csv, "~> 1.2.4"},
+     {:credo, "~> 0.2", only: [:dev, :test]},
+     {:dogma, "~> 0.0", only: :dev},]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

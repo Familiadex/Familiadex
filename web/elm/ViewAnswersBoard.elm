@@ -14,7 +14,7 @@ import ViewTeamPlayers exposing(viewBlueTeamPlayers, viewRedTeamPlayers)
 
 viewAnswersBoard: Address Action -> Address BackendCmd -> Model -> Html
 viewAnswersBoard address ba model =
-  let answerText answer = if answer.show then answer.answer else "................................."
+  let answerText answer = if answer.show then answer.answer ++ "( " ++ toString(answer.points) ++ " )" else "................................."
       answerView n boardAnswer = li [class "list-group-item blackbg"] [text (toString(n) ++ " " ++ (answerText boardAnswer))]
       questionView question = li [class "list-group-item blackbg"] [text question]
       sendAnswer backendCmd key =
@@ -22,8 +22,8 @@ viewAnswersBoard address ba model =
       answerBox model = input
                   [ class "answer-input"
                   , value model.answerValue
-                  , on "input" targetValue (Signal.message address << FamiliadaTypes.InputAnswer)
                   , onKeyUp ba (mkBackendCmd FBA.SendAnswer [model.answerValue] |> sendAnswer)
+                  , on "input" targetValue (Signal.message address << FamiliadaTypes.InputAnswer)
                   ] []
       answersBoard = div [class "answers-board"]
         [ ul [class "list-group"]

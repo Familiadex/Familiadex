@@ -13242,17 +13242,17 @@ Elm.ViewAnswersBoard.make = function (_elm) {
             return A2($Html.input,
             _L.fromArray([$Html$Attributes.$class("answer-input")
                          ,$Html$Attributes.value(model.answerValue)
+                         ,A2($Html$Events.onKeyUp,
+                         ba,
+                         sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
+                         $FamiliadaBackendActions.SendAnswer,
+                         _L.fromArray([model.answerValue]))))
                          ,A3($Html$Events.on,
                          "input",
                          $Html$Events.targetValue,
                          function ($) {
                             return $Signal.message(address)($FamiliadaTypes.InputAnswer($));
-                         })
-                         ,A2($Html$Events.onKeyUp,
-                         ba,
-                         sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
-                         $FamiliadaBackendActions.SendAnswer,
-                         _L.fromArray([model.answerValue]))))]),
+                         })]),
             _L.fromArray([]));
          };
          var questionView = function (question) {
@@ -13261,7 +13261,13 @@ Elm.ViewAnswersBoard.make = function (_elm) {
             _L.fromArray([$Html.text(question)]));
          };
          var answerText = function (answer) {
-            return answer.show ? answer.answer : ".................................";
+            return answer.show ? A2($Basics._op["++"],
+            answer.answer,
+            A2($Basics._op["++"],
+            "( ",
+            A2($Basics._op["++"],
+            $Basics.toString(answer.points),
+            " )"))) : ".................................";
          };
          var answerView = F2(function (n,
          boardAnswer) {
@@ -13461,22 +13467,32 @@ Elm.ViewTeamPlayers.make = function (_elm) {
    var answeringPlayer = function (player) {
       return A2($Html.div,
       _L.fromArray([$Html$Attributes.$class("player-info alert-success")]),
-      _L.fromArray([A2($Html.img,
+      _L.fromArray([A2($Html.div,
+                   _L.fromArray([]),
+                   _L.fromArray([A2($Html.img,
                    _L.fromArray([$Html$Attributes.src(player.avatar)
                                 ,$Html$Attributes.$class("avatar img-circle")]),
-                   _L.fromArray([]))
-                   ,A2($Html.span,
-                   _L.fromArray([$Html$Attributes.$class("alert-success")]),
-                   _L.fromArray([$Html.text(player.name)]))]));
+                   _L.fromArray([]))]))
+                   ,A2($Html.div,
+                   _L.fromArray([]),
+                   _L.fromArray([A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("badge")]),
+                   _L.fromArray([$Html.text(player.name)]))]))]));
    };
    var realPlayer = function (player) {
       return A2($Html.div,
       _L.fromArray([$Html$Attributes.$class("player-info")]),
-      _L.fromArray([A2($Html.img,
+      _L.fromArray([A2($Html.div,
+                   _L.fromArray([]),
+                   _L.fromArray([A2($Html.img,
                    _L.fromArray([$Html$Attributes.src(player.avatar)
                                 ,$Html$Attributes.$class("avatar img-circle")]),
-                   _L.fromArray([]))
-                   ,$Html.text(player.name)]));
+                   _L.fromArray([]))]))
+                   ,A2($Html.div,
+                   _L.fromArray([]),
+                   _L.fromArray([A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("badge")]),
+                   _L.fromArray([$Html.text(player.name)]))]))]));
    };
    var playerView = F2(function (player,
    answering) {

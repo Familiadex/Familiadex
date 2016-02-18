@@ -47,7 +47,7 @@ defmodule Familiada.Reactions do
   end
 
   def sit_down(model, player, team_id, position) do
-    if sits_already(model, player) != false do
+    if sits_already(model, player) do
       model
     else
       team = model[team_id]
@@ -58,7 +58,7 @@ defmodule Familiada.Reactions do
 
   def stand_up(model, player) do
     seated_at = sits_already(model, player)
-    if seated_at != false do
+    if seated_at do
       [team_id, position] = seated_at
       team = model[team_id]
       without = Dict.put(team, position, %{id: 0, name: "FREE SLOT", avatar: "images/karol.jpg"})
@@ -69,17 +69,21 @@ defmodule Familiada.Reactions do
   end
 
   def sample_question(id) do
-    Familiada.Question |> Repo.all |> Enum.at(id)
+    questions = Familiada.Question |> Repo.all
+    number_of_questions = questions |> Enum.count
+    :random.seed(:erlang.now)
+    chosen = :random.uniform(number_of_questions)
+    Familiada.Question |> Repo.all |> Enum.at(chosen)
   end
   def top_answers(question_id) do
     PolledAnswer
     |> where(question_id: ^question_id)
-    |> order_by(:points)
+    |> order_by(desc: :points)
     |> limit(6)
     |> Repo.all
   end
-  defp set_new_question(model, qid) do
-    question = sample_question(qid)
+  defp set_new_question(model) do
+    question = sample_question(1)
     answers = top_answers(question.id)
     answers_hash = %{
       a1: answers |> Enum.at(0),
@@ -95,16 +99,30 @@ defmodule Familiada.Reactions do
   end
   def start_game(model, player) do
     model = Dict.put(model, "mode", "RoundFight")
-    set_new_question(model, 1)
+    set_new_question(model)
   end
 
   # The team who first answer takes round
+  def get_synonyms(word) do
+    HTTPotion.start
+    response = HTTPotion.get("https://wordsapiv1.p.mashape.com/words/#{word}/synonyms", [headers: [
+      "X-Mashape-Key": System.get_env("MASHAPE_KEY"),
+      "Accept": "application/json"
+    ]])
+    if response.status_code == 200 do
+     synonyms = response.body |> Poison.decode! |> Dict.get("synonyms")
+     IO.puts "SYNONYMS(#{word}): #{Poison.encode!(synonyms)}"
+     synonyms || []
+    else
+      []
+    end
+  end
   defp answer_exists(model, answer_text) do
-    IO.puts "answer_text = #{answer_text}"
+    answer_text = String.downcase(answer_text)
     answers_board = model["answersBoard"]
     correct_answer = Enum.filter ["a1","a2", "a3", "a4", "a5", "a6"], fn (x) ->
-      IO.puts "ODP##{x} #{answers_board[x]["answer"]}"
-      answers_board[x]["answer"] == answer_text
+      possible_answers = Enum.map answers_board[x]["possible_answers"], &String.downcase/1
+      Enum.member?(possible_answers, answer_text)
     end
     correct_answer |> Enum.at(0)
   end
@@ -138,7 +156,7 @@ defmodule Familiada.Reactions do
     if team_players[current]["id"] != 0 do
       current
     else
-      next_player(team_players, next[current])
+      next_player(team_players, current)
     end
   end
   defp next_answering_player(model) do
@@ -180,7 +198,7 @@ defmodule Familiada.Reactions do
     model = Dict.put(model, "answeringTeam", "NONE")
     model = Dict.put(model, "answeringPlayer", %{"id" => 0, "name" => "X", "avatar" => "Z"})
     model = Dict.put(model, "mode", "RoundFight")
-    model = set_new_question(model, 2)
+    model = set_new_question(model)
   end
   defp add_error_unless_fight(model, player) do
     # NOTE: having this embbeded in model.player.team would simplify things
@@ -204,6 +222,20 @@ defmodule Familiada.Reactions do
       end
     end
   end
+  defp round_ended?(model) do
+    if model["answeredQuestions"] == 6 do
+      model = set_new_question(model)
+      model = set_round_fight(model)
+      model = reset_teams_errors(model)
+      model = Dict.put(model, "answeredQuestions", 0)
+    else
+      model
+    end
+  end
+  def increment_good_answers(model) do
+    currently = model["answeredQuestions"]
+    Dict.put(model, "answeredQuestions", currently + 1)
+  end
   def send_answer(model, player, answer_text) do
     good_answer = answer_exists(model, answer_text)
     if answer_allowed(model, player) do
@@ -216,12 +248,14 @@ defmodule Familiada.Reactions do
         model = update_team_points(model, player, answer)
         answer = Dict.put(answer, "show", true)
         answersBoard = Dict.put(answersBoard, good_answer, answer)
+        model = increment_good_answers(model)
         Dict.put(model, "answersBoard", answersBoard)
       else
         IO.puts "BAD ANSWER"
         add_error_unless_fight(model, player)
       end
       model = next_answering_player(model)
+      model = round_ended?(model)
     else
       model
     end

@@ -58,9 +58,9 @@ port newUser =
 
 model : Model
 model = { msgList = [{username = "Chat", content = "Welcome!"}]
-        , users = ["Anonymous"]
+        , users = []
         , inputMsg = ""
-        , currentUser = "Anonymous"
+        , currentUser = ""
         }
 
 mainSignal : Signal Action
@@ -81,7 +81,7 @@ update action model =
       NoOp -> model
       InputMsg s -> { model | inputMsg <- s }
       SendMsg msg -> { model | inputMsg <- "" }
-      NewMsg msg -> { model | msgList <- (model.msgList ++ [msg]) }
+      NewMsg msg -> { model | msgList <- (msg :: model.msgList) }
       InputUsername u -> { model | currentUser <- u.newUsername }
       UserListUpdate ul -> { model | users <- ul}
 

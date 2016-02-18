@@ -4,8 +4,10 @@
 [Trello board](https://trello.com/b/4t4cuGYZ/workflow)
 
 ## Dependencies
-  1. PostgreSQL
-  2. Redis
+  1. Elixir 1.2.2 / Phoenix 1.1.4
+  2. Elm 2.0.0
+  3. PostgreSQL 9+
+  4. Redis
 
 ## Start the App
   1. Install dependencies with `mix deps.get`
@@ -14,7 +16,7 @@
   4. If it complains about password please run `psql` & `alter user your_username with password '';`
   5. Migrate your database with `mix ecto.create && mix ecto.migrate`, then seed `mix run priv/repo/seeds.exs`
   6. Run `npm install`
-  7. Run `npm install -g elm`
+  7. Run `npm install -g elm@2.0.0`
   8. Run `cd web/elm` & `elm-package install`
   9. Start Phoenix endpoint with `mix phoenix.server`
   10. Install inotify(only linux) for automatic hot reload - http://www.phoenixframework.org/docs/installation
@@ -35,7 +37,6 @@ https://familiadex.herokuapp.com/
 === familiadex Buildpack URLs
   1. https://github.com/HashNuke/heroku-buildpack-elixir
   2. https://github.com/Machiaweliczny/heroku-buildpack-elm
-  3.
 
 ### Deploy to heroku
   1. Add priv/static files to git before pushing to heroku
