@@ -13241,18 +13241,18 @@ Elm.ViewAnswersBoard.make = function (_elm) {
          var answerBox = function (model) {
             return A2($Html.input,
             _L.fromArray([$Html$Attributes.$class("answer-input")
-                         ,A3($Html$Events.on,
-                         "input",
-                         $Html$Events.targetValue,
-                         function ($) {
-                            return $Signal.message(address)($FamiliadaTypes.InputAnswer($));
-                         })
+                         ,$Html$Attributes.value(model.answerValue)
                          ,A2($Html$Events.onKeyUp,
                          ba,
                          sendAnswer(A2($FamiliadaBackendActions.mkBackendCmd,
                          $FamiliadaBackendActions.SendAnswer,
                          _L.fromArray([model.answerValue]))))
-                         ,$Html$Attributes.value(model.answerValue)]),
+                         ,A3($Html$Events.on,
+                         "input",
+                         $Html$Events.targetValue,
+                         function ($) {
+                            return $Signal.message(address)($FamiliadaTypes.InputAnswer($));
+                         })]),
             _L.fromArray([]));
          };
          var questionView = function (question) {

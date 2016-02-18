@@ -21,9 +21,9 @@ viewAnswersBoard address ba model =
         if key == 13 then backendCmd else (mkBackendCmd FBA.NoAction [])
       answerBox model = input
                   [ class "answer-input"
-                  , on "input" targetValue (Signal.message address << FamiliadaTypes.InputAnswer)
-                  , onKeyUp ba (mkBackendCmd FBA.SendAnswer [model.answerValue] |> sendAnswer)
                   , value model.answerValue
+                  , onKeyUp ba (mkBackendCmd FBA.SendAnswer [model.answerValue] |> sendAnswer)
+                  , on "input" targetValue (Signal.message address << FamiliadaTypes.InputAnswer)
                   ] []
       answersBoard = div [class "answers-board"]
         [ ul [class "list-group"]
